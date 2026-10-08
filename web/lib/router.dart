@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'login_screen.dart';
+import 'lot_detail_screen.dart';
+import 'lots_screen.dart';
 import 'providers.dart';
 import 'shell.dart';
 
@@ -35,8 +37,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/lots',
-            builder: (_, _) => _todo('Lotes'),
-            routes: [GoRoute(path: ':id', builder: (_, s) => _todo('Lote ${s.pathParameters['id']}'))],
+            builder: (_, _) => const LotsScreen(),
+            routes: [GoRoute(path: ':id', builder: (_, s) => LotDetailScreen(s.pathParameters['id']!))],
           ),
           GoRoute(
             path: '/roasts',
