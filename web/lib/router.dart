@@ -6,6 +6,8 @@ import 'login_screen.dart';
 import 'lot_detail_screen.dart';
 import 'lots_screen.dart';
 import 'providers.dart';
+import 'roast_detail_screen.dart';
+import 'roasts_screen.dart';
 import 'shell.dart';
 
 Widget _todo(String t) => Center(child: Text(t));
@@ -42,8 +44,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/roasts',
-            builder: (_, _) => _todo('Tuestes'),
-            routes: [GoRoute(path: ':id', builder: (_, s) => _todo('Tueste ${s.pathParameters['id']}'))],
+            builder: (_, _) => const RoastsScreen(),
+            routes: [GoRoute(path: ':id', builder: (_, s) => RoastDetailScreen(s.pathParameters['id']!))],
           ),
           GoRoute(path: '/users', builder: (_, _) => _todo('Usuarios')),
         ],

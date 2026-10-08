@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'lot_form.dart';
 import 'models.dart';
 import 'providers.dart';
+import 'roast_form.dart';
 import 'util.dart';
 import 'widgets.dart';
 
@@ -39,7 +40,10 @@ class LotDetailScreen extends ConsumerWidget {
         const SizedBox(height: 12),
         Wrap(spacing: 8, children: [
           OutlinedButton(onPressed: () => editLot(context, ref, l), child: const Text('Editar')),
-          // Task 10 añade aquí el botón "Registrar tueste".
+          FilledButton(
+            onPressed: () => editRoast(context, ref, lotId: l.id),
+            child: const Text('Registrar tueste'),
+          ),
           if (user?.isAdmin ?? false)
             TextButton(onPressed: () => _delete(context, ref, l), child: const Text('Eliminar')),
         ]),
