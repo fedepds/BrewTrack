@@ -1,4 +1,6 @@
 import os
+from datetime import date, datetime, timezone
+from decimal import Decimal
 from pathlib import Path
 
 os.environ.setdefault("DATABASE_URL", "postgresql+psycopg://postgres:test@localhost:55432/brewtrack_test")
@@ -12,7 +14,7 @@ from sqlalchemy import text
 
 from app.db import SessionLocal, engine
 from app.main import app
-from app.models import User
+from app.models import GreenLot, Roast, User
 from app.security import create_access_token, hash_password
 
 ALEMBIC_INI = Path(__file__).parent.parent / "alembic.ini"
@@ -76,3 +78,36 @@ def roaster(make_user):
 @pytest.fixture
 def admin(make_user):
     return make_user("admin@x.com", "admin")
+
+
+@pytest.fixture
+def make_lot(db):
+    def _make(code="GL-1", kg="60", **kw):
+        data = dict(
+            code=code, origin_country="Colombia", variety="Caturra", process="washed",
+            harvest_year=2026, received_at=date(2026, 1, 1), received_kg=Decimal(kg),
+        )
+        lot = GreenLot(**{**data, **kw})
+        db.add(lot)
+        db.commit()
+        db.refresh(lot)
+        return lot
+
+    return _make
+
+
+@pytest.fixture
+def make_roast(db):
+    def _make(lot, user, green_in="10", out="8.5", **kw):
+        data = dict(
+            lot_id=lot.id, roaster_id=user.id, roasted_at=datetime(2026, 2, 1, tzinfo=timezone.utc),
+            green_in_kg=Decimal(green_in), roasted_out_kg=Decimal(out), loss_pct=Decimal("15.00"),
+            duration_s=600, drop_temp_c=Decimal("205.0"), roast_level="medium",
+        )
+        roast = Roast(**{**data, **kw})
+        db.add(roast)
+        db.commit()
+        db.refresh(roast)
+        return roast
+
+    return _make
