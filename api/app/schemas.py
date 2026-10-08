@@ -64,3 +64,7 @@ class RoastOut(ORM):
 
 class LotDetail(LotOut):
     roasts: list[RoastOut]
+
+
+class RoastDetail(RoastOut):
+    lot: LotOut
