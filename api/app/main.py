@@ -3,12 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import errors
 from app.config import settings
+from app.routers import auth
 
 app = FastAPI(title="BrewTrack", openapi_url="/api/v1/openapi.json", docs_url="/api/v1/docs")
 errors.install(app)
 app.add_middleware(
     CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"]
 )
+app.include_router(auth.router, prefix="/api/v1")
 
 
 @app.get("/api/v1/health")
