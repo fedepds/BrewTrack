@@ -9,8 +9,8 @@ import 'providers.dart';
 import 'roast_detail_screen.dart';
 import 'roasts_screen.dart';
 import 'shell.dart';
+import 'users_screen.dart';
 
-Widget _todo(String t) => Center(child: Text(t));
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier(0);
@@ -47,7 +47,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => const RoastsScreen(),
             routes: [GoRoute(path: ':id', builder: (_, s) => RoastDetailScreen(s.pathParameters['id']!))],
           ),
-          GoRoute(path: '/users', builder: (_, _) => _todo('Usuarios')),
+          GoRoute(path: '/users', builder: (_, _) => const UsersScreen()),
         ],
       ),
     ],
