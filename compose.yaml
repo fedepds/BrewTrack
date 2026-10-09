@@ -29,5 +29,15 @@ services:
       timeout: 3s
       retries: 10
 
+  web:
+    build:
+      context: ./web
+      dockerfile: Containerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   pgdata:
