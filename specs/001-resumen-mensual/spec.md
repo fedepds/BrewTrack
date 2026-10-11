@@ -1,6 +1,6 @@
 # 001 — Resumen mensual
 
-Estado: aprobada
+Estado: aceptada
 Fecha: 2026-10-11
 
 ## Contexto y objetivo
@@ -93,7 +93,7 @@ Objetivo: una pantalla "Resumen" que muestre, para un mes elegido, lo recibido, 
 
 ### Pantalla
 
-- CA-18. Dada una respuesta con los datos del ejemplo de RF-16, cuando se muestra la pantalla, entonces aparecen "7", "412.500 kg", "2", "120.000 kg", "18", "95.000 kg", "80.750 kg" y "15.00 %".
+- CA-18. Dada una respuesta con los datos del ejemplo de RF-16, cuando se muestra la pantalla, entonces la pantalla contiene "7", "412.500 kg", "2", "120.000 kg", "18", "95.000 kg", "80.750 kg" y "15.00 %". Las cifras pueden ir dentro de un texto con su etiqueta, por ejemplo "2 lotes" o "95.000 kg → 80.750 kg".
 - CA-19. Dada la pantalla abierta, entonces las cifras de lotes con stock y stock total incluyen el texto "hoy".
 - CA-20. Dada una respuesta con `loss_pct: null`, cuando se muestra la pantalla, entonces la merma muestra "—".
 - CA-21. Dado que el mes actual es octubre de 2026, cuando se abre la pantalla, entonces el selector muestra "octubre 2026" y la flecha "siguiente" está desactivada.
@@ -134,3 +134,4 @@ Ninguna. El usuario resolvió las tres preguntas de la versión 1.0:
 |---|---|---|
 | 2026-10-11 | 1.0 | Versión inicial. Diseño aprobado por el usuario en sesión de brainstorming. |
 | 2026-10-11 | 1.1 | Spec aprobada. Se pasan a RF-3, RF-6 y RF-21 las respuestas del usuario a las tres preguntas abiertas. |
+| 2026-10-11 | 1.2 | Spec aceptada según el informe de QA (sin fallos). CA-18 aclara que las cifras pueden ir con su etiqueta ("2 lotes", "95.000 kg → 80.750 kg"). Se acepta que la prueba de CA-9 use otras cifras, porque prueba la misma regla. Se acepta que RF-17 con token inválido no tenga prueba propia, porque usa la misma autenticación ya probada. Los huecos de prueba de QA y los pendientes del developer no bloquean y no cambian ningún RF. |
