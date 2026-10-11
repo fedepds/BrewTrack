@@ -15,6 +15,7 @@ class Shell extends ConsumerWidget {
     final dests = [
       ('/lots', Icons.inventory_2, 'Lotes'),
       ('/roasts', Icons.local_fire_department, 'Tuestes'),
+      ('/stats', Icons.bar_chart, 'Resumen'),
       if (user.isAdmin) ('/users', Icons.people, 'Usuarios'),
     ];
     final here = GoRouterState.of(context).matchedLocation;

@@ -20,6 +20,7 @@ Future<void> pumpShell(WidgetTester t, User u) async {
       routes: [
         GoRoute(path: '/lots', builder: (_, _) => const Text('lots-page')),
         GoRoute(path: '/roasts', builder: (_, _) => const Text('roasts-page')),
+        GoRoute(path: '/stats', builder: (_, _) => const Text('stats-page')),
         GoRoute(path: '/users', builder: (_, _) => const Text('users-page')),
       ],
     ),
@@ -30,6 +31,9 @@ Future<void> pumpShell(WidgetTester t, User u) async {
   ));
   await t.pumpAndSettle();
 }
+
+List<String> labels(WidgetTester t) =>
+    [for (final d in t.widgetList<NavigationDestination>(find.byType(NavigationDestination))) d.label];
 
 void main() {
   testWidgets('roaster no ve Usuarios', (t) async {
@@ -42,5 +46,15 @@ void main() {
   testWidgets('admin ve Usuarios', (t) async {
     await pumpShell(t, const User(id: '2', email: 'a@x.com', name: 'Ada', role: 'admin', active: true));
     expect(find.text('Usuarios'), findsOneWidget);
+  });
+
+  testWidgets('roaster ve Resumen después de Tuestes', (t) async {
+    await pumpShell(t, const User(id: '1', email: 'r@x.com', name: 'Rita', role: 'roaster', active: true));
+    expect(labels(t), ['Lotes', 'Tuestes', 'Resumen']);
+  });
+
+  testWidgets('admin ve Resumen entre Tuestes y Usuarios', (t) async {
+    await pumpShell(t, const User(id: '2', email: 'a@x.com', name: 'Ada', role: 'admin', active: true));
+    expect(labels(t), ['Lotes', 'Tuestes', 'Resumen', 'Usuarios']);
   });
 }

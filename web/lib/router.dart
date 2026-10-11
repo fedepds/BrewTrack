@@ -9,6 +9,7 @@ import 'providers.dart';
 import 'roast_detail_screen.dart';
 import 'roasts_screen.dart';
 import 'shell.dart';
+import 'stats_screen.dart';
 import 'users_screen.dart';
 
 
@@ -47,6 +48,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => const RoastsScreen(),
             routes: [GoRoute(path: ':id', builder: (_, s) => RoastDetailScreen(s.pathParameters['id']!))],
           ),
+          GoRoute(path: '/stats', builder: (_, _) => const StatsScreen()),
           GoRoute(path: '/users', builder: (_, _) => const UsersScreen()),
         ],
       ),
