@@ -1,6 +1,6 @@
 # 001 — Resumen mensual
 
-Estado: borrador para aprobación
+Estado: aprobada
 Fecha: 2026-10-11
 
 ## Contexto y objetivo
@@ -24,10 +24,10 @@ Objetivo: una pantalla "Resumen" que muestre, para un mes elegido, lo recibido, 
 
 - RF-1. **Lotes con stock:** cantidad de lotes con stock calculado mayor que 0. Refleja el día de hoy y no depende del mes elegido.
 - RF-2. **Stock total de verde (kg):** suma del stock calculado de todos los lotes. Refleja el día de hoy y no depende del mes elegido.
-- RF-3. El stock de cada lote es `received_kg` menos la suma de `green_in_kg` de sus tuestes, como manda la constitución. El sistema no lo guarda: lo calcula en cada consulta.
+- RF-3. El stock de cada lote es `received_kg` menos la suma de `green_in_kg` de sus tuestes, como manda la constitución. El sistema no lo guarda: lo calcula en cada consulta. Un lote con fecha de recepción posterior a hoy también cuenta en RF-1 y RF-2, igual que en el listado de lotes.
 - RF-4. **Recibido en el mes:** cantidad de lotes y suma de `received_kg` de los lotes cuya fecha de recepción cae en el mes. La fecha de recepción es solo una fecha, sin hora.
 - RF-5. **Tostado en el mes:** cantidad de tuestes, suma de `green_in_kg` y suma de `roasted_out_kg` de los tuestes cuya fecha de tueste cae en el mes.
-- RF-6. **Merma media del mes:** `(1 − kg tostado ÷ kg verde) × 100`, con los totales de RF-5, redondeada a 2 decimales (la mitad se redondea hacia arriba). No es el promedio de la merma de cada tueste: así un tueste chico no pesa igual que uno grande.
+- RF-6. **Merma media del mes:** `(1 − kg tostado ÷ kg verde) × 100`, con los totales de RF-5, redondeada a 2 decimales con la mitad hacia arriba (`12.345` → `12.35`). No es el promedio de la merma de cada tueste: así un tueste chico no pesa igual que uno grande.
 - RF-7. Si el mes no tiene tuestes, la merma media es nula.
 
 ### Mes y zona horaria
@@ -63,7 +63,7 @@ Objetivo: una pantalla "Resumen" que muestre, para un mes elegido, lo recibido, 
 - RF-18. La navegación muestra "Resumen" a los dos roles, entre "Tuestes" y "Usuarios". La pantalla de inicio sigue siendo la de lotes.
 - RF-19. Al entrar, la pantalla muestra el mes actual del taller (RF-10).
 - RF-20. Un selector muestra el mes en español, con el nombre del mes en minúscula y el año, por ejemplo "octubre 2026".
-- RF-21. El selector tiene una flecha "anterior" y una flecha "siguiente". Cada una cambia al mes contiguo y vuelve a cargar las cifras. La flecha "siguiente" está desactivada en el mes actual.
+- RF-21. El selector tiene una flecha "anterior" y una flecha "siguiente". Cada una cambia al mes contiguo y vuelve a cargar las cifras. La flecha "siguiente" está desactivada en el mes actual. La flecha "anterior" no tiene límite.
 - RF-22. La pantalla muestra las cinco cifras de RF-1, RF-2, RF-4, RF-5 y RF-6. Las cifras de RF-1 y RF-2 indican que son de "hoy".
 - RF-23. Los kg se muestran con 3 decimales y la unidad "kg" (por ejemplo "412.500 kg"). La merma se muestra con 2 decimales y "%" (por ejemplo "15.00 %").
 - RF-24. Si la merma es nula, la pantalla muestra "—".
@@ -122,12 +122,15 @@ Objetivo: una pantalla "Resumen" que muestre, para un mes elegido, lo recibido, 
 
 ## Preguntas abiertas
 
-1. **Límite de la flecha "anterior".** La spec no pone límite: se puede retroceder sin fin y la API acepta cualquier `YYYY-MM` válido. ¿Conviene frenar en el mes del primer lote o del primer tueste? Propuesta: sin límite en v1.
-2. **Redondeo de la merma.** RF-6 fija el redondeo de la mitad hacia arriba (`12.345` → `12.35`). Pido que el usuario lo confirme.
-3. **Lotes con fecha de recepción futura.** Un lote cargado con fecha posterior a hoy suma a "lotes con stock" y a "stock total" de hoy. Propuesta: aceptarlo así en v1, porque el stock se calcula igual en el listado de lotes y las dos cifras deben coincidir (CA-10).
+Ninguna. El usuario resolvió las tres preguntas de la versión 1.0:
+
+1. Resuelta. La flecha "anterior" no tiene límite en v1 (RF-21).
+2. Resuelta. La merma se redondea con la mitad hacia arriba (RF-6).
+3. Resuelta. Un lote con fecha de recepción futura cuenta en el stock de hoy (RF-3).
 
 ## Historial
 
 | Fecha | Versión | Cambio |
 |---|---|---|
 | 2026-10-11 | 1.0 | Versión inicial. Diseño aprobado por el usuario en sesión de brainstorming. |
+| 2026-10-11 | 1.1 | Spec aprobada. Se pasan a RF-3, RF-6 y RF-21 las respuestas del usuario a las tres preguntas abiertas. |
