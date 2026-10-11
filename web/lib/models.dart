@@ -87,3 +87,20 @@ Paged<T> pageFrom<T>(Map<String, dynamic> j, T Function(Map<String, dynamic>) f)
     Paged([for (final i in j['items']) f(i as Map<String, dynamic>)], j['total']);
 
 const roastLevels = {'light': 'Claro', 'medium': 'Medio', 'dark': 'Oscuro'};
+
+class Summary {
+  Summary.fromJson(Map<String, dynamic> j)
+      : month = j['month'],
+        lotsInStock = j['lots_in_stock'],
+        stockKg = j['stock_kg'],
+        receivedLots = j['received']['lots'],
+        receivedKg = j['received']['kg'],
+        roasts = j['roasted']['roasts'],
+        greenKg = j['roasted']['green_kg'],
+        roastedKg = j['roasted']['roasted_kg'],
+        lossPct = j['loss_pct'];
+  // Los kg y la merma llegan como texto ya formateado por la API.
+  final String month, stockKg, receivedKg, greenKg, roastedKg;
+  final int lotsInStock, receivedLots, roasts;
+  final String? lossPct;
+}

@@ -30,4 +30,15 @@ void main() {
     expect(canEditRoast(_user('bob', 'roaster'), r), isFalse);
     expect(canEditRoast(_user('bob', 'admin'), r), isTrue);
   });
+
+  test('monthLabel muestra el mes en español', () {
+    expect(monthLabel('2026-10'), 'octubre 2026');
+    expect(monthLabel('2027-01'), 'enero 2027');
+  });
+
+  test('shiftMonth cruza el cambio de año', () {
+    expect(shiftMonth('2026-10', -1), '2026-09');
+    expect(shiftMonth('2026-01', -1), '2025-12');
+    expect(shiftMonth('2026-12', 1), '2027-01');
+  });
 }

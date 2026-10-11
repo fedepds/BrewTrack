@@ -96,6 +96,10 @@ class Api {
 
   Future<RoastDetail> roast(String id) async => RoastDetail.fromJson(await _get('/roasts/$id'));
 
+  /// [month] 'AAAA-MM'; null pide el mes actual del taller.
+  Future<Summary> summary(String? month) async =>
+      Summary.fromJson(await _get('/stats/summary', {'month': ?month}));
+
   Future<List<User>> users() async => [
         for (final u in (await _dio.get<List<dynamic>>('/users')).data!) User.fromJson(u as Map<String, dynamic>)
       ];

@@ -40,3 +40,5 @@ final roastsProvider = FutureProvider.autoDispose
 final roastProvider =
     FutureProvider.autoDispose.family<RoastDetail, String>((ref, id) => ref.watch(apiProvider).roast(id));
 final usersProvider = FutureProvider.autoDispose<List<User>>((ref) => ref.watch(apiProvider).users());
+final summaryProvider = FutureProvider.autoDispose
+    .family<Summary, String?>((ref, month) => ref.watch(apiProvider).summary(month));
