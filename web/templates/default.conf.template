@@ -7,7 +7,7 @@ server {
     # DNS de la red, tomado de /etc/resolv.conf al arrancar (NGINX_LOCAL_RESOLVERS).
     # Con variable en proxy_pass, nginx vuelve a resolver "api" tras cada TTL.
     resolver ${NGINX_LOCAL_RESOLVERS} valid=5s;
-    set $api_upstream http://api:8000;
+    set $api_upstream http://${API_HOST}:8000;
     # Sin ruta en proxy_pass, nginx reenvía la URI original con su query.
     proxy_pass $api_upstream;
     proxy_set_header Host $host;

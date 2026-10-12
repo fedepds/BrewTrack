@@ -1,0 +1,2 @@
+# Host de la API para nginx. Sin variable en el entorno, usa "api" (compose).
+export API_HOST="${API_HOST:-api}"
