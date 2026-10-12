@@ -2,6 +2,21 @@
 
 Trazabilidad de café de especialidad: lotes de café verde y tuestes. API FastAPI + frontend Flutter Web + PostgreSQL, con Podman.
 
+## Qué hace
+
+BrewTrack lleva el registro de un taller de tueste, desde que llega el café verde hasta que sale tostado.
+
+- **Lotes de café verde:** cada lote guarda su origen (país, región, finca, productor), variedad, proceso, altitud, cosecha y los kg recibidos.
+- **Tuestes:** cada tueste anota de qué lote sale, quién lo hizo, cuánto verde entró y cuánto tostado salió, la duración, la temperatura de descarga y el nivel (`light`, `medium`, `dark`). La merma se calcula sola.
+- **Stock:** la app no lo guarda, lo calcula: kg recibidos menos el verde usado en los tuestes. No deja tostar más de lo que queda.
+- **Trazabilidad:** desde un lote se ven todos sus tuestes, y desde un tueste se llega a su lote de origen.
+- **Resumen mensual:** cuánto verde queda hoy y, para el mes elegido, cuánto se recibió, cuánto se tostó y con qué merma.
+- **Usuarios y roles:** `roaster` registra lotes y tuestes; `admin` además borra y gestiona usuarios. No hay registro abierto: un admin crea las cuentas.
+
+Una base nueva arranca con 20 lotes y 24 tuestes de ejemplo para probar el sistema; la carga se puede apagar con una variable de entorno.
+
+Fuera de alcance: curvas de tueste, empaque y venta, recetas y cata, y varias empresas en una misma instalación.
+
 ## Arrancar
 
 ```bash
