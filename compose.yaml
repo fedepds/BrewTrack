@@ -16,7 +16,8 @@ services:
   api:
     build:
       context: ./api
-      dockerfile: Containerfile
+      dockerfile: brewtrack-api.Containerfile
+    image: localhost/brewtrack-api:0.1.0
     environment:
       DATABASE_URL: postgresql+psycopg://brewtrack:${POSTGRES_PASSWORD}@db:5432/brewtrack
       JWT_SECRET: ${JWT_SECRET}
@@ -34,7 +35,8 @@ services:
   web:
     build:
       context: ./web
-      dockerfile: Containerfile
+      dockerfile: brewtrack-web.Containerfile
+    image: localhost/brewtrack-web:0.1.0
     ports:
       - "8080:80"
     depends_on:
