@@ -1,6 +1,6 @@
 # 003 — La web sigue llegando a la API tras reiniciar `api`
 
-Estado: aprobada
+Estado: aceptada
 Fecha: 2026-10-12
 
 ## Contexto y objetivo
@@ -57,3 +57,4 @@ Ninguna.
 | Fecha | Versión | Cambio |
 |---|---|---|
 | 2026-10-12 | 1.0 | Versión inicial a partir de la observación 4 del informe de QA de la spec 002. Aprobada: el usuario pidió el arreglo y el alcance es acotado. |
+| 2026-10-12 | 1.1 | Spec aceptada según el informe de QA (aprobado, CA-1 a CA-6 pasan). Observación 1: se acepta un 502 breve mientras `api` arranca, como ya dice la spec. Observación 2: la constitución y el plan todavía nombran `web/nginx.conf`; no son parte de esta spec y la constitución la cambia una persona. |
