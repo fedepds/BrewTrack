@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5000"]
     # Zona del taller: define dónde empieza y termina cada mes en el resumen.
     timezone: str = "America/Argentina/Buenos_Aires"
+    # Carga lotes y tuestes de ejemplo al iniciar (spec 002). Apagada si no se define.
+    seed_demo_lots: bool = False
 
     @field_validator("timezone")
     @classmethod

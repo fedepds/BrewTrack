@@ -1,11 +1,28 @@
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import errors
 from app.config import settings
+from app.seed import run_seed
 from app.routers import auth, green_lots, roasts, stats, users
 
-app = FastAPI(title="BrewTrack", openapi_url="/api/v1/openapi.json", docs_url="/api/v1/docs")
+log = logging.getLogger("uvicorn.error")
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    # Health responde solo cuando termina el lifespan de arranque (RF-16).
+    for line in run_seed():
+        (log.error if line.startswith("Error") else log.info)(line)
+    yield
+
+
+app = FastAPI(
+    title="BrewTrack", openapi_url="/api/v1/openapi.json", docs_url="/api/v1/docs", lifespan=lifespan
+)
 errors.install(app)
 app.add_middleware(
     CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"]

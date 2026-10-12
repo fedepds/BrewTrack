@@ -7,6 +7,7 @@ from sqlalchemy import select
 from app.db import SessionLocal
 from app.models import User
 from app.security import hash_password
+from app.seed import run_seed
 
 
 def create_admin(email: str, name: str, password: str) -> User:
@@ -20,7 +21,10 @@ def create_admin(email: str, name: str, password: str) -> User:
         )
         db.add(user)
         db.commit()
-        return user
+    # Con el admin ya guardado, cualquier fallo de la carga no lo deshace.
+    for line in run_seed(lots=False):
+        print(line)
+    return user
 
 
 def main() -> None:
