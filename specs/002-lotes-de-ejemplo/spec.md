@@ -1,6 +1,6 @@
 # 002 — Lotes y tuestes de ejemplo al iniciar
 
-Estado: aprobada
+Estado: aceptada
 Fecha: 2026-10-12
 
 ## Contexto y objetivo
@@ -45,7 +45,7 @@ Todo tueste necesita un autor, y una base nueva no tiene usuarios hasta que algu
   - `SEED_DEMO_LOTS` vale `true`;
   - la base no tiene ningún tueste;
   - la base tiene al menos un usuario activo;
-  - existen los 13 lotes que usan los tuestes de RF-17, con su `code` y con la nota de RF-14;
+  - existen los 13 lotes que usan los tuestes de RF-17, con su `code` y con la nota de RF-14. Un lote cuya nota alguien cambió ya no cuenta como lote de ejemplo, y la carga de tuestes se omite con el motivo "faltan lotes de ejemplo";
   - cada tueste cabe en el stock de su lote, con la misma regla que `POST /api/v1/roasts`.
 - RF-10. El autor de todos los tuestes de ejemplo es el usuario activo más antiguo. En una base nueva es el primer admin.
 - RF-11. La carga no crea usuarios ni contraseñas.
@@ -244,3 +244,4 @@ Ninguna. El usuario resolvió las cuatro preguntas de la versión 1.0:
 |---|---|---|
 | 2026-10-12 | 1.0 | Versión inicial a partir del pedido del usuario: unos 20 lotes cargados al levantar el stack. |
 | 2026-10-12 | 1.1 | Spec aprobada con las respuestas del usuario. Se agregan 24 tuestes de ejemplo. Como una base nueva no tiene usuarios, la carga de tuestes se intenta al arrancar la API y al terminar `create-admin`, y su autor es el usuario activo más antiguo. No se crean usuarios ni contraseñas. `SEED_DEMO_LOTS` pasa a controlar lotes y tuestes. La regla de base vaciada (RF-7) se extiende a los tuestes (RF-12). Los criterios se renumeran: los CA-9 a CA-17 de la 1.0 pasan a CA-23, CA-27, CA-28, CA-31, CA-32 y CA-33 a CA-35, con cambios para incluir los tuestes. |
+| 2026-10-12 | 1.2 | Spec aceptada según el informe de QA (aprobado con observaciones, ningún CA falla). El usuario eligió cerrarla sin cambios de código. Observación 1: se acepta que un lote de ejemplo con la nota editada bloquee la carga de tuestes con el motivo "faltan lotes de ejemplo"; RF-9 lo aclara, sin cambiar el comportamiento. Observaciones 2 y 3: se aceptan las pruebas de CA-6 (variable sin definir en pytest) y de CA-7 y CA-19 (fallo inyectado), porque prueban la misma regla. Observación 4 (502 de nginx tras reiniciar `api`): no es un fallo de esta spec; pasa a la spec 003. Hasta que se cierre la 003, CA-34 y CA-35 por la interfaz exigen reiniciar también `web`; por la API pasan. Las pantallas de CA-33 a CA-35 no se vieron en un navegador; se acepta la prueba por la API a través de nginx. |
