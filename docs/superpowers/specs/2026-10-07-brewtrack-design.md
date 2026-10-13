@@ -9,6 +9,7 @@ Sistema para la gestión y trazabilidad de café de especialidad en un solo tall
 Dentro:
 - Lotes de café verde, tuestes con datos resumen (sin curva).
 - Un solo taller, login con roles `roaster` y `admin`.
+- Monitoreo de la API con Prometheus y Grafana: métricas HTTP, paneles y alertas que se ven en Grafana.
 
 Fuera:
 - Curvas tiempo-temperatura y captura en vivo desde la tostadora.
@@ -18,7 +19,7 @@ Fuera:
 
 ## Arquitectura
 
-Tres contenedores: `db` (PostgreSQL), `api` (FastAPI), `web` (Flutter Web servido por nginx, con proxy `/api/` hacia `api:8000`). Solo `web` publica puerto al host.
+Cinco contenedores: `db` (PostgreSQL), `api` (FastAPI), `web` (Flutter Web servido por nginx, con proxy `/api/` hacia `api:8000`), `prometheus` (lee las métricas de `api`) y `grafana` (paneles y alertas). Solo `web` y `grafana` publican puerto al host; `grafana` solo en `127.0.0.1`.
 
 ## Modelo de datos
 
@@ -68,6 +69,7 @@ Errores y seguridad:
 - CORS cerrado al origen del frontend (solo relevante en desarrollo).
 - Secreto JWT desde variable de entorno.
 - `GET /health` para healthchecks.
+- `GET /metrics` (fuera de `/api/v1`) para Prometheus. nginx no lo publica: solo hace proxy de `/api/`.
 
 ## Frontend (Flutter Web)
 
@@ -91,7 +93,8 @@ Comportamiento:
 brewtrack/
 ├── api/            # FastAPI, Alembic, tests, Containerfile
 ├── web/            # Flutter Web, nginx.conf, Containerfile
-├── compose.yaml    # db + api + web
+├── monitoring/     # Prometheus y Grafana: configuración, paneles y alertas
+├── compose.yaml    # db + api + web + prometheus + grafana
 ├── .env.example
 └── docs/superpowers/specs/
 ```
@@ -101,10 +104,12 @@ brewtrack/
 | db | `postgres:17-alpine` | Volumen `pgdata`, healthcheck `pg_isready`. |
 | api | `python:3.13-slim` multi-stage | Usuario no root. Arranque: `alembic upgrade head` y luego `uvicorn`. Espera a `db` sano. Healthcheck en `/api/v1/health`. |
 | web | build `ghcr.io/cirruslabs/flutter`, runtime `nginx:alpine` | `flutter build web --release`. nginx sirve la SPA con fallback a `index.html` y hace proxy de `/api/`. |
+| prometheus | `prom/prometheus` (versión fija) | Lee `api:8000/metrics`. Sin puerto al host. |
+| grafana | `grafana/grafana` (versión fija) | Fuente de datos, paneles y alertas cargados desde `monitoring/`. Puerto solo en `127.0.0.1`. Sin acceso anónimo. |
 
 - Archivos `Containerfile`, flujo `podman compose up --build`, modo rootless.
 - Destino adicional: Minikube, en el namespace `brewtrack`, con las mismas imágenes. Compose sigue siendo el principal. Los secretos entran por un Secret de Kubernetes creado desde `.env`, nunca escritos en los manifiestos.
-- Configuración en `.env` (no versionado): `POSTGRES_PASSWORD`, `JWT_SECRET`, `DATABASE_URL`. Plantilla en `.env.example`.
+- Configuración en `.env` (no versionado): `POSTGRES_PASSWORD`, `JWT_SECRET`, `DATABASE_URL`, `GRAFANA_ADMIN_PASSWORD`. Plantilla en `.env.example`.
 - Primer admin: `podman compose exec api python -m app.cli create-admin`.
 - Backup documentado con `pg_dump`.
 
