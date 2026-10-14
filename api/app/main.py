@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app import errors
+from app import errors, metrics
 from app.config import settings
 from app.seed import run_seed
 from app.routers import auth, green_lots, roasts, stats, users
@@ -37,3 +37,7 @@ app.include_router(stats.router, prefix="/api/v1")
 @app.get("/api/v1/health")
 def health():
     return {"status": "ok"}
+
+
+# Al final: necesita las rutas ya registradas para crear las series en 0.
+metrics.install(app)

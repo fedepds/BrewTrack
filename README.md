@@ -20,11 +20,25 @@ Fuera de alcance: curvas de tueste, empaque y venta, recetas y cata, y varias em
 ## Arrancar
 
 ```bash
-cp .env.example .env   # y rellenar POSTGRES_PASSWORD y JWT_SECRET
+cp .env.example .env   # y rellenar POSTGRES_PASSWORD, JWT_SECRET y GRAFANA_ADMIN_PASSWORD
 podman compose up --build -d
 podman compose exec api python -m app.cli create-admin --email tu@correo.dev --name "Tu Nombre"
 ```
-Abrir http://localhost:8080.
+Abrir http://localhost:8081.
+
+## Monitoreo
+
+Prometheus lee `/metrics` de la API cada 15 s. Grafana trae el panel "BrewTrack API" y seis alertas, sin pasos a mano. Ábrelo en http://127.0.0.1:3001 (usuario `admin`, contraseña `GRAFANA_ADMIN_PASSWORD`). Sin esa variable en `.env`, `grafana` no arranca. La configuración está en `monitoring/`; para cambiar un umbral edita `monitoring/grafana/provisioning/alerting/rules.yaml` y corre `podman compose restart grafana`.
+
+Grafana guarda la contraseña de admin en su volumen la primera vez que arranca. Cambiar `GRAFANA_ADMIN_PASSWORD` después no la cambia. Para cambiarla, con `grafana` en marcha:
+
+```bash
+podman compose exec grafana sh -c 'grafana cli admin reset-admin-password "$GF_SECURITY_ADMIN_PASSWORD"'
+```
+
+Antes, actualiza `.env` y recrea el contenedor con `podman compose up -d grafana`. Si prefieres empezar de cero, borra el volumen con `podman compose down grafana && podman volume rm brewtrack2_grafanadata`.
+
+En Minikube: ver `k8s/README.md`.
 
 ## Desarrollo
 

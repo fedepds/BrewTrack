@@ -17,7 +17,8 @@ Resumen de lo que no se rompe:
 - **Secretos:** `.env` no se versiona, no se lee ni se imprime. Todo secreto entra por variable de entorno.
 
 ## Comandos
-- **Levantar todo:** `podman compose up --build -d` → http://localhost:8080
+- **Levantar todo:** `podman compose up --build -d` → http://localhost:8081
+- **Grafana (compose):** http://127.0.0.1:3001 (usuario `admin`, contraseña `GRAFANA_ADMIN_PASSWORD`)
 - **Solo la base de datos:** `podman compose up -d db`
 - **Primer admin:** `podman compose exec api python -m app.cli create-admin --email <correo> --name "<nombre>"`
 - **API (desarrollo):** `cd api && . .venv/bin/activate && uvicorn app.main:app --reload` (con `DATABASE_URL` y `JWT_SECRET` en el entorno)
@@ -64,4 +65,4 @@ Revisa cada texto contra estas reglas antes de entregarlo.
 - Analizar: `cd web && flutter analyze`.
 - Ejecutar tests: `cd api && pytest` y `cd web && flutter test`.
 - Si cambió el esquema: la migración nueva aplica limpia con `alembic upgrade head`.
-- Validar el stack local: `podman compose up --build -d` y comprobar que `api` queda sano (`/api/v1/health`) y que http://localhost:8080 carga.
+- Validar el stack local: `podman compose up --build -d` y comprobar que `api` queda sano (`/api/v1/health`) y que http://localhost:8081 carga.

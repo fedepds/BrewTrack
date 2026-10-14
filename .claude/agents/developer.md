@@ -30,6 +30,6 @@ Lee la sección "Constitución" de `AGENTS.md` y el spec de diseño `docs/superp
 - No toques `.venv/`, `.pubcache/`, `.superpowers/` ni `web/build/`.
 
 ## Antes de entregar
-Ejecuta y corrige: `cd api && pytest`, `cd web && flutter analyze`, `cd web && flutter test`. Si cambió el esquema, prueba `alembic upgrade head` sobre una base vacía. Valida el stack con `podman compose up --build -d`: `api` sano en `/api/v1/health` y http://localhost:8080 carga.
+Ejecuta y corrige: `cd api && pytest`, `cd web && flutter analyze`, `cd web && flutter test`. Si cambió el esquema, prueba `alembic upgrade head` sobre una base vacía. Valida el stack con `podman compose up --build -d`: `api` sano en `/api/v1/health` y http://localhost:8081 carga.
 
 Redacta prosa (notas, mensajes de PR) según las reglas de redacción de `AGENTS.md`. No cambies el código ni los términos técnicos por eso.

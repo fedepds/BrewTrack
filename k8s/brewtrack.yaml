@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: localhost/brewtrack-api:0.1.0
+          image: localhost/brewtrack-api:0.2.0
           imagePullPolicy: Never   # la imagen viene de "minikube image load"
           ports:
             - containerPort: 8000
