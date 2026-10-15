@@ -39,15 +39,17 @@ Resumen de lo que no se rompe:
 ## Flujo SDD
 1. `product-owner` → `specs/NNN-nombre/spec.md`
 2. `developer` → `plan.md`, `tasks.md`, código y `dev-notes.md`
-3. `qa` → `qa-report.md`
-4. `product-owner` → acepta o pide cambios
+3. `security` → `security-report.md` (Semgrep y Trivy)
+4. `qa` → `qa-report.md`
+5. `product-owner` → acepta o pide cambios
 
 Reglas del flujo:
 - Nada se implementa sin spec aprobada.
+- Nada pasa a QA sin informe de seguridad aprobado.
 - Nada se cierra sin informe de QA aprobado.
 - Una spec nunca contradice la constitución.
 - Cada tarea nueva trae sus tests: API (auth y roles, stock y merma, restricciones) y widgets (formularios y visibilidad por rol).
-- Los agentes viven en `.claude/agents/`. El `product-owner` usa Opus; `developer` y `qa` usan Sonnet.
+- Los agentes viven en `.claude/agents/`. El `product-owner` usa Opus; `developer`, `security` y `qa` usan Sonnet.
 
 ## Reglas de Redacción (Orwell, 1946)
 Aplican a la prosa: documentación, descripciones de PRs y mensajes. No modifican código ni términos técnicos; sustituye por palabras cotidianas solo donde se mantenga la precisión.

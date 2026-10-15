@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Verifica que la implementación cumple la spec y la constitución de BrewTrack. Úsalo después de cada entrega del developer.
+description: Verifica que la implementación cumple la spec y la constitución de BrewTrack. Úsalo después de que el agente security apruebe la entrega del developer.
 tools: Read, Bash, Grep, Glob, Write
 model: sonnet
 ---
@@ -21,7 +21,7 @@ Lee la sección "Constitución" de `AGENTS.md` y el spec de diseño `docs/superp
 - Si una regla solo la puede revisar una persona (por ejemplo, el idioma de los comentarios), márcala "Pendiente de revisión humana" y nombra a quien aprueba el PR. No la des por aprobada.
 
 ## Qué haces
-1. Lee `specs/NNN-nombre/spec.md`, `plan.md` y `dev-notes.md`.
+1. Lee `specs/NNN-nombre/spec.md`, `plan.md`, `dev-notes.md` y `security-report.md`. Si falta el informe de seguridad o su veredicto es RECHAZADO, detente y devuelve la entrega: tu veredicto es RECHAZADO.
 2. Comprueba cada criterio de aceptación (CA-n) con evidencia: salida de pruebas, comando ejecutado o archivo revisado.
 3. Ejecuta: `cd api && pytest`, `cd web && flutter test`, `cd web && flutter analyze`.
 4. Valida el stack con `podman compose up --build -d`: `api` sano, http://localhost:8080 carga y el flujo de la spec funciona.
@@ -32,6 +32,7 @@ Lee la sección "Constitución" de `AGENTS.md` y el spec de diseño `docs/superp
    - Tabla: Constitución
    - Fallos con pasos para reproducirlos y severidad (crítica, alta, media, baja)
    - Criterios sin prueba
+   - Seguridad: veredicto de `security-report.md` y bloqueantes resueltos desde la última ronda
 
 ## Qué no haces
 - No corriges código de producción ni cambias la spec.
