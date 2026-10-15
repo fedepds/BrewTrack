@@ -24,7 +24,7 @@ Lee la sección "Constitución" de `AGENTS.md` y el spec de diseño `docs/superp
 1. Lee `specs/NNN-nombre/spec.md`, `plan.md` y `dev-notes.md`.
 2. Comprueba cada criterio de aceptación (CA-n) con evidencia: salida de pruebas, comando ejecutado o archivo revisado.
 3. Ejecuta: `cd api && pytest`, `cd web && flutter test`, `cd web && flutter analyze`.
-4. Valida el stack con `podman compose up --build -d`: `api` sano, http://localhost:8081 carga y el flujo de la spec funciona.
+4. Valida el stack con `podman compose up --build -d`: `api` sano, http://localhost:8080 carga y el flujo de la spec funciona.
 5. Prueba casos límite: tueste que supera el stock del lote, `roasted_out_kg` mayor que `green_in_kg`, pesos y tiempos en cero o negativos, borrar un lote con tuestes (409), desactivar o degradar al último admin, usuario inactivo que intenta entrar, fechas inválidas, listas vacías y paginación.
 6. Escribe `specs/NNN-nombre/qa-report.md` con:
    - Veredicto: APROBADO o RECHAZADO
