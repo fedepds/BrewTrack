@@ -26,6 +26,10 @@ podman compose exec api python -m app.cli create-admin --email tu@correo.dev --n
 ```
 Abrir http://localhost:8080.
 
+`JWT_SECRET` debe tener al menos 32 caracteres y no puede ser el valor de `.env.example`. Genera uno con `openssl rand -hex 32`.
+
+**Si ya tienes una instalación:** la API no arranca con un `JWT_SECRET` corto o igual al de la plantilla. Genera uno nuevo con `openssl rand -hex 32`, ponlo en `.env` y ejecuta `podman compose up -d`. Al cambiar el secreto, todos los usuarios tienen que volver a entrar.
+
 ## Desarrollo
 
 ```bash
