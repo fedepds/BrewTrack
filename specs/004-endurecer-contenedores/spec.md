@@ -1,6 +1,6 @@
 # 004 — Endurecer el contenedor web y el secreto JWT
 
-Estado: aprobada
+Estado: aceptada
 Fecha: 2026-10-15
 
 ## Contexto y objetivo
@@ -102,3 +102,4 @@ Ninguna.
 | 2026-10-15 | 1.0 | Versión inicial a partir de los hallazgos 1 y 4 de la auditoría de seguridad inicial. |
 | 2026-10-15 | 1.1 | El usuario responde las dos preguntas abiertas, que pasan a "Decisiones" (D-1 y D-2). RF-6 fija `nginx:alpine` con un usuario sin root. RF-12 y CA-13 añaden el aviso del README para instalaciones existentes. Nuevo CA-14. Lista para aprobación. |
 | 2026-10-15 | 1.1 | El usuario aprueba la spec. |
+| 2026-10-15 | 1.2 | Spec aceptada según los informes de QA (aprobado, CA-1 a CA-14 pasan) y de seguridad (aprobado, sin bloqueantes, DS-0002 resuelto). Nota menor de los dos informes: la imagen `web` declara el puerto 80, que viene de `nginx:alpine`, pero nginx solo escucha en 8080. No afecta a ningún CA. Los hallazgos 2, 3 y 5 a 11 quedan pendientes para specs futuras. |
