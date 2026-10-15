@@ -3,9 +3,9 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from sqlalchemy import (
-    CheckConstraint, Date, DateTime, ForeignKey, Index, Numeric, String, Text, Uuid, func, true,
+    CheckConstraint, Date, DateTime, ForeignKey, Index, Numeric, String, Text, Uuid, func, select, true,
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, column_property, mapped_column, relationship
 
 from app.db import Base
 
@@ -79,3 +79,13 @@ class Roast(Base, Timestamps):
         Index("ix_roasts_lot_id", "lot_id"),
         Index("ix_roasts_roasted_at", "roasted_at"),
     )
+
+
+# Stock: única expresión de lectura. Se calcula en cada consulta; nunca se guarda.
+GreenLot.stock_kg = column_property(
+    GreenLot.received_kg
+    - select(func.coalesce(func.sum(Roast.green_in_kg), 0))
+    .where(Roast.lot_id == GreenLot.id)
+    .correlate_except(Roast)
+    .scalar_subquery()
+)

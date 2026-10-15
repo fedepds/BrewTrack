@@ -4,19 +4,10 @@ from decimal import Decimal
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.models import GreenLot, Roast
+from app.models import Roast
 
 
-def used_expr():
-    """Kg ya tostados del lote, como subconsulta correlacionada con GreenLot."""
-    return (
-        select(func.coalesce(func.sum(Roast.green_in_kg), 0))
-        .where(Roast.lot_id == GreenLot.id)
-        .correlate(GreenLot)
-        .scalar_subquery()
-    )
-
-
+# Solo para validar antes de escribir (puede excluir un tueste). Para leer usa GreenLot.stock_kg.
 def used_kg(db: Session, lot_id: uuid.UUID, exclude_roast_id: uuid.UUID | None = None) -> Decimal:
     q = select(func.coalesce(func.sum(Roast.green_in_kg), 0)).where(Roast.lot_id == lot_id)
     if exclude_roast_id:

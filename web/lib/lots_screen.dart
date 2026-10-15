@@ -61,9 +61,9 @@ class _LotsScreenState extends ConsumerState<LotsScreen> {
         Expanded(
           child: asyncBody(
             ref.watch(lotsProvider(_filter)),
-            (page) => SingleChildScrollView(
+            (items) => SingleChildScrollView(
               child: ResponsiveTable<Lot>(
-                items: page.items,
+                items: items,
                 columns: const ['Código', 'País', 'Variedad', 'Proceso', 'Recibido', 'Stock'],
                 cells: (l) => [l.code, l.originCountry, l.variety, l.process, fmtKg(l.receivedKg), fmtKg(l.stockKg)],
                 title: (l) => '${l.code} · ${l.originCountry}',

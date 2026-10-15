@@ -12,7 +12,7 @@ from app.deps import admin_only, current_user
 from app.errors import ApiError, commit_or_409
 from app.models import GreenLot, Roast
 from app.schemas import LotDetail, LotOut, Page
-from app.stock import used_expr, used_kg
+from app.stock import used_kg
 
 router = APIRouter(prefix="/green-lots", tags=["green-lots"], dependencies=[Depends(current_user)])
 
@@ -55,11 +55,6 @@ def _lot_or_404(db: Session, lot_id: uuid.UUID, lock: bool = False) -> GreenLot:
     return lot
 
 
-def _with_stock(db: Session, lot: GreenLot) -> GreenLot:
-    lot.stock_kg = lot.received_kg - used_kg(db, lot.id)
-    return lot
-
-
 @router.get("", response_model=Page[LotOut])
 def list_lots(
     country: str | None = None,
@@ -73,22 +68,19 @@ def list_lots(
         where.append(GreenLot.origin_country.ilike(f"%{country}%"))
     if process:
         where.append(GreenLot.process.ilike(f"%{process}%"))
-    stock = (GreenLot.received_kg - used_expr()).label("stock_kg")
-    rows = db.execute(
-        select(GreenLot, stock).where(*where)
+    rows = db.scalars(
+        select(GreenLot).where(*where)
         .order_by(GreenLot.received_at.desc(), GreenLot.code).limit(limit).offset(offset)
     ).all()
-    for lot, s in rows:
-        lot.stock_kg = s
     total = db.scalar(select(func.count()).select_from(GreenLot).where(*where))
     return Page[LotOut](
-        items=[LotOut.model_validate(lot) for lot, _ in rows], total=total, limit=limit, offset=offset
+        items=[LotOut.model_validate(lot) for lot in rows], total=total, limit=limit, offset=offset
     )
 
 
 @router.get("/{lot_id}", response_model=LotDetail)
 def get_lot(lot_id: uuid.UUID, db: Session = Depends(get_db)):
-    return _with_stock(db, _lot_or_404(db, lot_id))
+    return _lot_or_404(db, lot_id)
 
 
 @router.post("", response_model=LotOut, status_code=201)
@@ -96,7 +88,7 @@ def create_lot(body: LotIn, db: Session = Depends(get_db)):
     lot = GreenLot(**body.model_dump())
     db.add(lot)
     commit_or_409(db, "duplicate_code", "Ya existe un lote con ese código")
-    lot.stock_kg = lot.received_kg
+    db.refresh(lot)  # relee también el stock calculado
     return lot
 
 
@@ -109,7 +101,8 @@ def patch_lot(lot_id: uuid.UUID, body: LotPatch, db: Session = Depends(get_db)):
     for k, v in changes.items():
         setattr(lot, k, v)
     commit_or_409(db, "duplicate_code", "Ya existe un lote con ese código")
-    return _with_stock(db, lot)
+    db.refresh(lot)
+    return lot
 
 
 @router.delete("/{lot_id}", status_code=204, dependencies=[Depends(admin_only)])

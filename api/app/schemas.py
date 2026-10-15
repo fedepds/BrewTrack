@@ -43,7 +43,7 @@ class LotOut(ORM):
     received_at: date
     received_kg: Num
     notes: str | None
-    stock_kg: Num  # se asigna como atributo transitorio antes de serializar
+    stock_kg: Num  # columna calculada de GreenLot (models.py)
 
 
 class RoastOut(ORM):
