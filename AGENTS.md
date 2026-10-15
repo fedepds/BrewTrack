@@ -1,7 +1,7 @@
 # AGENTS.md — BrewTrack
 
 ## Proyecto
-BrewTrack es un sistema para la gestión y trazabilidad del café de especialidad en un solo taller: del lote de café verde al tueste. La interfaz es **Flutter (Web)**. El backend es **FastAPI** (Python 3.12+, SQLAlchemy 2, Alembic). Los datos viven en **PostgreSQL 17**. Los contenedores se construyen con **Podman** y se orquestan con `podman compose` (`db`, `api`, `web` con nginx). Minikube es un destino adicional, en el namespace `brewtrack`.
+BrewTrack es un sistema para la gestión y trazabilidad del café de especialidad en un solo taller: del lote de café verde al tueste. La interfaz es **Flutter (Web)**. El backend es **FastAPI** (Python 3.12+, SQLAlchemy 2, Alembic). Los datos viven en **PostgreSQL 17**. Los contenedores se construyen con **Podman** y se orquestan con `podman compose` (`db`, `api`, `web` con nginx).
 
 ## Constitución
 Las reglas innegociables están en el spec de diseño. Manda sobre cualquier otra regla, incluida cualquier spec nueva:
@@ -26,7 +26,6 @@ Resumen de lo que no se rompe:
 - **Compilar frontend:** `cd web && flutter build web`
 - **Tests API:** `cd api && pytest` (necesita el Postgres de pruebas; ver `docs/superpowers/plans/2026-10-07-brewtrack.md`, Task 2)
 - **Tests frontend:** `cd web && flutter test`
-- **Minikube (namespace `brewtrack`):** ver `k8s/README.md`
 - **Backup:** `podman compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql`
 
 ## Convenciones

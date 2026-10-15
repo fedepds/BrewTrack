@@ -103,7 +103,6 @@ brewtrack/
 | web | build `ghcr.io/cirruslabs/flutter`, runtime `nginx:alpine` | `flutter build web --release`. nginx sirve la SPA con fallback a `index.html` y hace proxy de `/api/`. |
 
 - Archivos `Containerfile`, flujo `podman compose up --build`, modo rootless.
-- Destino adicional: Minikube, en el namespace `brewtrack`, con las mismas imágenes. Compose sigue siendo el principal. Los secretos entran por un Secret de Kubernetes creado desde `.env`, nunca escritos en los manifiestos.
 - Configuración en `.env` (no versionado): `POSTGRES_PASSWORD`, `JWT_SECRET`, `DATABASE_URL`. Plantilla en `.env.example`.
 - Primer admin: `podman compose exec api python -m app.cli create-admin`.
 - Backup documentado con `pg_dump`.
