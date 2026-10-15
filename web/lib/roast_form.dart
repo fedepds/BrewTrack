@@ -40,7 +40,7 @@ Future<void> editRoast(BuildContext context, WidgetRef ref, {Roast? roast, Strin
   final api = ref.read(apiProvider);
   Map<String, String>? lotOptions;
   if (roast == null) {
-    final lots = (await api.lots()).items;
+    final lots = await api.lots();
     lotOptions = {for (final l in lots) l.id: '${l.code} · stock ${l.stockKg.toStringAsFixed(1)} kg'};
   }
   if (!context.mounted) return;

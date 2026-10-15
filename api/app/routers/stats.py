@@ -11,7 +11,6 @@ from app.config import settings
 from app.db import get_db
 from app.deps import current_user
 from app.models import GreenLot, Roast
-from app.stock import used_expr
 
 router = APIRouter(prefix="/stats", tags=["stats"], dependencies=[Depends(current_user)])
 
@@ -51,8 +50,8 @@ def summary(month: str | None = Query(None, pattern=MONTH), db: Session = Depend
     start, end = date(y, m, 1), date(y + m // 12, m % 12 + 1, 1)
     start_at, end_at = datetime.combine(start, time(), tz), datetime.combine(end, time(), tz)
 
-    stock = GreenLot.received_kg - used_expr()
-    lots_in_stock, stock_kg = db.execute(
+    stock = GreenLot.stock_kg
+    lots_in_stock, stock_total = db.execute(
         select(func.count().filter(stock > 0), func.coalesce(func.sum(stock), 0)).select_from(GreenLot)
     ).one()
     lots, received_kg = db.execute(
@@ -73,7 +72,7 @@ def summary(month: str | None = Query(None, pattern=MONTH), db: Session = Depend
     return Summary(
         month=month,
         lots_in_stock=lots_in_stock,
-        stock_kg=_kg(stock_kg),
+        stock_kg=_kg(stock_total),
         received=Received(lots=lots, kg=_kg(received_kg)),
         roasted=Roasted(roasts=roasts, green_kg=_kg(green_kg), roasted_kg=_kg(roasted_kg)),
         loss_pct=loss,

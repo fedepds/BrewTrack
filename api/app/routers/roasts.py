@@ -98,7 +98,6 @@ def list_roasts(
 @router.get("/{roast_id}", response_model=RoastDetail)
 def get_roast(roast_id: uuid.UUID, db: Session = Depends(get_db)):
     roast = _roast_or_404(db, roast_id)
-    roast.lot.stock_kg = roast.lot.received_kg - used_kg(db, roast.lot_id)
     return roast
 
 

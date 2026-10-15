@@ -65,3 +65,13 @@ def test_token_of_deactivated_user_is_rejected(client, db, roaster, auth):
     roaster.active = False
     db.commit()
     assert client.get(ME, headers=headers).status_code == 401
+
+
+def test_token_lifetimes(client, roaster):
+    import jwt
+
+    b = login(client).json()
+    a = jwt.decode(b["access_token"], options={"verify_signature": False})
+    r = jwt.decode(b["refresh_token"], options={"verify_signature": False})
+    assert a["exp"] - a["iat"] == 3600
+    assert r["exp"] - r["iat"] == 604800

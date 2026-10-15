@@ -77,15 +77,6 @@ class RoastDetail {
   final Lot lot;
 }
 
-class Paged<T> {
-  const Paged(this.items, this.total);
-  final List<T> items;
-  final int total;
-}
-
-Paged<T> pageFrom<T>(Map<String, dynamic> j, T Function(Map<String, dynamic>) f) =>
-    Paged([for (final i in j['items']) f(i as Map<String, dynamic>)], j['total']);
-
 const roastLevels = {'light': 'Claro', 'medium': 'Medio', 'dark': 'Oscuro'};
 
 class Summary {

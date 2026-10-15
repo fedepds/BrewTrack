@@ -36,7 +36,7 @@ class _RoastsScreenState extends ConsumerState<RoastsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final lots = ref.watch(lotsProvider((country: '', process: ''))).valueOrNull?.items ?? const <Lot>[];
+    final lots = ref.watch(lotsProvider((country: '', process: ''))).valueOrNull ?? const <Lot>[];
     final filter = (lotId: _lotId, level: _level, from: _fromApplied, to: _toApplied);
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -86,9 +86,9 @@ class _RoastsScreenState extends ConsumerState<RoastsScreen> {
         Expanded(
           child: asyncBody(
             ref.watch(roastsProvider(filter)),
-            (page) => SingleChildScrollView(
+            (items) => SingleChildScrollView(
               child: ResponsiveTable<Roast>(
-                items: page.items,
+                items: items,
                 columns: const ['Fecha', 'Lote', 'Entrada', 'Salida', 'Merma', 'Nivel', 'Tostador'],
                 cells: (r) => [
                   fmtDate(r.roastedAt), r.lotCode, fmtKg(r.greenInKg), fmtKg(r.roastedOutKg),

@@ -31,12 +31,12 @@ class AuthController extends AsyncNotifier<User?> {
 
 final authProvider = AsyncNotifierProvider<AuthController, User?>(AuthController.new);
 
-final lotsProvider = FutureProvider.autoDispose.family<Paged<Lot>, LotFilter>(
+final lotsProvider = FutureProvider.autoDispose.family<List<Lot>, LotFilter>(
     (ref, f) => ref.watch(apiProvider).lots(country: f.country, process: f.process));
 final lotProvider =
     FutureProvider.autoDispose.family<LotDetail, String>((ref, id) => ref.watch(apiProvider).lot(id));
 final roastsProvider = FutureProvider.autoDispose
-    .family<Paged<Roast>, RoastFilter>((ref, f) => ref.watch(apiProvider).roasts(f));
+    .family<List<Roast>, RoastFilter>((ref, f) => ref.watch(apiProvider).roasts(f));
 final roastProvider =
     FutureProvider.autoDispose.family<RoastDetail, String>((ref, id) => ref.watch(apiProvider).roast(id));
 final usersProvider = FutureProvider.autoDispose<List<User>>((ref) => ref.watch(apiProvider).users());

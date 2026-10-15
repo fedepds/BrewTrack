@@ -73,8 +73,11 @@ class Api {
   Future<Map<String, dynamic>> _get(String path, [Map<String, dynamic>? query]) async =>
       (await _dio.get<Map<String, dynamic>>(path, queryParameters: query)).data!;
 
+  List<T> _items<T>(Map<String, dynamic> j, T Function(Map<String, dynamic>) f) =>
+      [for (final i in j['items']) f(i as Map<String, dynamic>)];
+
   // ponytail: lista fija de 200 filas, sin paginación en la UI; añadirla si un taller supera eso.
-  Future<Paged<Lot>> lots({String country = '', String process = ''}) async => pageFrom(
+  Future<List<Lot>> lots({String country = '', String process = ''}) async => _items(
       await _get('/green-lots', {
         'limit': 200,
         if (country.isNotEmpty) 'country': country,
@@ -84,7 +87,7 @@ class Api {
 
   Future<LotDetail> lot(String id) async => LotDetail.fromJson(await _get('/green-lots/$id'));
 
-  Future<Paged<Roast>> roasts(RoastFilter f) async => pageFrom(
+  Future<List<Roast>> roasts(RoastFilter f) async => _items(
       await _get('/roasts', {
         'limit': 200,
         if (f.lotId.isNotEmpty) 'lot_id': f.lotId,

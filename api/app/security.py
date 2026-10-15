@@ -8,6 +8,8 @@ from argon2.exceptions import InvalidHashError, VerifyMismatchError
 from app.config import settings
 
 _ph = PasswordHasher()
+ACCESS_TTL = timedelta(minutes=60)
+REFRESH_TTL = timedelta(days=7)
 
 
 def hash_password(password: str) -> str:
@@ -28,11 +30,11 @@ def _token(user_id: uuid.UUID, kind: str, ttl: timedelta) -> str:
 
 
 def create_access_token(user_id: uuid.UUID) -> str:
-    return _token(user_id, "access", timedelta(minutes=settings.access_ttl_min))
+    return _token(user_id, "access", ACCESS_TTL)
 
 
 def create_refresh_token(user_id: uuid.UUID) -> str:
-    return _token(user_id, "refresh", timedelta(days=settings.refresh_ttl_days))
+    return _token(user_id, "refresh", REFRESH_TTL)
 
 
 def decode_token(token: str, kind: str) -> uuid.UUID | None:
