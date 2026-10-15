@@ -38,7 +38,7 @@ services:
       dockerfile: brewtrack-web.Containerfile
     image: localhost/brewtrack-web:0.1.0
     ports:
-      - "8080:80"
+      - "8080:8080"
     depends_on:
       api:
         condition: service_healthy
