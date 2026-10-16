@@ -8,7 +8,12 @@ double? lossPct(double? inKg, double? outKg) {
 
 bool canEditRoast(User u, Roast r) => u.isAdmin || r.roasterId == u.id;
 
-String fmtKg(double v) => '${v.toStringAsFixed(3)} kg';
+/// Un decimal con coma y sin separador de miles: 205,5.
+String fmtNum(num v) => v.toStringAsFixed(1).replaceAll('.', ',');
+
+String fmtKg(num v) => '${fmtNum(v)} kg';
+String fmtPct(num v) => '${fmtNum(v)} %';
+String fmtC(num v) => '${fmtNum(v)} °C';
 
 /// 'AAAA-MM-DD HH:mm' en hora local.
 String fmtDate(DateTime d) => d.toLocal().toIso8601String().substring(0, 16).replaceFirst('T', ' ');
