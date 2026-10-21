@@ -1,0 +1,68 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: brewtrack
+spec:
+  selector:
+    app: web
+    color: blue
+  ports:
+    - port: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-blue
+  namespace: brewtrack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      color: blue
+  template:
+    metadata:
+      labels:
+        app: web
+        color: blue
+    spec:
+      containers:
+        - name: web
+          image: localhost/brewtrack-web:master
+          imagePullPolicy: IfNotPresent
+          env:
+            # Nombre completo del Service api: el resolver de nginx no completa "api" solo.
+            - name: API_UPSTREAM
+              value: http://api.brewtrack.svc.cluster.local:8000
+          ports:
+            - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-green
+  namespace: brewtrack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      color: green
+  template:
+    metadata:
+      labels:
+        app: web
+        color: green
+    spec:
+      containers:
+        - name: web
+          image: localhost/brewtrack-web:rebranding
+          imagePullPolicy: IfNotPresent
+          env:
+            # Nombre completo del Service api: el resolver de nginx no completa "api" solo.
+            - name: API_UPSTREAM
+              value: http://api.brewtrack.svc.cluster.local:8000
+          ports:
+            - containerPort: 8080
