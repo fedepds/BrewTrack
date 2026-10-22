@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app import errors
 from app.config import settings
@@ -32,6 +33,8 @@ app.include_router(users.router, prefix="/api/v1")
 app.include_router(green_lots.router, prefix="/api/v1")
 app.include_router(roasts.router, prefix="/api/v1")
 app.include_router(stats.router, prefix="/api/v1")
+# Fuera de /api/: solo Prometheus la lee dentro del clúster.
+Instrumentator().instrument(app).expose(app, include_in_schema=False)
 
 
 @app.get("/api/v1/health")
