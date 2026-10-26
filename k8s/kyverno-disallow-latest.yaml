@@ -1,0 +1,36 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-latest-tag
+spec:
+  background: true
+  rules:
+    # Sin etiqueta (`nginx`) equivale a `latest`.
+    - name: require-image-tag
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      validate:
+        failureAction: Enforce
+        message: "La imagen debe llevar una etiqueta explícita."
+        pattern:
+          spec:
+            =(initContainers):
+              - image: "*:*"
+            containers:
+              - image: "*:*"
+    - name: disallow-latest
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+      validate:
+        failureAction: Enforce
+        message: "No se permite la etiqueta 'latest'."
+        pattern:
+          spec:
+            =(initContainers):
+              - image: "!*:latest"
+            containers:
+              - image: "!*:latest"

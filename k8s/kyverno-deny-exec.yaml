@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: deny-pod-exec
+spec:
+  background: false
+  rules:
+    # Solo deja pasar la CLI del primer admin (`python -m app.cli create-admin`).
+    - name: deny-exec
+      match:
+        any:
+          - resources:
+              kinds: [Pod/exec]
+              namespaces: [brewtrack]
+      preconditions:
+        all:
+          - key: "{{ request.operation || 'BACKGROUND' }}"
+            operator: Equals
+            value: CONNECT
+          - key: "{{ join(' ', request.object.command[0:3] || `[]`) }}"
+            operator: NotEquals
+            value: python -m app.cli
+      validate:
+        failureAction: Enforce
+        message: "No se permite kubectl exec en brewtrack, salvo `python -m app.cli`."
+        deny: {}
