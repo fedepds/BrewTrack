@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'api.dart';
+import 'brand.dart';
 import 'providers.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -21,7 +22,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _busy = true;
       _error = null;
     });
-    await ref.read(authProvider.notifier).login(_email.text.trim(), _password.text);
+    await ref
+        .read(authProvider.notifier)
+        .login(_email.text.trim(), _password.text);
     final s = ref.read(authProvider);
     if (mounted) {
       setState(() {
@@ -48,29 +51,52 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             margin: const EdgeInsets.all(16),
             child: Padding(
               padding: const EdgeInsets.all(24),
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text('BrewTrack', style: Theme.of(context).textTheme.headlineMedium),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _email,
-                  decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _password,
-                  decoration: const InputDecoration(labelText: 'Contraseña', border: OutlineInputBorder()),
-                  obscureText: true,
-                  onSubmitted: (_) => _submit(),
-                ),
-                if (_error != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/logo.png',
+                    height: 120,
+                    excludeFromSemantics: true,
                   ),
-                const SizedBox(height: 16),
-                FilledButton(onPressed: _busy ? null : _submit, child: const Text('Entrar')),
-              ]),
+                  const SizedBox(height: 8),
+                  Text('BREWTRACK', style: stencil.copyWith(fontSize: 40, letterSpacing: 2)),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _email,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _password,
+                    decoration: const InputDecoration(
+                      labelText: 'Contraseña',
+                      border: OutlineInputBorder(),
+                    ),
+                    obscureText: true,
+                    onSubmitted: (_) => _submit(),
+                  ),
+                  if (_error != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Text(
+                        _error!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  FilledButton(
+                    onPressed: _busy ? null : _submit,
+                    child: const Text('Entrar'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

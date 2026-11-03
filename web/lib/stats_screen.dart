@@ -55,12 +55,15 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
     );
   }
 
+  // La API manda cadenas decimales; se muestran con un decimal y coma.
+  String _kg(String v) => fmtKg(double.parse(v));
+
   Widget _figures(Summary s) => Wrap(spacing: 12, runSpacing: 12, children: [
         _Figure('Lotes con stock (hoy)', '${s.lotsInStock}'),
-        _Figure('Stock de verde (hoy)', '${s.stockKg} kg'),
-        _Figure('Recibido en el mes', '${s.receivedKg} kg', _count(s.receivedLots, 'lote', 'lotes')),
-        _Figure('Tostado en el mes', '${s.greenKg} kg → ${s.roastedKg} kg', _count(s.roasts, 'tueste', 'tuestes')),
-        _Figure('Merma media', s.lossPct == null ? '—' : '${s.lossPct} %'),
+        _Figure('Stock de verde (hoy)', _kg(s.stockKg)),
+        _Figure('Recibido en el mes', _kg(s.receivedKg), _count(s.receivedLots, 'lote', 'lotes')),
+        _Figure('Tostado en el mes', '${_kg(s.greenKg)} › ${_kg(s.roastedKg)}', _count(s.roasts, 'tueste', 'tuestes')),
+        _Figure('Merma media', s.lossPct == null ? '—' : fmtPct(double.parse(s.lossPct!))),
       ]);
 }
 

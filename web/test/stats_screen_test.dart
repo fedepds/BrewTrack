@@ -37,12 +37,12 @@ void main() {
   testWidgets('muestra las cinco cifras con formato', (t) async {
     await pump(t);
     expect(find.text('7'), findsOneWidget);
-    expect(find.text('412.500 kg'), findsOneWidget);
-    expect(find.text('120.000 kg'), findsOneWidget);
+    expect(find.text('412,5 kg'), findsOneWidget);
+    expect(find.text('120,0 kg'), findsOneWidget);
     expect(find.text('2 lotes'), findsOneWidget);
-    expect(find.text('95.000 kg → 80.750 kg'), findsOneWidget);
+    expect(find.text('95,0 kg › 80,8 kg'), findsOneWidget);
     expect(find.text('18 tuestes'), findsOneWidget);
-    expect(find.text('15.00 %'), findsOneWidget);
+    expect(find.text('15,0 %'), findsOneWidget);
     expect(find.textContaining('hoy'), findsNWidgets(2));
   });
 

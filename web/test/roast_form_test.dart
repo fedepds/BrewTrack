@@ -29,9 +29,12 @@ void main() {
 
     expect(find.text('Merma: —'), findsOneWidget);
     await t.enterText(input, '10');
-    await t.enterText(output, '8.5');
+    await t.enterText(output, '8,5');
     await t.pump();
-    expect(find.text('Merma: 15.0 %'), findsOneWidget);
+    expect(find.text('Merma: 15,0 %'), findsOneWidget);
+    await t.enterText(output, '8.5'); // CA-9b: el punto también vale
+    await t.pump();
+    expect(find.text('Merma: 15,0 %'), findsOneWidget);
 
     await t.enterText(input, '0'); // peso en cero: no debe romper ni dividir por cero
     await t.pump();

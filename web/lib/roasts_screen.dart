@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'brand.dart';
 import 'models.dart';
 import 'providers.dart';
 import 'roast_form.dart';
@@ -23,9 +24,20 @@ class _RoastsScreenState extends ConsumerState<RoastsScreen> {
   String _toApplied = '';
 
   void _apply() => setState(() {
-        _fromApplied = _from.text.trim();
-        _toApplied = _to.text.trim();
-      });
+    _fromApplied = _from.text.trim();
+    _toApplied = _to.text.trim();
+  });
+
+  void _clear() {
+    _from.clear();
+    _to.clear();
+    setState(() {
+      _lotId = '';
+      _level = '';
+      _fromApplied = '';
+      _toApplied = '';
+    });
+  }
 
   @override
   void dispose() {
@@ -36,73 +48,134 @@ class _RoastsScreenState extends ConsumerState<RoastsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final lots = ref.watch(lotsProvider((country: '', process: ''))).valueOrNull ?? const <Lot>[];
-    final filter = (lotId: _lotId, level: _level, from: _fromApplied, to: _toApplied);
+    final lots =
+        ref.watch(lotsProvider((country: '', process: ''))).valueOrNull ??
+        const <Lot>[];
+    final filter = (
+      lotId: _lotId,
+      level: _level,
+      from: _fromApplied,
+      to: _toApplied,
+    );
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(children: [
-        Wrap(spacing: 12, runSpacing: 12, crossAxisAlignment: WrapCrossAlignment.center, children: [
-          DropdownButton<String>(
-            value: _lotId,
-            items: [
-              const DropdownMenuItem(value: '', child: Text('Todos los lotes')),
-              for (final l in lots) DropdownMenuItem(value: l.id, child: Text(l.code)),
-            ],
-            onChanged: (v) => setState(() => _lotId = v ?? ''),
-          ),
-          DropdownButton<String>(
-            value: _level,
-            items: [
-              const DropdownMenuItem(value: '', child: Text('Todos los niveles')),
-              for (final e in roastLevels.entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
-            ],
-            onChanged: (v) => setState(() => _level = v ?? ''),
-          ),
-          // ponytail: fechas como texto AAAA-MM-DD; la API responde 422 si el formato es inválido.
-          SizedBox(
-            width: 170,
-            child: TextField(
-              controller: _from,
-              decoration: const InputDecoration(labelText: 'Desde (AAAA-MM-DD)', border: OutlineInputBorder()),
-              onSubmitted: (_) => _apply(),
-            ),
-          ),
-          SizedBox(
-            width: 170,
-            child: TextField(
-              controller: _to,
-              decoration: const InputDecoration(labelText: 'Hasta (AAAA-MM-DD)', border: OutlineInputBorder()),
-              onSubmitted: (_) => _apply(),
-            ),
-          ),
-          OutlinedButton(onPressed: _apply, child: const Text('Filtrar')),
-          FilledButton.icon(
-            onPressed: () => editRoast(context, ref, lotId: _lotId.isEmpty ? null : _lotId),
-            icon: const Icon(Icons.add),
-            label: const Text('Nuevo tueste'),
-          ),
-        ]),
-        const SizedBox(height: 12),
-        Expanded(
-          child: asyncBody(
-            ref.watch(roastsProvider(filter)),
-            (items) => SingleChildScrollView(
-              child: ResponsiveTable<Roast>(
-                items: items,
-                columns: const ['Fecha', 'Lote', 'Entrada', 'Salida', 'Merma', 'Nivel', 'Tostador'],
-                cells: (r) => [
-                  fmtDate(r.roastedAt), r.lotCode, fmtKg(r.greenInKg), fmtKg(r.roastedOutKg),
-                  '${r.lossPct.toStringAsFixed(1)} %', roastLevels[r.roastLevel] ?? r.roastLevel, r.roasterName,
+      child: Column(
+        children: [
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              DropdownButton<String>(
+                value: _lotId,
+                items: [
+                  const DropdownMenuItem(
+                    value: '',
+                    child: Text('Todos los lotes'),
+                  ),
+                  for (final l in lots)
+                    DropdownMenuItem(value: l.id, child: Text(l.code)),
                 ],
-                title: (r) => '${r.lotCode} · ${fmtDate(r.roastedAt)}',
-                subtitle: (r) =>
-                    '${fmtKg(r.greenInKg)} → ${fmtKg(r.roastedOutKg)} · ${r.lossPct.toStringAsFixed(1)} % · ${r.roasterName}',
-                onTap: (r) => context.go('/roasts/${r.id}'),
+                onChanged: (v) => setState(() => _lotId = v ?? ''),
+              ),
+              DropdownButton<String>(
+                value: _level,
+                items: [
+                  const DropdownMenuItem(
+                    value: '',
+                    child: Text('Todos los niveles'),
+                  ),
+                  for (final e in roastLevels.entries)
+                    DropdownMenuItem(value: e.key, child: Text(e.value)),
+                ],
+                onChanged: (v) => setState(() => _level = v ?? ''),
+              ),
+              // ponytail: fechas como texto AAAA-MM-DD; la API responde 422 si el formato es inválido.
+              SizedBox(
+                width: 170,
+                child: TextField(
+                  controller: _from,
+                  decoration: const InputDecoration(
+                    labelText: 'Desde (AAAA-MM-DD)',
+                    border: OutlineInputBorder(),
+                  ),
+                  onSubmitted: (_) => _apply(),
+                ),
+              ),
+              SizedBox(
+                width: 170,
+                child: TextField(
+                  controller: _to,
+                  decoration: const InputDecoration(
+                    labelText: 'Hasta (AAAA-MM-DD)',
+                    border: OutlineInputBorder(),
+                  ),
+                  onSubmitted: (_) => _apply(),
+                ),
+              ),
+              OutlinedButton(onPressed: _apply, child: const Text('Filtrar')),
+              FilledButton.icon(
+                onPressed: () => editRoast(
+                  context,
+                  ref,
+                  lotId: _lotId.isEmpty ? null : _lotId,
+                ),
+                icon: const Icon(Icons.add),
+                label: const Text('Nuevo tueste'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: asyncBody(
+              ref.watch(roastsProvider(filter)),
+              (items) => SingleChildScrollView(
+                child: ResponsiveTable<Roast>(
+                  items: items,
+                  columns: const [
+                    'Fecha',
+                    'Lote',
+                    'Entrada',
+                    'Salida',
+                    'Merma',
+                    'Nivel',
+                    'Tostador',
+                  ],
+                  cells: (r) => [
+                    m(fmtDate(r.roastedAt)),
+                    Text(r.lotCode, style: stencil),
+                    m(fmtKg(r.greenInKg)),
+                    m(fmtKg(r.roastedOutKg)),
+                    m(fmtPct(r.lossPct)),
+                    LevelChip(r.roastLevel),
+                    r.roasterName,
+                  ],
+                  title: (r) =>
+                      codeTitle(r.lotCode, ' · ${fmtDate(r.roastedAt)}'),
+                  subtitle: (r) =>
+                      '${fmtKg(r.greenInKg)} › ${fmtKg(r.roastedOutKg)} · ${fmtPct(r.lossPct)} · ${r.roasterName}',
+                  cardExtra: (r) => Align(
+                    alignment: Alignment.centerLeft,
+                    child: LevelChip(r.roastLevel),
+                  ),
+                  empty: filter == (lotId: '', level: '', from: '', to: '')
+                      ? EmptyState(
+                          'Aún no hay tuestes',
+                          'Nuevo tueste',
+                          () => editRoast(context, ref),
+                        )
+                      : EmptyState(
+                          'Ningún tueste coincide con estos filtros',
+                          'Quitar filtros',
+                          _clear,
+                        ),
+                  onTap: (r) => context.go('/roasts/${r.id}'),
+                ),
               ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }

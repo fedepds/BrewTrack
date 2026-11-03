@@ -1,0 +1,20 @@
+# Tareas 005
+
+1. Rama `feat/005-rebranding-tostado`; base del usuario intacta. (RF-30, CA-20)
+2. Empaquetar fuentes OFL y declararlas en `pubspec.yaml`. (RF-11 a RF-14, CA-16)
+3. `brand.dart`: etapas, interpolación, `onColor`, temas claro y oscuro con foco visible. (RF-2, RF-5, RF-7 a RF-10, RF-27)
+4. `main.dart`: `theme` y `darkTheme`. (RF-9, CA-15)
+5. `shell.dart`: encabezado que se tuesta, etiqueta de etapa, barra lateral o inferior. (RF-1 a RF-6, RF-22, RF-23, RF-28; CA-1 a CA-5, CA-13, CA-14)
+6. `LevelChip` en listas y detalle de tueste. (RF-15; CA-6)
+7. `StockBar` en lista y detalle de lote. (RF-16 a RF-18; CA-7, CA-8, CA-8b)
+8. Barras de merma y aviso en el formulario de tueste. (RF-19 a RF-21; CA-9, CA-10)
+9. `EmptyState` y "Quitar filtros" en lotes y tuestes. (RF-24 a RF-26; CA-11, CA-12)
+10. Tipografía en tablas, tarjetas y detalles. (RF-11 a RF-13)
+11. Tests nuevos (`test/brand_test.dart`, `test/shell_test.dart`). (RF-32)
+12. `dev-notes.md`.
+13. Coma decimal: `fmtNum/fmtKg/fmtPct/fmtC` en toda la interfaz; campos aceptan coma y punto; tests a coma y test CA-9b. (RF-14b, RF-32; CA-9, CA-9b)
+14. `FocusRing` en navegación y filas de tabla, con test de contraste. (RF-27; CA-17)
+15. Test de reducir movimiento. (RF-28; CA-18)
+16. Tests de 400 px en Tuestes, Resumen, Usuarios, detalles y login. (RF-29; CA-19)
+17. Declarar `Roboto` con Public Sans y cambiar `→` por `›`; test de ausencia de `→`. (RF-14, CA-16)
+18. Borde de 1,5 px en el punto de nivel; test de contraste del punto Oscuro en los dos temas. (RF-15, CA-6)

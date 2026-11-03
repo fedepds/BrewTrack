@@ -49,8 +49,14 @@ class _EditDialog extends StatefulWidget {
 class _EditDialogState extends State<_EditDialog> {
   final _form = GlobalKey<FormState>();
   late final Map<String, TextEditingController> _c = {
-    for (final f in widget.fields) f.key: TextEditingController(text: '${widget.initial[f.key] ?? ''}'),
+    for (final f in widget.fields) f.key: TextEditingController(text: _initialText(f)),
   };
+  // Los decimales se editan con coma; el valor sigue saliendo como número.
+  String _initialText(FieldSpec f) {
+    final t = '${widget.initial[f.key] ?? ''}';
+    return f.kind == Kind.decimal ? t.replaceAll('.', ',') : t;
+  }
+
   String? _error;
   bool _busy = false;
 
