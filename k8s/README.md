@@ -10,17 +10,17 @@ El Service `web` manda el tráfico al color que diga su selector.
 ## Levantar
 
 ```sh
-podman machine start
-minikube start --driver=podman
+colima start
+minikube start --driver=docker
 
 # 1. Construir las imágenes y cargarlas en minikube (no las baja de ningún registro).
-podman compose build
-podman save localhost/brewtrack-api:0.1.0 -o /tmp/api.tar && minikube image load /tmp/api.tar
-podman build -t localhost/brewtrack-web:master -f web/brewtrack-web.Containerfile web
+docker compose build
+docker save localhost/brewtrack-api:0.1.0 -o /tmp/api.tar && minikube image load /tmp/api.tar
+docker build -t localhost/brewtrack-web:master -f web/brewtrack-web.Containerfile web
 git worktree add /tmp/green feat/005-rebranding-tostado
 cp web/templates/default.conf.template /tmp/green/web/templates/   # la rama todavía no lee API_UPSTREAM
-podman build -t localhost/brewtrack-web:rebranding -f /tmp/green/web/brewtrack-web.Containerfile /tmp/green/web
-for t in master rebranding; do podman save localhost/brewtrack-web:$t -o /tmp/web-$t.tar && minikube image load /tmp/web-$t.tar; done
+docker build -t localhost/brewtrack-web:rebranding -f /tmp/green/web/brewtrack-web.Containerfile /tmp/green/web
+for t in master rebranding; do docker save localhost/brewtrack-web:$t -o /tmp/web-$t.tar && minikube image load /tmp/web-$t.tar; done
 
 # 2. Crear el namespace y el Secret con las claves (sin escribirlas en ningún archivo versionado).
 kubectl apply -f k8s/brewtrack.yaml -f k8s/web-bluegreen.yaml   # la primera vez db y api esperan el Secret

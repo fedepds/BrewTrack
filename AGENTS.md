@@ -1,7 +1,7 @@
 # AGENTS.md — BrewTrack
 
 ## Proyecto
-BrewTrack es un sistema para la gestión y trazabilidad del café de especialidad en un solo taller: del lote de café verde al tueste. La interfaz es **Flutter (Web)**. El backend es **FastAPI** (Python 3.12+, SQLAlchemy 2, Alembic). Los datos viven en **PostgreSQL 17**. Los contenedores se construyen con **Podman** y se orquestan con `podman compose` (`db`, `api`, `web` con nginx).
+BrewTrack es un sistema para la gestión y trazabilidad del café de especialidad en un solo taller: del lote de café verde al tueste. La interfaz es **Flutter (Web)**. El backend es **FastAPI** (Python 3.12+, SQLAlchemy 2, Alembic). Los datos viven en **PostgreSQL 17**. Los contenedores se construyen con **Docker sobre Colima** y se orquestan con `docker compose` (`db`, `api`, `web` con nginx).
 
 ## Constitución
 Las reglas innegociables están en el spec de diseño. Manda sobre cualquier otra regla, incluida cualquier spec nueva:
@@ -17,16 +17,16 @@ Resumen de lo que no se rompe:
 - **Secretos:** `.env` no se versiona, no se lee ni se imprime. Todo secreto entra por variable de entorno.
 
 ## Comandos
-- **Levantar todo:** `podman compose up --build -d` → http://localhost:8080
-- **Solo la base de datos:** `podman compose up -d db`
-- **Primer admin:** `podman compose exec api python -m app.cli create-admin --email <correo> --name "<nombre>"`
+- **Levantar todo:** `docker compose up --build -d` → http://localhost:8080
+- **Solo la base de datos:** `docker compose up -d db`
+- **Primer admin:** `docker compose exec api python -m app.cli create-admin --email <correo> --name "<nombre>"`
 - **API (desarrollo):** `cd api && . .venv/bin/activate && uvicorn app.main:app --reload` (con `DATABASE_URL` y `JWT_SECRET` en el entorno)
 - **Migraciones:** `cd api && alembic revision --autogenerate -m "<mensaje>"` | `alembic upgrade head`
 - **Frontend (desarrollo):** `cd web && flutter run -d chrome --web-port 5000 --dart-define=API_BASE=http://localhost:8000/api/v1`
 - **Compilar frontend:** `cd web && flutter build web`
 - **Tests API:** `cd api && pytest` (necesita el Postgres de pruebas; ver `docs/superpowers/plans/2026-10-07-brewtrack.md`, Task 2)
 - **Tests frontend:** `cd web && flutter test`
-- **Backup:** `podman compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql`
+- **Backup:** `docker compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql`
 
 ## Convenciones
 - Commits en Conventional Commits con el área como alcance: `feat(api): ...`, `fix(web): ...`, `docs: ...`.
@@ -65,4 +65,4 @@ Revisa cada texto contra estas reglas antes de entregarlo.
 - Analizar: `cd web && flutter analyze`.
 - Ejecutar tests: `cd api && pytest` y `cd web && flutter test`.
 - Si cambió el esquema: la migración nueva aplica limpia con `alembic upgrade head`.
-- Validar el stack local: `podman compose up --build -d` y comprobar que `api` queda sano (`/api/v1/health`) y que http://localhost:8080 carga.
+- Validar el stack local: `docker compose up --build -d` y comprobar que `api` queda sano (`/api/v1/health`) y que http://localhost:8080 carga.

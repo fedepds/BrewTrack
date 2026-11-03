@@ -1,6 +1,6 @@
 # BrewTrack
 
-Trazabilidad de café de especialidad: lotes de café verde y tuestes. API FastAPI + frontend Flutter Web + PostgreSQL, con Podman.
+Trazabilidad de café de especialidad: lotes de café verde y tuestes. API FastAPI + frontend Flutter Web + PostgreSQL, con Docker sobre Colima.
 
 ## Qué hace
 
@@ -21,19 +21,19 @@ Fuera de alcance: curvas de tueste, empaque y venta, recetas y cata, y varias em
 
 ```bash
 cp .env.example .env   # y rellenar POSTGRES_PASSWORD y JWT_SECRET
-podman compose up --build -d
-podman compose exec api python -m app.cli create-admin --email tu@correo.dev --name "Tu Nombre"
+docker compose up --build -d
+docker compose exec api python -m app.cli create-admin --email tu@correo.dev --name "Tu Nombre"
 ```
 Abrir http://localhost:8080.
 
 `JWT_SECRET` debe tener al menos 32 caracteres y no puede ser el valor de `.env.example`. Genera uno con `openssl rand -hex 32`.
 
-**Si ya tienes una instalación:** la API no arranca con un `JWT_SECRET` corto o igual al de la plantilla. Genera uno nuevo con `openssl rand -hex 32`, ponlo en `.env` y ejecuta `podman compose up -d`. Al cambiar el secreto, todos los usuarios tienen que volver a entrar.
+**Si ya tienes una instalación:** la API no arranca con un `JWT_SECRET` corto o igual al de la plantilla. Genera uno nuevo con `openssl rand -hex 32`, ponlo en `.env` y ejecuta `docker compose up -d`. Al cambiar el secreto, todos los usuarios tienen que volver a entrar.
 
 ## Desarrollo
 
 ```bash
-podman compose up -d db                       # solo la base de datos
+docker compose up -d db                       # solo la base de datos
 cd api && . .venv/bin/activate && pytest      # requiere el Postgres de pruebas (ver docs/superpowers/plans, Task 2)
 cd api && uvicorn app.main:app --reload       # DATABASE_URL y JWT_SECRET en el entorno
 cd web && flutter run -d chrome --web-port 5000 --dart-define=API_BASE=http://localhost:8000/api/v1
@@ -43,5 +43,5 @@ cd web && flutter test
 ## Backup
 
 ```bash
-podman compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql
+docker compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql
 ```

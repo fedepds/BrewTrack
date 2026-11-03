@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Sistema para la gestión y trazabilidad de café de especialidad en un solo taller: del lote de café verde al tueste. API en FastAPI, frontend en Flutter Web, datos en PostgreSQL, contenedores con Podman.
+Sistema para la gestión y trazabilidad de café de especialidad en un solo taller: del lote de café verde al tueste. API en FastAPI, frontend en Flutter Web, datos en PostgreSQL, contenedores con Docker sobre Colima.
 
 ## Alcance v1
 
@@ -102,13 +102,13 @@ brewtrack/
 | api | `python:3.13-slim` multi-stage | Usuario no root. Arranque: `alembic upgrade head` y luego `uvicorn`. Espera a `db` sano. Healthcheck en `/api/v1/health`. |
 | web | build `ghcr.io/cirruslabs/flutter`, runtime `nginx:alpine` | `flutter build web --release`. nginx sirve la SPA con fallback a `index.html` y hace proxy de `/api/`. |
 
-- Archivos `Containerfile`, flujo `podman compose up --build`, modo rootless.
+- Archivos `Containerfile`, flujo `docker compose up --build` sobre Colima.
 - Configuración en `.env` (no versionado): `POSTGRES_PASSWORD`, `JWT_SECRET`, `DATABASE_URL`. Plantilla en `.env.example`.
-- Primer admin: `podman compose exec api python -m app.cli create-admin`.
+- Primer admin: `docker compose exec api python -m app.cli create-admin`.
 - Backup documentado con `pg_dump`.
 
 Desarrollo:
-- Solo `db` por Podman. `uvicorn --reload` y `flutter run -d chrome` en el host.
+- Solo `db` en contenedor. `uvicorn --reload` y `flutter run -d chrome` en el host.
 
 ## Pruebas
 
