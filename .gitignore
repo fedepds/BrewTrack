@@ -11,3 +11,5 @@ web/build/
 .pubcache/
 .agents/
 .claude/
+.venv-ci/
+api/pytest.xml
