@@ -9,3 +9,5 @@ web/build/
 .DS_Store
 .superpowers/
 .pubcache/
+.agents/
+.claude/

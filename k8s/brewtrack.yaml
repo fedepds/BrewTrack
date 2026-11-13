@@ -33,9 +33,18 @@ spec:
       labels:
         app: db
     spec:
+      # uid 70 = usuario postgres de la imagen alpine; fsGroup deja el disco escribible.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        fsGroup: 70
       containers:
         - name: postgres
-          image: docker.io/library/postgres:17-alpine
+          image: localhost/brewtrack-db:0.1.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           env:
             - name: POSTGRES_USER
               value: brewtrack
@@ -54,11 +63,21 @@ spec:
           volumeMounts:
             - name: pgdata
               mountPath: /var/lib/postgresql/data
+            # Raíz de solo lectura: el socket y los temporales van a discos en memoria.
+            - name: run
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
           # Equivale al healthcheck de compose: hasta que responda, no recibe tráfico.
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", "brewtrack"]
             periodSeconds: 5
+      volumes:
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
   # Pide un disco de 1 GiB al clúster (el "volumes: pgdata" de compose).
   volumeClaimTemplates:
     - metadata:
@@ -96,10 +115,20 @@ spec:
       labels:
         app: api
     spec:
+      # uid numérico: con "USER app" el kubelet no puede comprobar runAsNonRoot.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
         - name: api
           image: localhost/brewtrack-api:0.1.0
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
@@ -126,3 +155,6 @@ spec:
               path: /api/v1/health
               port: 8000
             periodSeconds: 10
+      volumes:
+        - name: tmp
+          emptyDir: {}

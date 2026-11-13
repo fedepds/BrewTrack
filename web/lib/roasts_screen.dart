@@ -49,7 +49,7 @@ class _RoastsScreenState extends ConsumerState<RoastsScreen> {
   @override
   Widget build(BuildContext context) {
     final lots =
-        ref.watch(lotsProvider((country: '', process: ''))).valueOrNull ??
+        ref.watch(lotsProvider((country: '', process: ''))).value ??
         const <Lot>[];
     final filter = (
       lotId: _lotId,

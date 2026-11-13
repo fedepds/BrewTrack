@@ -1,4 +1,4 @@
-"""Carga de lotes y tuestes de ejemplo (spec 002). No crea usuarios ni toca datos existentes."""
+"""Carga de lotes y tuestes de ejemplo (spec 002) y del admin inicial desde el entorno. No toca datos existentes."""
 from datetime import date, datetime
 from decimal import Decimal
 from zoneinfo import ZoneInfo
@@ -12,6 +12,7 @@ from app.errors import ApiError
 from app.models import GreenLot, Roast, User
 from app.routers.green_lots import LotIn
 from app.routers.roasts import RoastIn, _check_stock, loss_pct
+from app.security import hash_password
 
 LOT_NOTE = "Lote de ejemplo cargado al iniciar BrewTrack."
 ROAST_NOTE = "Tueste de ejemplo cargado al iniciar BrewTrack."
@@ -70,6 +71,17 @@ ROASTS = [
     ("GL-2026-016", "2026-10-07 10:30", "10.000", "8.250", 760, "221.0", "dark"),
     ("GL-2026-006", "2026-10-09 09:00", "12.000", "10.200", 650, "207.0", "medium"),
 ]
+
+def seed_admin(db: Session) -> str:
+    """Crea el admin de SEED_ADMIN_EMAIL solo si la base no tiene usuarios."""
+    if db.scalar(select(User.id).limit(1)):
+        return "Carga del admin inicial omitida: la base ya tiene usuarios"
+    email = settings.seed_admin_email.strip().lower()  # igual que el login
+    db.add(User(email=email, name="admin", role="admin",
+                password_hash=hash_password(settings.seed_admin_password)))
+    db.commit()
+    return f"Se creó el admin inicial {email}"
+
 
 def seed_lots(db: Session) -> str:
     """Todo o nada: valida con LotIn y confirma una sola vez."""
@@ -134,7 +146,11 @@ def _guarded(label: str, fn) -> str:
 
 def run_seed(lots: bool = True) -> list[str]:
     """Líneas de resultado. Nunca lanza. `lots=False` la usa create-admin."""
+    # Primero el admin: así los tuestes de ejemplo ya tienen autor.
+    admin = lots and settings.seed_admin_email and settings.seed_admin_password
+    out = [_guarded("admin", seed_admin)] if admin else []
     if not settings.seed_demo_lots:
-        return [DISABLED]
-    out = [_guarded("lotes", seed_lots)] if lots else []
+        return out + [DISABLED]
+    if lots:
+        out.append(_guarded("lotes", seed_lots))
     return out + [_guarded("tuestes", seed_roasts)]

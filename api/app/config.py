@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     timezone: str = "America/Argentina/Buenos_Aires"
     # Carga lotes y tuestes de ejemplo al iniciar (spec 002). Apagada si no se define.
     seed_demo_lots: bool = False
+    # Admin inicial: se crea al arrancar si las dos están definidas y no hay usuarios.
+    seed_admin_email: str = ""
+    seed_admin_password: str = ""
 
     @field_validator("jwt_secret")
     @classmethod
@@ -26,6 +29,14 @@ class Settings(BaseSettings):
             raise ValueError("JWT_SECRET tiene menos de 32 caracteres")
         if v == TEMPLATE_JWT_SECRET:
             raise ValueError("JWT_SECRET es el valor de la plantilla .env.example")
+        return v
+
+    @field_validator("seed_admin_password")
+    @classmethod
+    def _admin_password(cls, v: str) -> str:
+        # Vacía significa "no crear admin". El mínimo es el mismo que el de create-admin.
+        if v and len(v) < 8:
+            raise ValueError("SEED_ADMIN_PASSWORD tiene menos de 8 caracteres")
         return v
 
     @field_validator("timezone")

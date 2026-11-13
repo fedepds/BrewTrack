@@ -17,9 +17,9 @@ Resumen de lo que no se rompe:
 - **Secretos:** `.env` no se versiona, no se lee ni se imprime. Todo secreto entra por variable de entorno.
 
 ## Comandos
-- **Levantar todo:** `docker compose up --build -d` → http://localhost:8080
+- **Levantar todo:** `docker compose up --build -d` → http://localhost:8081
 - **Solo la base de datos:** `docker compose up -d db`
-- **Primer admin:** `docker compose exec api python -m app.cli create-admin --email <correo> --name "<nombre>"`
+- **Primer admin:** define `SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD` (8 caracteres o más) en `.env`; la API lo crea al arrancar si la base no tiene usuarios. Alternativa: `docker compose exec api python -m app.cli create-admin --email <correo> --name "<nombre>"`.
 - **API (desarrollo):** `cd api && . .venv/bin/activate && uvicorn app.main:app --reload` (con `DATABASE_URL` y `JWT_SECRET` en el entorno)
 - **Migraciones:** `cd api && alembic revision --autogenerate -m "<mensaje>"` | `alembic upgrade head`
 - **Frontend (desarrollo):** `cd web && flutter run -d chrome --web-port 5000 --dart-define=API_BASE=http://localhost:8000/api/v1`
@@ -27,6 +27,20 @@ Resumen de lo que no se rompe:
 - **Tests API:** `cd api && pytest` (necesita el Postgres de pruebas; ver `docs/superpowers/plans/2026-10-07-brewtrack.md`, Task 2)
 - **Tests frontend:** `cd web && flutter test`
 - **Backup:** `docker compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql`
+
+## Puertos del host
+Cada servicio tiene un puerto fijo para que no choquen entre sí ni con Jenkins, que corre en la misma máquina.
+
+| Puerto | Servicio | Notas |
+|---|---|---|
+| 8080 | Jenkins (UI) | Reservado. BrewTrack no lo usa. |
+| 50000 | Jenkins (agentes) | Reservado. |
+| 8081 | `web` de BrewTrack (nginx) | Único puerto que publica `compose.yaml` (`8081:8080`). También el `port-forward` de `k8s/`. |
+| 8000 | API en desarrollo (`uvicorn --reload`) | Solo en el host. En compose, `api` no publica puerto. |
+| 5000 | Frontend en desarrollo (`flutter run`) | Origen permitido por CORS. |
+| 55432 | Postgres de pruebas (`brewtrack-test-db`) | Solo para `pytest`. |
+
+Antes de publicar un puerto nuevo, revisa que esté libre (`lsof -nP -iTCP:<puerto> -sTCP:LISTEN`) y agrégalo a esta tabla.
 
 ## Convenciones
 - Commits en Conventional Commits con el área como alcance: `feat(api): ...`, `fix(web): ...`, `docs: ...`.
@@ -65,4 +79,4 @@ Revisa cada texto contra estas reglas antes de entregarlo.
 - Analizar: `cd web && flutter analyze`.
 - Ejecutar tests: `cd api && pytest` y `cd web && flutter test`.
 - Si cambió el esquema: la migración nueva aplica limpia con `alembic upgrade head`.
-- Validar el stack local: `docker compose up --build -d` y comprobar que `api` queda sano (`/api/v1/health`) y que http://localhost:8080 carga.
+- Validar el stack local: `docker compose up --build -d` y comprobar que `api` queda sano (`/api/v1/health`) y que http://localhost:8081 carga.

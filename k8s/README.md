@@ -2,8 +2,8 @@
 
 `brewtrack.yaml` levanta `db` y `api`. `web-bluegreen.yaml` levanta la web en dos colores que comparten la misma API:
 
-- `web-blue`: master (imagen `localhost/brewtrack-web:master`).
-- `web-green`: la rama `feat/005-rebranding-tostado` (imagen `localhost/brewtrack-web:rebranding`).
+- `web-blue`: la rama `UI_vieja`, la UI anterior (imagen `localhost/brewtrack-web:master`).
+- `web-green`: el árbol actual con el rebranding (imagen `localhost/brewtrack-web:rebranding`).
 
 El Service `web` manda el tráfico al color que diga su selector.
 
@@ -15,11 +15,10 @@ minikube start --driver=docker
 
 # 1. Construir las imágenes y cargarlas en minikube (no las baja de ningún registro).
 docker compose build
-docker save localhost/brewtrack-api:0.1.0 -o /tmp/api.tar && minikube image load /tmp/api.tar
-docker build -t localhost/brewtrack-web:master -f web/brewtrack-web.Containerfile web
-git worktree add /tmp/green feat/005-rebranding-tostado
-cp web/templates/default.conf.template /tmp/green/web/templates/   # la rama todavía no lee API_UPSTREAM
-docker build -t localhost/brewtrack-web:rebranding -f /tmp/green/web/brewtrack-web.Containerfile /tmp/green/web
+for i in db api; do docker save localhost/brewtrack-$i:0.1.0 -o /tmp/$i.tar && minikube image load /tmp/$i.tar; done
+git worktree add /tmp/blue UI_vieja
+docker build -t localhost/brewtrack-web:master -f /tmp/blue/web/brewtrack-web.Containerfile /tmp/blue/web
+docker build -t localhost/brewtrack-web:rebranding -f web/brewtrack-web.Containerfile web
 for t in master rebranding; do docker save localhost/brewtrack-web:$t -o /tmp/web-$t.tar && minikube image load /tmp/web-$t.tar; done
 
 # 2. Crear el namespace y el Secret con las claves (sin escribirlas en ningún archivo versionado).
@@ -31,8 +30,8 @@ kubectl -n brewtrack create secret generic brewtrack \
 # 3. Mirar cómo arrancan (Ctrl+C para salir).
 kubectl -n brewtrack get pods -w
 
-# 4. Abrir la web en http://localhost:8080
-kubectl -n brewtrack port-forward svc/web 8080:8080
+# 4. Abrir la web en http://localhost:8081
+kubectl -n brewtrack port-forward svc/web 8081:8080
 ```
 
 Primer admin:

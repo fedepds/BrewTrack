@@ -11,7 +11,9 @@ ENV API_UPSTREAM=http://api:8000
 COPY templates /etc/nginx/templates
 COPY --from=build /app/build/web /usr/share/nginx/html
 
-RUN sed -i -e '/^user /d' -e 's#/run/nginx.pid#/tmp/nginx.pid#' /etc/nginx/nginx.conf \
+# Trivy: parches de Alpine (brotli, curl) que la imagen base aún no trae.
+RUN apk upgrade --no-cache \
+ && sed -i -e '/^user /d' -e 's#/run/nginx.pid#/tmp/nginx.pid#' /etc/nginx/nginx.conf \
  && chown -R nginx:nginx /var/cache/nginx /etc/nginx/conf.d
 USER nginx
 EXPOSE 8080

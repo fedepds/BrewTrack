@@ -25,7 +25,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final auth = ref.read(authProvider);
       final here = state.matchedLocation;
       if (auth.isLoading) return here == '/splash' ? null : '/splash';
-      final user = auth.valueOrNull;
+      final user = auth.value;
       if (user == null) return here == '/login' ? null : '/login';
       if (here == '/login' || here == '/splash' || (here.startsWith('/users') && !user.isAdmin)) {
         return '/lots';

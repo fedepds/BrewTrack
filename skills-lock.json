@@ -13,6 +13,12 @@
       "skillPath": "skills/llm-security/SKILL.md",
       "computedHash": "c6f01f4b16c45c4a68aa7679ada409647435207d3bce7185d8fa62be9dbe7553"
     },
+    "security-audit": {
+      "source": "cloudflare/security-audit-skill",
+      "sourceType": "github",
+      "skillPath": "skills/security-audit/SKILL.md",
+      "computedHash": "98b97aad2873b3b9a8e064007c25e7827b493ba27fda8bfbdb41dab586767973"
+    },
     "semgrep": {
       "source": "semgrep/skills",
       "sourceType": "github",
