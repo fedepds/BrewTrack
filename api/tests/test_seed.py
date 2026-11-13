@@ -380,3 +380,51 @@ def test_ca32_log_lines_for_cases(seed_on, db, make_lot, info):
     make_lot("GL-2026-900")
     boot()
     assert "Carga de lotes de ejemplo omitida: la base ya tiene lotes" in info()
+
+
+# --- admin inicial ---
+
+@pytest.fixture
+def admin_env(monkeypatch):
+    monkeypatch.setattr(settings, "seed_admin_email", " Admin@Admin.com ")
+    monkeypatch.setattr(settings, "seed_admin_password", "longenough1")
+
+
+def test_admin_seed_creates_admin_who_can_log_in(admin_env, db, client, info):
+    boot()
+    user = db.scalar(select(User))
+    assert (user.email, user.name, user.role) == ("admin@admin.com", "admin", "admin")
+    assert "Se creó el admin inicial admin@admin.com" in info()
+    r = client.post("/api/v1/auth/login", json={"email": "admin@admin.com", "password": "longenough1"})
+    assert r.status_code == 200
+
+
+def test_admin_seed_is_author_of_demo_roasts(admin_env, seed_on, db):
+    boot()
+    admin = db.scalar(select(User))
+    assert count(db, Roast) == len(ROAST_ROWS)
+    assert {r.roaster_id for r in db.scalars(select(Roast))} == {admin.id}
+
+
+def test_admin_seed_log_hides_password(admin_env, db, info):
+    boot()
+    assert "longenough1" not in info()
+
+
+def test_admin_seed_skipped_when_users_exist(admin_env, db, make_user, info):
+    make_user("first@x.com", "roaster")
+    boot()
+    assert count(db, User) == 1
+    assert "Carga del admin inicial omitida: la base ya tiene usuarios" in info()
+
+
+def test_admin_seed_off_without_password(monkeypatch, db):
+    monkeypatch.setattr(settings, "seed_admin_email", "admin@admin.com")
+    boot()
+    assert count(db, User) == 0
+
+
+def test_admin_seed_off_without_email(monkeypatch, db):
+    monkeypatch.setattr(settings, "seed_admin_password", "longenough1")
+    boot()
+    assert count(db, User) == 0

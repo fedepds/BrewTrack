@@ -20,11 +20,12 @@ Fuera de alcance: curvas de tueste, empaque y venta, recetas y cata, y varias em
 ## Arrancar
 
 ```bash
-cp .env.example .env   # y rellenar POSTGRES_PASSWORD y JWT_SECRET
+cp .env.example .env   # y rellenar POSTGRES_PASSWORD, JWT_SECRET y SEED_ADMIN_PASSWORD
 docker compose up --build -d
-docker compose exec api python -m app.cli create-admin --email tu@correo.dev --name "Tu Nombre"
 ```
-Abrir http://localhost:8080.
+Abrir http://localhost:8081 y entrar con `SEED_ADMIN_EMAIL` (por defecto `admin@admin.com`) y `SEED_ADMIN_PASSWORD`. La API crea ese admin al arrancar si la base no tiene usuarios. La contraseña necesita 8 caracteres o más.
+
+Si dejas `SEED_ADMIN_PASSWORD` vacía, crea el admin a mano: `docker compose exec api python -m app.cli create-admin --email tu@correo.dev --name "Tu Nombre"`.
 
 `JWT_SECRET` debe tener al menos 32 caracteres y no puede ser el valor de `.env.example`. Genera uno con `openssl rand -hex 32`.
 

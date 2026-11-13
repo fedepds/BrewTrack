@@ -17,7 +17,7 @@ class _StatsScreenState extends ConsumerState<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final current = ref.watch(summaryProvider(null)).valueOrNull?.month;
+    final current = ref.watch(summaryProvider(null)).value?.month;
     final month = _month ?? current;
     final summary = ref.watch(summaryProvider(_month));
 

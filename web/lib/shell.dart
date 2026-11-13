@@ -43,7 +43,7 @@ class _ShellState extends ConsumerState<Shell> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider).valueOrNull;
+    final user = ref.watch(authProvider).value;
     if (user == null) return const SizedBox.shrink();
     final dests = [
       ('/lots', Icons.inventory_2, 'Lotes'),

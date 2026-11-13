@@ -28,10 +28,32 @@ spec:
         app: web
         color: blue
     spec:
+      # uid 101 = usuario nginx de la imagen alpine.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+      volumes:
+        - name: conf
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
       containers:
         - name: web
           image: localhost/brewtrack-web:master
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          # Raíz de solo lectura: nginx escribe la config generada, la caché y el pid aquí.
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/nginx/conf.d
+            - name: cache
+              mountPath: /var/cache/nginx
+            - name: tmp
+              mountPath: /tmp
           env:
             # Nombre completo del Service api: el resolver de nginx no completa "api" solo.
             - name: API_UPSTREAM
@@ -56,10 +78,32 @@ spec:
         app: web
         color: green
     spec:
+      # uid 101 = usuario nginx de la imagen alpine.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+      volumes:
+        - name: conf
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
       containers:
         - name: web
           image: localhost/brewtrack-web:rebranding
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          # Raíz de solo lectura: nginx escribe la config generada, la caché y el pid aquí.
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/nginx/conf.d
+            - name: cache
+              mountPath: /var/cache/nginx
+            - name: tmp
+              mountPath: /tmp
           env:
             # Nombre completo del Service api: el resolver de nginx no completa "api" solo.
             - name: API_UPSTREAM

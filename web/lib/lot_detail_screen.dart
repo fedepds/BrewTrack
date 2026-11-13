@@ -27,7 +27,7 @@ class LotDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider).valueOrNull;
+    final user = ref.watch(authProvider).value;
     final text = Theme.of(context).textTheme;
     return asyncBody(ref.watch(lotProvider(id)), (d) {
       final l = d.lot;

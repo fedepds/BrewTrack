@@ -43,11 +43,13 @@ def test_roast_may_consume_exactly_the_remaining_stock(client, roaster, auth, ma
 def test_out_cannot_exceed_in(client, roaster, auth, make_lot):
     r = client.post(URL, json=_body(make_lot(), roasted_out_kg=11), headers=auth(roaster))
     assert r.status_code == 422 and r.json()["error"]["code"] == "validation_error"
+    assert r.json()["error"]["message"] == "Value error, roasted_out_kg no puede superar green_in_kg"
 
 
 def test_invalid_level_is_422(client, roaster, auth, make_lot):
     r = client.post(URL, json=_body(make_lot(), roast_level="burnt"), headers=auth(roaster))
     assert r.status_code == 422
+    assert r.json()["error"]["message"] == "roast_level: Input should be 'light', 'medium' or 'dark'"
 
 
 def test_unknown_lot_is_404(client, roaster, auth, make_lot):

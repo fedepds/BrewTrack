@@ -47,3 +47,14 @@ def test_valid_secret_logs_in(client, make_user):
     make_user("a@x.com", password="secret123")
     r = client.post("/api/v1/auth/login", json={"email": "a@x.com", "password": "secret123"})
     assert r.status_code == 200 and "access_token" in r.json()
+
+
+def test_short_seed_admin_password_is_rejected():
+    env = {**os.environ, "SEED_ADMIN_EMAIL": "admin@admin.com", "SEED_ADMIN_PASSWORD": "admin"}
+    r = subprocess.run(
+        [sys.executable, "-c", "import app.main"], cwd=API_DIR, env=env, capture_output=True, text=True
+    )
+    out = r.stdout + r.stderr
+    assert r.returncode != 0
+    assert "SEED_ADMIN_PASSWORD" in out and "8" in out
+    assert "input_value" not in out

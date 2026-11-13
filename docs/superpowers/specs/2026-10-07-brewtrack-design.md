@@ -43,7 +43,7 @@ Contrato OpenAPI en `/api/v1/openapi.json`.
 Auth:
 - `POST /auth/login` → JWT de acceso (1 h) y refresh token (7 días).
 - `POST /auth/refresh`, `GET /auth/me`.
-- Sin auto-registro. Los usuarios los crea un admin. El primer admin se crea con la CLI `create-admin`.
+- Sin auto-registro. Los usuarios los crea un admin. El primer admin sale de `.env` (`SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD`, 8 caracteres o más): la API lo crea al arrancar si la base no tiene usuarios. La CLI `create-admin` queda como alternativa.
 
 | Recurso | Endpoints | Permisos |
 |---|---|---|
@@ -103,8 +103,8 @@ brewtrack/
 | web | build `ghcr.io/cirruslabs/flutter`, runtime `nginx:alpine` | `flutter build web --release`. nginx sirve la SPA con fallback a `index.html` y hace proxy de `/api/`. |
 
 - Archivos `Containerfile`, flujo `docker compose up --build` sobre Colima.
-- Configuración en `.env` (no versionado): `POSTGRES_PASSWORD`, `JWT_SECRET`, `DATABASE_URL`. Plantilla en `.env.example`.
-- Primer admin: `docker compose exec api python -m app.cli create-admin`.
+- Configuración en `.env` (no versionado): `POSTGRES_PASSWORD`, `JWT_SECRET`, `DATABASE_URL`, `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`. Plantilla en `.env.example`.
+- Primer admin: desde `.env` al arrancar, o con `docker compose exec api python -m app.cli create-admin`.
 - Backup documentado con `pg_dump`.
 
 Desarrollo:

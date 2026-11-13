@@ -24,19 +24,24 @@ def commit_or_409(db: Session, code: str, message: str) -> None:
         raise ApiError(409, code, message)
 
 
+async def _api(_: Request, e: ApiError) -> JSONResponse:
+    return JSONResponse(_body(e.code, e.message), status_code=e.status)
+
+
+async def _http(_: Request, e: StarletteHTTPException) -> JSONResponse:
+    return JSONResponse(_body("http_error", str(e.detail)), status_code=e.status_code)
+
+
+def _one(x: dict) -> str:
+    loc = ".".join(str(p) for p in x["loc"][1:])
+    return f"{loc}: {x['msg']}" if loc else x["msg"]
+
+
+async def _validation(_: Request, e: RequestValidationError) -> JSONResponse:
+    return JSONResponse(_body("validation_error", "; ".join(_one(x) for x in e.errors())), status_code=422)
+
+
 def install(app: FastAPI) -> None:
-    @app.exception_handler(ApiError)
-    async def _api(_: Request, e: ApiError):
-        return JSONResponse(_body(e.code, e.message), status_code=e.status)
-
-    @app.exception_handler(StarletteHTTPException)
-    async def _http(_: Request, e: StarletteHTTPException):
-        return JSONResponse(_body("http_error", str(e.detail)), status_code=e.status_code)
-
-    @app.exception_handler(RequestValidationError)
-    async def _validation(_: Request, e: RequestValidationError):
-        def one(x: dict) -> str:
-            loc = ".".join(str(p) for p in x["loc"][1:])
-            return f"{loc}: {x['msg']}" if loc else x["msg"]
-
-        return JSONResponse(_body("validation_error", "; ".join(one(x) for x in e.errors())), status_code=422)
+    app.add_exception_handler(ApiError, _api)
+    app.add_exception_handler(StarletteHTTPException, _http)
+    app.add_exception_handler(RequestValidationError, _validation)
