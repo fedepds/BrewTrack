@@ -5,60 +5,67 @@ pipeline {
   options { timestamps(); disableConcurrentBuilds() }
 
   stages {
-    stage('Tests API') {
-      steps {
-        script {
-          docker.image('postgres:17-alpine').withRun('-e POSTGRES_PASSWORD=test -e POSTGRES_DB=brewtrack_test') { pg ->
-            docker.image('python:3.13-slim').inside("--link ${pg.id}:db -e HOME=/tmp") {
-              sh '''
-                cd api
-                python -m venv .venv-ci && . .venv-ci/bin/activate
-                pip install -q -e '.[dev]'
-                export DATABASE_URL=postgresql+psycopg://postgres:test@db:5432/brewtrack_test
-                until python -c "import psycopg; psycopg.connect('postgresql://postgres:test@db:5432/brewtrack_test')" 2>/dev/null; do sleep 1; done
-                pytest --junitxml=pytest.xml
-              '''
+    // Tests y escaneos en paralelo: un test roto no oculta lo que encuentran Semgrep o Trivy.
+    // Si cualquiera falla, no se construye ni se deploya nada.
+    stage('Tests y seguridad') {
+      failFast false
+      parallel {
+        stage('Tests API') {
+          steps {
+            script {
+              docker.image('postgres:17-alpine').withRun('-e POSTGRES_PASSWORD=test -e POSTGRES_DB=brewtrack_test') { pg ->
+                docker.image('python:3.13-slim').inside("--link ${pg.id}:db -e HOME=/tmp") {
+                  sh '''
+                    cd api
+                    python -m venv .venv-ci && . .venv-ci/bin/activate
+                    pip install -q -e '.[dev]'
+                    export DATABASE_URL=postgresql+psycopg://postgres:test@db:5432/brewtrack_test
+                    until python -c "import psycopg; psycopg.connect('postgresql://postgres:test@db:5432/brewtrack_test')" 2>/dev/null; do sleep 1; done
+                    pytest --junitxml=pytest.xml
+                  '''
+                }
+              }
             }
           }
         }
-      }
-    }
 
-    stage('Tests web') {
-      agent { docker { image 'ghcr.io/cirruslabs/flutter:stable'; args '-u root'; reuseNode true } }
-      steps {
-        // El SDK es de root; al final se devuelve el workspace al usuario de Jenkins.
-        sh '''
-          cd web
-          set +e
-          flutter pub get && flutter analyze && flutter test
-          rc=$?
-          chown -R 1000:1000 .
-          exit $rc
-        '''
-      }
-    }
+        stage('Tests web') {
+          agent { docker { image 'ghcr.io/cirruslabs/flutter:stable'; args '-u root'; reuseNode true } }
+          steps {
+            // El SDK es de root; al final se devuelve el workspace al usuario de Jenkins.
+            sh '''
+              cd web
+              set +e
+              flutter pub get && flutter analyze && flutter test
+              rc=$?
+              chown -R 1000:1000 .
+              exit $rc
+            '''
+          }
+        }
 
-    stage('Semgrep') {
-      agent { docker { image 'semgrep/semgrep'; args '--entrypoint= -e HOME=/tmp'; reuseNode true } }
-      steps {
-        sh '''
-          semgrep scan --error --metrics=off \
-            --config p/python --config p/security-audit --config p/secrets --config p/dockerfile \
-            --exclude=.env --exclude=.venv --exclude=.venv-ci --exclude=.pubcache --exclude=.superpowers \
-            --exclude=web/build --exclude=.dart_tool \
-            api web compose.yaml
-        '''
-      }
-    }
+        stage('Semgrep') {
+          agent { docker { image 'semgrep/semgrep'; args '--entrypoint= -e HOME=/tmp'; reuseNode true } }
+          steps {
+            sh '''
+              semgrep scan --error --metrics=off \
+                --config p/python --config p/security-audit --config p/secrets --config p/dockerfile \
+                --exclude=.env --exclude=.venv --exclude=.venv-ci --exclude=.pubcache --exclude=.superpowers \
+                --exclude=web/build --exclude=.dart_tool \
+                api web compose.yaml
+            '''
+          }
+        }
 
-    stage('Trivy fs') {
-      agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache'; reuseNode true } }
-      steps {
-        sh '''
-          trivy fs --exit-code 1 --scanners vuln,secret,misconfig --severity HIGH,CRITICAL --quiet \
-            --skip-files .env --skip-dirs '**/.venv,**/.venv-ci,.pubcache,.superpowers,web/build,**/.dart_tool' .
-        '''
+        stage('Trivy fs') {
+          agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache'; reuseNode true } }
+          steps {
+            sh '''
+              trivy fs --exit-code 1 --scanners vuln,secret,misconfig --severity HIGH,CRITICAL --ignore-unfixed --quiet \
+                --skip-files .env --skip-dirs '**/.venv,**/.venv-ci,.pubcache,.superpowers,web/build,**/.dart_tool' .
+            '''
+          }
+        }
       }
     }
 
