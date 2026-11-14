@@ -7,11 +7,14 @@ OUT=$1; shift
 D="slim-dind-${BUILD_NUMBER:-$$}"
 SLIM=dslim/slim:1.40.11
 TMP=$(mktemp -d)
-cleanup() { docker rm -f "$D" >/dev/null 2>&1 || true; rm -rf "$TMP"; }
-trap cleanup EXIT INT TERM
+cleanup() { docker rm -f "$D" >/dev/null 2>&1 || true; docker network rm "$D" >/dev/null 2>&1 || true; rm -rf "$TMP"; }
+trap cleanup EXIT; trap 'exit 130' INT; trap 'exit 143' TERM
 
-# Sin -p: el Docker temporal no publica puertos en el host.
-docker run -d --privileged --name "$D" -e DOCKER_TLS_CERTDIR= docker:27.5.1-dind >/dev/null
+# Restos de un build abortado a la fuerza (SIGKILL no ejecuta el trap).
+docker rm -f "$D" >/dev/null 2>&1 || true; docker network rm "$D" >/dev/null 2>&1 || true
+# Red propia: el puerto 2375 sin TLS solo lo alcanzan Slim y el dind. Sin -p: nada se publica en el host.
+docker network create "$D" >/dev/null
+docker run -d --privileged --name "$D" --network "$D" -e DOCKER_TLS_CERTDIR= docker:27.5.1-dind >/dev/null
 n=0
 until docker exec "$D" docker info >/dev/null 2>&1; do
   n=$((n + 1)); [ "$n" -le 60 ] || { echo "dind no arrancó" >&2; exit 1; }
@@ -20,7 +23,9 @@ done
 
 { echo "# Análisis de imágenes (SlimToolkit)"; echo; echo "Generado: $(date -u +%F)"; } > "$OUT"
 for img in "$@"; do
-  docker save "$img" | docker exec -i "$D" docker load >/dev/null
+  docker save -o "$TMP/img.tar" "$img"
+  docker exec -i "$D" docker load < "$TMP/img.tar" >/dev/null
+  rm -f "$TMP/img.tar"
   docker run --rm --platform linux/amd64 --network "container:$D" -e DOCKER_HOST=tcp://127.0.0.1:2375 \
     "$SLIM" --check-version=false xray --changes none "$img" > "$TMP/log" 2>&1 \
     || { echo "slim falló con $img" >&2; exit 1; }

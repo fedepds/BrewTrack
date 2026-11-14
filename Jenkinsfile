@@ -95,10 +95,11 @@ pipeline {
     // Tamaño y capas de cada imagen con SlimToolkit, contra un Docker 27 temporal (spec 007).
     // El script borra el Docker temporal al salir; si falta un dato, falla y no hay deploy.
     stage('SlimToolkit imágenes') {
+      options { timeout(time: 15, unit: 'MINUTES') }
       steps {
         sh 'scripts/slim-analysis.sh image-analysis.md localhost/brewtrack-db:0.1.0 localhost/brewtrack-api:0.1.0 localhost/brewtrack-web:rebranding'
       }
-      post { always { archiveArtifacts artifacts: 'image-analysis.md', allowEmptyArchive: true } }
+      post { always { archiveArtifacts artifacts: 'image-analysis.md' } }
     }
 
     stage('Deploy minikube') {
