@@ -124,3 +124,24 @@ Las tres imágenes usan `docker.io/library/...` o `ghcr.io/...` con etiqueta fij
 - `docs/security/scan_semgrep.txt` sigue en el repositorio con el patrón de una clave de Stripe enmascarada.
 - `docs/ci/jenkins.md`, que cita `AGENTS.md` y el `Jenkinsfile`, no existe (lo anotó el developer).
 - Semgrep no entrega reglas de Dockerfile sobre `*.Containerfile`: sin cobertura automática de esos archivos.
+
+## Revisión de las mejoras (commits 4b9d1c1 y 66e14c8)
+
+Alcance: `git diff 208e31e..HEAD` en `scripts/slim-analysis.sh` y en la etapa "SlimToolkit imágenes" del `Jenkinsfile`. Semgrep 1.184.0 (`p/security-audit`, `p/secrets`, `p/dockerfile`) sobre `scripts/` y `Jenkinsfile`: 0 hallazgos. `sh -n` sin errores.
+
+| Mejora | Estado | Evidencia |
+|---|---|---|
+| N-2 red propia | Resuelto | `docker network create "$D"` y `--network "$D"` en el dind (líneas 16-17). Ejecución real con `localhost/brewtrack-web:rebranding`: `docker network inspect` muestra la red `slim-dind-9907` (bridge) con un solo miembro, el dind, y `NetworkMode=slim-dind-9907`. Sin puertos publicados. Slim entra con `--network container:$D`, que comparte la pila del dind, así que el 2375 sigue sin alcanzarse desde otros contenedores |
+| N-3 tope de tiempo y restos | Resuelto | `timeout(time: 15, unit: 'MINUTES')` en la etapa (`Jenkinsfile:98`). `docker rm -f` y `docker network rm` al inicio (líneas 14-15) |
+| N-4 señales | Resuelto | `trap cleanup EXIT; trap 'exit 130' INT; trap 'exit 143' TERM`. `exit` dispara el `trap EXIT`, así que la limpieza corre una vez y el script termina |
+| N-5 `save`/`load` | Resuelto | `docker save -o "$TMP/img.tar"` con `set -e`: un fallo de `save` detiene el script. El tar se borra tras cada carga y `$TMP` entero en `cleanup` |
+| N-7 `allowEmptyArchive` | Resuelto | Quitado (`Jenkinsfile:101`): si falta `image-analysis.md`, `archiveArtifacts` falla a la vista |
+
+Riesgos nuevos revisados:
+- `docker rm -f "$D"` inicial: el nombre `slim-dind-<BUILD_NUMBER>` es propio del script. Solo borraría un contenedor ajeno con ese nombre exacto. Riesgo despreciable; no bloqueante. Sin `BUILD_NUMBER` usa `$$`, que cambia en cada ejecución.
+- Tar en `$TMP`: `mktemp -d` crea el directorio con modo 0700, así que otros usuarios del host no lo leen. Se borra en `cleanup`. Ocupa disco por una imagen a la vez.
+- Orden de `cleanup`: primero el contenedor, luego la red (una red con miembros no se borra), luego `$TMP`. Correcto.
+- Residuos: tras la ejecución de prueba (rc=0) no quedan contenedor ni red `slim-dind*`.
+- Pendiente sin cambio: un `SIGKILL` no corre el `trap`. El `rm` inicial lo cubre en el build siguiente si repite el número; con otro `BUILD_NUMBER` el resto sobrevive hasta limpieza manual. No bloqueante.
+
+**Veredicto: sigue APROBADO.** N-2, N-3, N-4, N-5 y N-7 quedan resueltos, sin bloqueantes nuevos. N-1 y N-6 no entraban en este cambio y siguen como estaban.
