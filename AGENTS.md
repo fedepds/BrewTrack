@@ -27,7 +27,7 @@ Resumen de lo que no se rompe:
 - **Tests API:** `cd api && pytest` (necesita el Postgres de pruebas; ver `docs/superpowers/plans/2026-10-07-brewtrack.md`, Task 2)
 - **Tests frontend:** `cd web && flutter test`
 - **Backup:** `docker compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql`
-- **CI/CD:** `Jenkinsfile` (tests, Semgrep, Trivy y deploy a minikube en cada push a `master`). Ver `docs/ci/jenkins.md`.
+- **CI/CD:** `Jenkinsfile` (tests, Semgrep, Trivy, SlimToolkit y deploy a minikube en cada push a `master`). Ver `docs/ci/jenkins.md`.
 
 ## Puertos del host
 Cada servicio tiene un puerto fijo para que no choquen entre sí ni con Jenkins, que corre en la misma máquina.
