@@ -10,6 +10,7 @@ web/build/
 .superpowers/
 .pubcache/
 .agents/
-.claude/
+.claude/*
+!.claude/agents/
 .venv-ci/
 api/pytest.xml

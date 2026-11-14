@@ -5,7 +5,6 @@ pipeline {
   options { timestamps(); disableConcurrentBuilds() }
   // Jenkins corre en localhost y GitHub no puede avisarle: consulta el repo cada 2 minutos.
   triggers { pollSCM('H/2 * * * *') }
-
   stages {
     // Tests y escaneos en paralelo: un test roto no oculta lo que encuentran Semgrep o Trivy.
     // Si cualquiera falla, no se construye ni se deploya nada.
