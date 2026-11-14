@@ -1,4 +1,4 @@
-// CI/CD de BrewTrack: tests, Semgrep, Trivy y deploy a minikube.
+// CI/CD de BrewTrack: tests, Semgrep, Trivy, SlimToolkit y deploy a minikube.
 // Requisitos de Jenkins: docs/ci/jenkins.md
 pipeline {
   agent any
@@ -14,8 +14,8 @@ pipeline {
         stage('Tests API') {
           steps {
             script {
-              docker.image('postgres:17-alpine').withRun('-e POSTGRES_PASSWORD=test -e POSTGRES_DB=brewtrack_test') { pg ->
-                docker.image('python:3.13-slim').inside("--link ${pg.id}:db -e HOME=/tmp") {
+              docker.image('postgres:17.11-alpine3.24').withRun('-e POSTGRES_PASSWORD=test -e POSTGRES_DB=brewtrack_test') { pg ->
+                docker.image('python:3.13.18-slim-trixie').inside("--link ${pg.id}:db -e HOME=/tmp") {
                   sh '''
                     cd api
                     python -m venv .venv-ci && . .venv-ci/bin/activate
@@ -31,7 +31,7 @@ pipeline {
         }
 
         stage('Tests web') {
-          agent { docker { image 'ghcr.io/cirruslabs/flutter:stable'; args '-u root'; reuseNode true } }
+          agent { docker { image 'ghcr.io/cirruslabs/flutter:3.44.0'; args '-u root'; reuseNode true } }
           steps {
             // El SDK es de root; al final se devuelve el workspace al usuario de Jenkins.
             sh '''
@@ -46,7 +46,7 @@ pipeline {
         }
 
         stage('Semgrep') {
-          agent { docker { image 'semgrep/semgrep'; args '--entrypoint= -e HOME=/tmp'; reuseNode true } }
+          agent { docker { image 'semgrep/semgrep:1.184.0'; args '--entrypoint= -e HOME=/tmp'; reuseNode true } }
           steps {
             sh '''
               semgrep scan --error --metrics=off \
@@ -59,7 +59,7 @@ pipeline {
         }
 
         stage('Trivy fs') {
-          agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache'; reuseNode true } }
+          agent { docker { image 'aquasec/trivy:0.76.2'; args '--entrypoint= -u root -v trivy-cache:/root/.cache'; reuseNode true } }
           steps {
             sh '''
               trivy fs --exit-code 1 --scanners vuln,secret,misconfig --severity HIGH,CRITICAL --ignore-unfixed --quiet \
@@ -81,7 +81,7 @@ pipeline {
     }
 
     stage('Trivy imágenes') {
-      agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache -v /var/run/docker.sock:/var/run/docker.sock'; reuseNode true } }
+      agent { docker { image 'aquasec/trivy:0.76.2'; args '--entrypoint= -u root -v trivy-cache:/root/.cache -v /var/run/docker.sock:/var/run/docker.sock'; reuseNode true } }
       steps {
         sh '''
           T="trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --quiet"
@@ -90,6 +90,15 @@ pipeline {
           $T localhost/brewtrack-web:rebranding
         '''
       }
+    }
+
+    // Tamaño y capas de cada imagen con SlimToolkit, contra un Docker 27 temporal (spec 007).
+    // El script borra el Docker temporal al salir; si falta un dato, falla y no hay deploy.
+    stage('SlimToolkit imágenes') {
+      steps {
+        sh 'scripts/slim-analysis.sh image-analysis.md localhost/brewtrack-db:0.1.0 localhost/brewtrack-api:0.1.0 localhost/brewtrack-web:rebranding'
+      }
+      post { always { archiveArtifacts artifacts: 'image-analysis.md', allowEmptyArchive: true } }
     }
 
     stage('Deploy minikube') {
