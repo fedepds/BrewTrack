@@ -9,8 +9,8 @@ Las reglas innegociables están en el spec de diseño. Manda sobre cualquier otr
 @docs/superpowers/specs/2026-10-07-brewtrack-design.md
 
 Resumen de lo que no se rompe:
-- **Alcance:** lotes verdes y tuestes con datos resumen, un solo taller. Fuera: curvas de tueste, empaque y venta, recetas y cata, multi-empresa. Una idea que necesite alguno de estos es una decisión de producto, no una tarea.
-- **Stock:** nunca se guarda. Es `received_kg` menos la suma de `green_in_kg` de los tuestes del lote.
+- **Alcance:** lotes verdes y tuestes con datos resumen, un solo taller. Dentro también: salidas de café tostado por tueste (spec 007). Fuera: curvas de tueste, empaque, precios, clientes y facturación, recetas y cata, multi-empresa. Una idea que necesite alguno de estos es una decisión de producto, no una tarea.
+- **Stock:** nunca se guarda. El verde es `received_kg` menos la suma de `green_in_kg` de los tuestes del lote. El tostado es `roasted_out_kg` menos la suma de `kg` de las salidas del tueste.
 - **Permisos:** los impone la API. El frontend solo oculta lo que el rol no permite.
 - **Errores:** siempre `{"error": {"code", "message"}}`.
 - **Esquema:** solo cambia con migraciones Alembic nuevas. Nunca se edita una migración ya aplicada.

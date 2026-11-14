@@ -8,11 +8,12 @@ Sistema para la gestión y trazabilidad de café de especialidad en un solo tall
 
 Dentro:
 - Lotes de café verde, tuestes con datos resumen (sin curva).
+- Salidas de café tostado por tueste (venta, consumo, otro), sin precios ni clientes (spec 007).
 - Un solo taller, login con roles `roaster` y `admin`.
 
 Fuera:
 - Curvas tiempo-temperatura y captura en vivo desde la tostadora.
-- Empaque y venta, recetas y cata.
+- Empaque, precios, clientes y facturación; recetas y cata.
 - Multi-empresa (multi-tenant).
 - CI/CD, TLS y backups automáticos.
 
@@ -28,7 +29,9 @@ Todas las tablas llevan `id` UUID, `created_at` y `updated_at`.
 
 **green_lots**: `code` (único, p. ej. `GL-2026-014`), `origin_country`, `region`, `farm`, `producer`, `variety`, `process`, `altitude_m` (opcional), `harvest_year`, `received_at`, `received_kg`, `notes`. El stock actual no se almacena: `received_kg` menos la suma de `green_in_kg` de sus tuestes.
 
-**roasts**: `lot_id` → `green_lots` (`ON DELETE RESTRICT`), `roasted_at`, `roaster_id` → `users`, `green_in_kg`, `roasted_out_kg`, `loss_pct` (calculado en la API), `duration_s`, `drop_temp_c`, `roast_level` (`light` | `medium` | `dark`), `notes`.
+**roasts**: `lot_id` → `green_lots` (`ON DELETE RESTRICT`), `roasted_at`, `roaster_id` → `users`, `green_in_kg`, `roasted_out_kg`, `loss_pct` (calculado en la API), `duration_s`, `drop_temp_c`, `roast_level` (`light` | `medium` | `dark`), `notes`. El stock tostado no se almacena: `roasted_out_kg` menos la suma de `kg` de sus salidas.
+
+**roast_withdrawals**: `roast_id` → `roasts` (`ON DELETE RESTRICT`), `user_id` → `users`, `withdrawn_at`, `kg` (> 0), `reason` (`sale` | `consumption` | `other`), `notes`.
 
 Integridad:
 - Constraints en BD: `roasted_out_kg <= green_in_kg`, pesos y tiempos > 0.
