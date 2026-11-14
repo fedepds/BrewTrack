@@ -103,7 +103,7 @@ brewtrack/
 | api | `python:3.13-slim` multi-stage | Usuario no root. Arranque: `alembic upgrade head` y luego `uvicorn`. Espera a `db` sano. Healthcheck en `/api/v1/health`. |
 | web | build `ghcr.io/cirruslabs/flutter`, runtime `nginx:alpine` | `flutter build web --release`. nginx sirve la SPA con fallback a `index.html` y hace proxy de `/api/`. |
 
-- Cada imagen base lleva una etiqueta de versión exacta (mayor, menor y parche) de la imagen y la variante de la tabla, p. ej. `nginx:1.31.8-alpine`. Nunca `latest`, `stable` ni una versión parcial.
+- Cada imagen base lleva una etiqueta de versión exacta (mayor, menor y parche, o mayor y menor en PostgreSQL, que no tiene parche) de la imagen y la variante de la tabla, p. ej. `nginx:1.31.8-alpine`. Nunca `latest`, `stable` ni una versión parcial.
 - Archivos `Containerfile`, flujo `docker compose up --build` sobre Colima.
 - Configuración en `.env` (no versionado): `POSTGRES_PASSWORD`, `JWT_SECRET`, `DATABASE_URL`, `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`. Plantilla en `.env.example`.
 - Primer admin: desde `.env` al arrancar, o con `docker compose exec api python -m app.cli create-admin`.

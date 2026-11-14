@@ -46,10 +46,10 @@ Objetivo: que las tres imágenes y el pipeline cumplan los requisitos de la entr
 
 Ver D-2 y D-3.
 
-- RF-1. Cada `FROM` de `api/brewtrack-api.Containerfile`, `web/brewtrack-web.Containerfile` y `db/brewtrack-db.Containerfile` usa una etiqueta con versión mayor, menor y de parche (por ejemplo `1.31.8`). No usa `latest`, `stable`, una versión parcial (`3.13`, `17`) ni falta de etiqueta.
+- RF-1. Cada `FROM` de `api/brewtrack-api.Containerfile`, `web/brewtrack-web.Containerfile` y `db/brewtrack-db.Containerfile` usa una etiqueta con la versión completa que publica el proyecto: mayor, menor y parche (por ejemplo `1.31.8`), o mayor y menor en PostgreSQL, que desde la versión 10 no tiene parche (por ejemplo `17.11`). No usa `latest`, `stable`, una versión parcial (`3.13`, `17`) ni falta de etiqueta.
 - RF-2. Cada imagen sigue siendo la misma imagen de la constitución, con una etiqueta más precisa: `python` en variante `slim`, `nginx` en variante `alpine`, `postgres` en variante `alpine` y `ghcr.io/cirruslabs/flutter`.
 - RF-3. Las versiones fijadas no son menores que las que corren hoy (ver Contexto). El developer anota en `dev-notes.md` qué etiqueta eligió para cada imagen y cómo comprobó que existe.
-- RF-4. Todas las imágenes que usa el `Jenkinsfile` llevan versión mayor, menor y de parche, incluidas Semgrep, Trivy, `docker:27.5.1-dind` y `dslim/slim:1.40.11`.
+- RF-4. Todas las imágenes que usa el `Jenkinsfile` llevan la versión completa de RF-1 (mayor, menor y parche, o mayor y menor en PostgreSQL), incluidas Semgrep, Trivy, `docker:27.5.1-dind` y `dslim/slim:1.40.11`.
 - RF-5. Las imágenes con que Jenkins corre los tests (Postgres, Python y Flutter) usan la misma etiqueta que el `FROM` del Containerfile correspondiente.
 - RF-6. Las imágenes de terceros en `k8s/` (`grafana/grafana:12.4.13` y `prometheus/prometheus:v3.15.1`) ya cumplen y no cambian.
 - RF-7. Las etiquetas no llevan digest (`@sha256:…`). Ver "Fuera de alcance".
@@ -95,8 +95,8 @@ Ver D-3 y D-5.
 
 CA-1 a CA-5 son revisiones de archivos. CA-6 a CA-10 se prueban sobre las imágenes construidas. CA-11 a CA-13 se prueban en Jenkins. CA-14 a CA-16 se prueban sobre el stack levantado con `docker compose up --build -d`.
 
-- CA-1. Dado el código de la entrega, cuando QA ejecuta `grep -hE '^FROM' api/*.Containerfile web/*.Containerfile db/*.Containerfile | grep -vE ':[^ @]*[0-9]+\.[0-9]+\.[0-9]+'`, entonces no sale ninguna línea.
-- CA-2. Dado el código de la entrega, cuando QA ejecuta `grep -nE 'latest|:stable|nginx:alpine|python:3\.13-slim|postgres:17-alpine' Jenkinsfile api/*.Containerfile web/*.Containerfile db/*.Containerfile`, entonces no sale ninguna línea. Cuando QA lista todas las imágenes del `Jenkinsfile` (las de `docker.image(...)`, `image '...'` y `docker run`), entonces cada una tiene versión mayor, menor y de parche.
+- CA-1. Dado el código de la entrega, cuando QA ejecuta `grep -hE '^FROM' api/*.Containerfile web/*.Containerfile db/*.Containerfile | grep -vE ':[0-9]+\.[0-9]+\.[0-9]+|postgres:[0-9]+\.[0-9]+([^.0-9]|$)'`, entonces no sale ninguna línea. La segunda parte del patrón acepta la versión mayor y menor solo en PostgreSQL (RF-1). Con el mismo filtro, `postgres:17-alpine`, `nginx:alpine`, `python:3.13-slim` y `flutter:stable` sí salen.
+- CA-2. Dado el código de la entrega, cuando QA ejecuta `grep -nE 'latest|:stable|nginx:alpine|python:3\.13-slim|postgres:17-alpine' Jenkinsfile api/*.Containerfile web/*.Containerfile db/*.Containerfile`, entonces no sale ninguna línea. Cuando QA lista todas las imágenes del `Jenkinsfile` (las de `docker.image(...)`, `image '...'` y `docker run`), entonces cada una tiene versión mayor, menor y de parche, salvo PostgreSQL, que tiene mayor y menor (RF-1).
 - CA-3. Dado el código de la entrega, cuando QA compara la etiqueta de Postgres, Python y Flutter en el `Jenkinsfile` con la del `FROM` de cada Containerfile, entonces son iguales.
 - CA-4. Dado el código de la entrega, cuando QA ejecuta `grep -c '^FROM' <archivo>`, entonces sale 2 para `api/brewtrack-api.Containerfile` y para `web/brewtrack-web.Containerfile`, y 1 para `db/brewtrack-db.Containerfile` (D-4).
 - CA-5. Dado el código de la entrega, cuando QA ejecuta `git ls-files reports/`, entonces salen `reports/image-analysis.md` y `reports/slimtoolkit-ejecucion.md`.
@@ -151,3 +151,4 @@ Ninguna. P-1 a P-5 de la versión 0.1 pasan a "Decisiones" (D-2 a D-6).
 | 2026-11-14 | 0.1 | Borrador a partir de los requisitos de la entrega académica sobre contenedores y del hallazgo 10 de la spec 004. Recoge D-1 (Slim contra un Docker 27 temporal). Quedan abiertas P-1 a P-5. |
 | 2026-11-14 | 1.1 | El usuario acepta las cinco recomendaciones ("acepto"). P-1 a P-5 pasan a "Decisiones" (D-2 a D-6). Se enmienda la constitución: las imágenes base llevan etiqueta de versión exacta (D-2) y Jenkins local entra en el alcance (D-3). Los RF y CA que dependían de P-1 a P-4 dejan de ser condicionales. RF-16 añade la revisión de `--privileged` por `security`. |
 | 2026-11-14 | 1.1 | El usuario aprueba la spec. |
+| 2026-11-14 | 1.2 | Aclaración: PostgreSQL numera sus versiones como mayor y menor desde la versión 10, así que `17.11` ya es su versión exacta y `17.11.0` no existe. RF-1, RF-4, CA-1 y CA-2 piden la versión completa que publica cada proyecto, y el patrón de CA-1 acepta `postgres:17.11-alpine3.24` y sigue rechazando etiquetas parciales. Se aclara igual la constitución. Lo aprobó el usuario el 2026-11-14. |
