@@ -61,3 +61,19 @@ Los hallazgos N-1 a N-7 del informe de seguridad no afectan a ningún CA. N-3 (s
 ## Seguridad
 
 Veredicto de `security-report.md`: APROBADO. Sin bloqueantes. Seis hallazgos no bloqueantes y uno informativo (N-1 a N-7), aceptados por D-5.
+
+## Verificación de las mejoras
+
+Rango `208e31e..HEAD`. `git diff --stat` toca `Jenkinsfile`, `scripts/slim-analysis.sh`, `reports/` y documentos de la spec. No toca `api/` ni `web/`, así que no se repitieron `pytest` ni `flutter`.
+
+| Ítem | Estado | Evidencia |
+|---|---|---|
+| F-1 | Cerrado | `reports/image-analysis.md` usa solo MB decimales y lo declara ("MB = 10^6 bytes"). La capa más grande del resumen es la mayor fila de cada tabla: api 100,7 MB (base Debian; la siguiente es 94,6), web 49,3 MB (la siguiente es 44,7), db 280,3 MB. |
+| CA-10 | Pasa | El script da 294 MB / 11 capas / 280 MB (db), 242 MB / 8 / 100 MB (api) y 108 MB / 11 / 49 MB (web). El informe da 294,1, 242,8 y 108,1 MB con las mismas capas y la misma capa mayor. El script trunca a MB enteros; el informe lleva un decimal, sin contradicción. |
+| CA-12 | Pasa en local; sin prueba en Jenkins real | Tras el caso de éxito (rc 0) y el de fallo, `docker ps -a --filter name=slim-dind` y `docker network ls --filter name=slim-dind` salen vacíos. |
+| CA-13 | Pasa en local; sin prueba en Jenkins real | Con `localhost/nope:9.9.9` el script sale con rc 1 ("No such image"). |
+| Jenkinsfile | Pasa | Orden Trivy imágenes (83), SlimToolkit imágenes (97), Deploy minikube (105). `options { timeout(time: 15, unit: 'MINUTES') }` va como primera directiva dentro de `stage`, posición válida en sintaxis declarativa. Sin linter de Jenkins disponible. |
+| CA-11 | Pendiente de prueba humana | Requiere un build real de Jenkins. |
+| CA-16 | Pendiente de prueba humana | Login de admin: no hay credenciales sin leer `.env`. |
+
+Veredicto: APROBADO. F-1 queda cerrado y CA-10, CA-12 y CA-13 siguen en Pasa. Quedan CA-11 y CA-16 para prueba humana; no bloquean.
