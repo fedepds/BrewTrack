@@ -1,10 +1,10 @@
-FROM docker.io/library/python:3.13-slim AS build
+FROM docker.io/library/python:3.13.18-slim-trixie AS build
 WORKDIR /src
 COPY pyproject.toml ./
 COPY app ./app
 RUN pip install --no-cache-dir --prefix=/install .
 
-FROM docker.io/library/python:3.13-slim
+FROM docker.io/library/python:3.13.18-slim-trixie
 # Trivy: parches de Debian y fuera pip (trae msgpack, urllib3 y setuptools vulnerables; en ejecución no hace falta).
 RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/* \
  && pip uninstall -y pip setuptools \
