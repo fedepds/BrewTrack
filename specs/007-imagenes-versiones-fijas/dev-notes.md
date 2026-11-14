@@ -48,3 +48,21 @@ Probé las tres imágenes sin `apt-get upgrade` y sin `apk upgrade`. Trivy falla
 
 ## Preguntas abiertas
 1. **CA-1 contradice RF-1 para Postgres.** Postgres publica etiquetas `MAYOR.MENOR` (17.11), sin parche. La etiqueta `17.11-alpine3.24` no cumple el `grep` de CA-1 (`[0-9]+\.[0-9]+\.[0-9]+`) y sale como línea. La spec pide a la vez "versión mayor, menor y de parche" y esa salida vacía. Elegí `17.11-alpine3.24` (la versión exacta que corría) y no `postgres:17.11.0-...`, que no existe. Hace falta que el product-owner relaje CA-1 y RF-1 para Postgres (por ejemplo, aceptar `17.11-alpine3.24`) o indique otra etiqueta. Lo mismo vale para CA-2, que pide "mayor, menor y de parche" en cada imagen del `Jenkinsfile`.
+
+## Mejoras tras seguridad y QA
+Apliqué N-2 a N-5, N-7 y F-1. No cambia ningún requisito.
+- `scripts/slim-analysis.sh`: red propia por ejecución para el Docker temporal (N-2); borrado de restos al inicio (N-3); `trap cleanup EXIT` con `exit 130` en `INT` y `exit 143` en `TERM` (N-4); `docker save` a un archivo en `$TMP` y `docker load` desde él, que se borra tras cargar (N-5).
+- `Jenkinsfile`: `timeout` de 15 minutos en la etapa (N-3) y sin `allowEmptyArchive` (N-7).
+- `reports/image-analysis.md`: todas las cifras de capas en MB decimales, medidas con `docker history --human=false` en el Docker temporal. La capa más grande de api es la base Debian (100,7 MB), de web 49,3 MB y de db 280,3 MB (F-1).
+- `reports/slimtoolkit-ejecucion.md`: documenta red propia, limpieza al inicio y timeout.
+
+Evidencia (local):
+| Caso | Resultado |
+|---|---|
+| `sh -n scripts/slim-analysis.sh` | sin errores |
+| Éxito con las tres imágenes | rc 0; `docker ps -a` y `docker network ls` con `--filter name=slim-dind` vacíos |
+| Fallo con `localhost/nope:9.9.9` | rc 1; ambos listados vacíos |
+| `SIGINT` a los 20 s | rc 130 en 3 s; ambos listados vacíos |
+| `SIGTERM` a los 20 s | rc 143 en 3 s; ambos listados vacíos |
+
+Un `kill -INT` a un trabajo en segundo plano de `sh` no llega al script (el shell lo lanza con `INT` ignorada); probé con `INT` restaurado desde Python.

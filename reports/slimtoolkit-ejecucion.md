@@ -122,10 +122,11 @@ scripts/slim-analysis.sh image-analysis.md \
   localhost/brewtrack-db:0.1.0 localhost/brewtrack-api:0.1.0 localhost/brewtrack-web:rebranding
 ```
 
-- Levanta `slim-dind-<BUILD_NUMBER o PID>` sin publicar puertos, copia cada imagen, corre `xray` y lee tamaño, capas, capa más grande, duplicados, shells y setuid.
-- Sale con error si Slim falla o falta un dato de alguna imagen. Un `trap` borra el Docker temporal con éxito o con fallo (`docker ps -a --filter name=slim-dind` no debe listar nada).
+- Antes de crear nada borra el contenedor y la red de un build abortado a la fuerza. Luego crea una red propia `slim-dind-<BUILD_NUMBER o PID>` y levanta ahí el Docker temporal, sin publicar puertos: solo Slim (`--network container:…`) llega al puerto 2375 sin TLS. Copia cada imagen con `docker save` a un archivo y `docker load`, y lo borra tras cargarlo.
+- Por cada imagen corre `xray` y lee tamaño, capas, capa más grande, duplicados, shells y setuid.
+- Sale con error si Slim falla o falta un dato de alguna imagen. `trap` borra el contenedor y la red al salir (éxito, fallo, `INT` o `TERM`); `docker ps -a --filter name=slim-dind` y `docker network ls --filter name=slim-dind` no deben listar nada.
 - Las imágenes deben existir en el Docker local (`docker compose build` o el paso "Build imágenes" de Jenkins).
 
 ## 9. En Jenkins
 
-La etapa "SlimToolkit imágenes" corre el mismo script entre "Trivy imágenes" y "Deploy minikube" y archiva `image-analysis.md`. Si falla, no hay deploy. El Docker temporal usa `--privileged`; el agente `security` lo revisa. Jenkins monta el socket del Docker de Colima, así que el contenedor `slim-dind-<build>` aparece junto a los demás y se borra al terminar.
+La etapa "SlimToolkit imágenes" (tope de 15 minutos) corre el mismo script entre "Trivy imágenes" y "Deploy minikube" y archiva `image-analysis.md`. Si falla, no hay deploy. El Docker temporal usa `--privileged`; el agente `security` lo revisa. Jenkins monta el socket del Docker de Colima, así que el contenedor `slim-dind-<build>` aparece junto a los demás y se borra al terminar.
