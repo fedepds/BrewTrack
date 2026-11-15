@@ -5,8 +5,8 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
-from app.stock import withdrawn_kg
 from app.models import GreenLot, Roast, RoastWithdrawal, User
+from app.stock import withdrawn_kg
 
 
 def _setup(db):
