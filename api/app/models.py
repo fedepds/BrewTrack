@@ -62,6 +62,9 @@ class Roast(Base, Timestamps):
     notes: Mapped[str | None] = mapped_column(Text)
     lot: Mapped[GreenLot] = relationship(back_populates="roasts", lazy="joined")
     roaster: Mapped[User] = relationship(lazy="joined")
+    withdrawals: Mapped[list["RoastWithdrawal"]] = relationship(
+        back_populates="roast", order_by="RoastWithdrawal.withdrawn_at.desc()"
+    )
 
     @property
     def lot_code(self) -> str:
@@ -81,11 +84,40 @@ class Roast(Base, Timestamps):
     )
 
 
+class RoastWithdrawal(Base, Timestamps):
+    __tablename__ = "roast_withdrawals"
+    roast_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("roasts.id", ondelete="RESTRICT"))
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    withdrawn_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    kg: Mapped[Decimal] = mapped_column(Numeric(10, 3))
+    reason: Mapped[str] = mapped_column(String(20))
+    notes: Mapped[str | None] = mapped_column(Text)
+    roast: Mapped[Roast] = relationship(back_populates="withdrawals")
+    user: Mapped[User] = relationship(lazy="joined")
+
+    @property
+    def user_name(self) -> str:
+        return self.user.name
+
+    __table_args__ = (
+        CheckConstraint("kg > 0", name="ck_withdrawals_kg"),
+        CheckConstraint("reason IN ('sale','consumption','other')", name="ck_withdrawals_reason"),
+        Index("ix_roast_withdrawals_roast_id", "roast_id"),
+    )
+
+
 # Stock: única expresión de lectura. Se calcula en cada consulta; nunca se guarda.
 GreenLot.stock_kg = column_property(
     GreenLot.received_kg
     - select(func.coalesce(func.sum(Roast.green_in_kg), 0))
     .where(Roast.lot_id == GreenLot.id)
     .correlate_except(Roast)
+    .scalar_subquery()
+)
+Roast.roasted_stock_kg = column_property(
+    Roast.roasted_out_kg
+    - select(func.coalesce(func.sum(RoastWithdrawal.kg), 0))
+    .where(RoastWithdrawal.roast_id == Roast.id)
+    .correlate_except(RoastWithdrawal)
     .scalar_subquery()
 )

@@ -5,7 +5,8 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
-from app.models import GreenLot, Roast, User
+from app.stock import withdrawn_kg
+from app.models import GreenLot, Roast, RoastWithdrawal, User
 
 
 def _setup(db):
@@ -59,3 +60,50 @@ def test_lot_with_roasts_cannot_be_deleted_in_db(db):
     with pytest.raises(IntegrityError):
         db.execute(text("DELETE FROM green_lots WHERE id = :i"), {"i": lot.id})
         db.commit()
+
+
+def _withdrawal(roast, user, kg="1", **kw):
+    base = dict(
+        roast_id=roast.id, user_id=user.id, kg=Decimal(kg),
+        withdrawn_at=datetime(2026, 2, 2, tzinfo=timezone.utc), reason="sale",
+    )
+    return RoastWithdrawal(**{**base, **kw})
+
+
+def test_withdrawal_kg_and_reason_constraints(db, make_roast):
+    user, lot = _setup(db)
+    roast = make_roast(lot, user)
+    db.add(_withdrawal(roast, user, kg="0"))
+    with pytest.raises(IntegrityError):
+        db.commit()
+    db.rollback()
+    db.add(_withdrawal(roast, user, reason="gift"))
+    with pytest.raises(IntegrityError):
+        db.commit()
+
+
+def test_roast_with_withdrawals_cannot_be_deleted_in_db(db, make_roast):
+    user, lot = _setup(db)
+    roast = make_roast(lot, user)
+    db.add(_withdrawal(roast, user))
+    db.commit()
+    with pytest.raises(IntegrityError):
+        db.execute(text("DELETE FROM roasts WHERE id = :i"), {"i": roast.id})
+        db.commit()
+
+
+def test_roasted_stock_is_out_minus_withdrawals(db, make_roast):
+    user, lot = _setup(db)
+    roast = make_roast(lot, user, out="8.5")
+    db.refresh(roast)
+    assert roast.roasted_stock_kg == Decimal("8.5")
+    db.add_all([
+        _withdrawal(roast, user, kg="2"),
+        _withdrawal(roast, user, kg="1.5", reason="other", withdrawn_at=datetime(2026, 2, 3, tzinfo=timezone.utc)),
+    ])
+    db.commit()
+    db.refresh(roast)
+    assert roast.roasted_stock_kg == Decimal("5.000")
+    assert withdrawn_kg(db, roast.id) == Decimal("3.5")
+    assert [w.kg for w in roast.withdrawals] == [Decimal("1.500"), Decimal("2.000")]
+    assert roast.withdrawals[0].user_name == "A"
