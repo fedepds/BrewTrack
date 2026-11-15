@@ -53,10 +53,11 @@ class Roast {
         durationS = j['duration_s'],
         dropTempC = _d(j['drop_temp_c']),
         roastLevel = j['roast_level'],
+        roastedStockKg = _d(j['roasted_stock_kg']),
         notes = j['notes'];
   final String id, lotId, lotCode, roasterId, roasterName, roastLevel;
   final DateTime roastedAt;
-  final double greenInKg, roastedOutKg, lossPct, dropTempC;
+  final double greenInKg, roastedOutKg, lossPct, dropTempC, roastedStockKg;
   final int durationS;
   final String? notes;
 }
@@ -72,10 +73,28 @@ class LotDetail {
 class RoastDetail {
   RoastDetail.fromJson(Map<String, dynamic> j)
       : roast = Roast.fromJson(j),
-        lot = Lot.fromJson(j['lot'] as Map<String, dynamic>);
+        lot = Lot.fromJson(j['lot'] as Map<String, dynamic>),
+        withdrawals = [for (final w in j['withdrawals']) Withdrawal.fromJson(w as Map<String, dynamic>)];
   final Roast roast;
   final Lot lot;
+  final List<Withdrawal> withdrawals;
 }
+
+class Withdrawal {
+  Withdrawal.fromJson(Map<String, dynamic> j)
+      : id = j['id'],
+        userName = j['user_name'],
+        withdrawnAt = DateTime.parse(j['withdrawn_at']),
+        kg = _d(j['kg']),
+        reason = j['reason'],
+        notes = j['notes'];
+  final String id, userName, reason;
+  final DateTime withdrawnAt;
+  final double kg;
+  final String? notes;
+}
+
+const withdrawalReasons = {'sale': 'Venta', 'consumption': 'Consumo', 'other': 'Otro'};
 
 const roastLevels = {'light': 'Claro', 'medium': 'Medio', 'dark': 'Oscuro'};
 

@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 Roast _roast(String roasterId) => Roast.fromJson({
       'id': 'r1', 'lot_id': 'l1', 'lot_code': 'GL-1', 'roaster_id': roasterId, 'roaster_name': 'Ana',
-      'roasted_at': '2026-02-01T10:00:00Z', 'green_in_kg': 10, 'roasted_out_kg': 8.5, 'loss_pct': 15.0,
+      'roasted_at': '2026-02-01T10:00:00Z', 'green_in_kg': 10, 'roasted_out_kg': 8.5, 'loss_pct': 15.0, 'roasted_stock_kg': 8.5,
       'duration_s': 600, 'drop_temp_c': 205.0, 'roast_level': 'medium', 'notes': null,
     });
 

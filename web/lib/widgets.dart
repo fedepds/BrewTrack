@@ -96,21 +96,27 @@ class ResponsiveTable<T> extends StatelessWidget {
             ],
           );
         }
-        return SizedBox(
-          width: double.infinity,
-          child: DataTable(
-            showCheckboxColumn: false,
-            columns: [for (final c in columns) DataColumn(label: Text(c))],
-            rows: [
-              for (final i in items)
-                DataRow(
-                  onSelectChanged: (_) => onTap(i),
-                  cells: [
-                    for (final s in cells(i))
-                      DataCell(FocusRing(child: s is Widget ? s : Text('$s'))),
-                  ],
-                ),
-            ],
+        // Desplazamiento horizontal: con 8 columnas la tabla no cabe en anchos medios.
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: box.maxWidth),
+            child: DataTable(
+              showCheckboxColumn: false,
+              columns: [for (final c in columns) DataColumn(label: Text(c))],
+              rows: [
+                for (final i in items)
+                  DataRow(
+                    onSelectChanged: (_) => onTap(i),
+                    cells: [
+                      for (final s in cells(i))
+                        DataCell(
+                          FocusRing(child: s is Widget ? s : Text('$s')),
+                        ),
+                    ],
+                  ),
+              ],
+            ),
           ),
         );
       },

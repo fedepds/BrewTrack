@@ -10,7 +10,7 @@ Summary _summary(String month, String? loss) => Summary.fromJson({
       'month': month, 'lots_in_stock': 7, 'stock_kg': '412.500',
       'received': {'lots': 2, 'kg': '120.000'},
       'roasted': {'roasts': 18, 'green_kg': '95.000', 'roasted_kg': '80.750'},
-      'loss_pct': loss,
+      'loss_pct': loss, 'roasted_stock_kg': 8.5,
     });
 
 /// Mes actual del taller fijo en 2026-10. Devuelve los meses pedidos a la API.

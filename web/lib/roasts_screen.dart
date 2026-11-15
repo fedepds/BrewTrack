@@ -137,6 +137,7 @@ class _RoastsScreenState extends ConsumerState<RoastsScreen> {
                     'Lote',
                     'Entrada',
                     'Salida',
+                    'Stock tostado',
                     'Merma',
                     'Nivel',
                     'Tostador',
@@ -146,6 +147,7 @@ class _RoastsScreenState extends ConsumerState<RoastsScreen> {
                     Text(r.lotCode, style: stencil),
                     m(fmtKg(r.greenInKg)),
                     m(fmtKg(r.roastedOutKg)),
+                    m(fmtKg(r.roastedStockKg)),
                     m(fmtPct(r.lossPct)),
                     LevelChip(r.roastLevel),
                     r.roasterName,
@@ -153,7 +155,7 @@ class _RoastsScreenState extends ConsumerState<RoastsScreen> {
                   title: (r) =>
                       codeTitle(r.lotCode, ' · ${fmtDate(r.roastedAt)}'),
                   subtitle: (r) =>
-                      '${fmtKg(r.greenInKg)} › ${fmtKg(r.roastedOutKg)} · ${fmtPct(r.lossPct)} · ${r.roasterName}',
+                      '${fmtKg(r.greenInKg)} › ${fmtKg(r.roastedOutKg)} · ${fmtPct(r.lossPct)} · stock ${fmtKg(r.roastedStockKg)} · ${r.roasterName}',
                   cardExtra: (r) => Align(
                     alignment: Alignment.centerLeft,
                     child: LevelChip(r.roastLevel),

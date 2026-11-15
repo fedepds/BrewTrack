@@ -43,7 +43,7 @@ Roast roast(String level) => Roast.fromJson({
   'roasted_at': '2026-02-01T10:00:00Z',
   'green_in_kg': 10,
   'roasted_out_kg': 8.5,
-  'loss_pct': 15,
+  'loss_pct': 15, 'roasted_stock_kg': 8.5,
   'duration_s': 600,
   'drop_temp_c': 200,
   'roast_level': level,
@@ -109,11 +109,12 @@ void main() {
                 'roasted_at': '2026-02-01T10:00:00Z',
                 'green_in_kg': 10,
                 'roasted_out_kg': 8.5,
-                'loss_pct': 15,
+                'loss_pct': 15, 'roasted_stock_kg': 8.5,
                 'duration_s': 600,
                 'drop_temp_c': 200,
                 'roast_level': level,
               },
+              'withdrawals': [],
               'lot': {
                 'id': 'l1',
                 'code': 'GL-2026-014',
@@ -374,7 +375,7 @@ void main() {
     'roasted_at': '2026-02-01T10:00:00Z',
     'green_in_kg': 10,
     'roasted_out_kg': 8.5,
-    'loss_pct': 15,
+    'loss_pct': 15, 'roasted_stock_kg': 8.5,
     'duration_s': 600,
     'drop_temp_c': temp,
     'roast_level': 'medium',
@@ -425,7 +426,7 @@ void main() {
       (
         const RoastDetailScreen('r1'),
         [
-          roastProvider.overrideWith((ref, id) async => RoastDetail.fromJson({...roastJson(), 'lot': lotJson()})),
+          roastProvider.overrideWith((ref, id) async => RoastDetail.fromJson({...roastJson(), 'lot': lotJson(), 'withdrawals': []})),
         ],
       ),
     ];
@@ -534,7 +535,7 @@ void main() {
         'detalle de tueste',
         const RoastDetailScreen('r1'),
         [
-          roastProvider.overrideWith((ref, id) async => RoastDetail.fromJson({...roastJson(), 'lot': lotJson()})),
+          roastProvider.overrideWith((ref, id) async => RoastDetail.fromJson({...roastJson(), 'lot': lotJson(), 'withdrawals': []})),
         ],
       ),
       ('login', const LoginScreen(), []),

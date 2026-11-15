@@ -6,6 +6,7 @@ import 'brand.dart';
 import 'providers.dart';
 import 'roast_form.dart';
 import 'util.dart';
+import 'withdrawals.dart';
 import 'widgets.dart';
 
 class RoastDetailScreen extends ConsumerWidget {
@@ -37,6 +38,7 @@ class RoastDetailScreen extends ConsumerWidget {
             'Entrada ${fmtKg(r.greenInKg)} › salida ${fmtKg(r.roastedOutKg)} · merma ${fmtPct(r.lossPct)}',
             style: mono,
           ),
+          Text('Stock tostado ${fmtKg(r.roastedStockKg)}', style: mono),
           Wrap(
             spacing: 8,
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -49,6 +51,31 @@ class RoastDetailScreen extends ConsumerWidget {
             ],
           ),
           if (r.notes != null) Text(r.notes!),
+          const Divider(height: 32),
+          Row(
+            children: [
+              Expanded(child: Text('Salidas', style: text.titleMedium)),
+              OutlinedButton(
+                onPressed: () => registerWithdrawal(context, ref, r),
+                child: const Text('Registrar salida'),
+              ),
+            ],
+          ),
+          WithdrawalList(
+            withdrawals: d.withdrawals,
+            isAdmin: user?.isAdmin ?? false,
+            onDelete: (w) async {
+              if (!await confirm(context, '¿Eliminar esta salida?')) return;
+              try {
+                await ref.read(apiProvider).send('DELETE', '/roasts/${r.id}/withdrawals/${w.id}');
+                ref.invalidate(roastProvider);
+                ref.invalidate(roastsProvider);
+                ref.invalidate(lotProvider);
+              } catch (e) {
+                if (context.mounted) toast(context, e);
+              }
+            },
+          ),
           const Divider(height: 32),
           Text('Lote de origen', style: text.titleMedium),
           codeTitle(
