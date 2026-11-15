@@ -60,6 +60,18 @@ class RoastOut(ORM):
     drop_temp_c: Num
     roast_level: Literal["light", "medium", "dark"]
     notes: str | None
+    roasted_stock_kg: Num  # columna calculada de Roast (models.py)
+
+
+class WithdrawalOut(ORM):
+    id: uuid.UUID
+    roast_id: uuid.UUID
+    user_id: uuid.UUID
+    user_name: str
+    withdrawn_at: datetime
+    kg: Num
+    reason: Literal["sale", "consumption", "other"]
+    notes: str | None
 
 
 class LotDetail(LotOut):
@@ -68,3 +80,4 @@ class LotDetail(LotOut):
 
 class RoastDetail(RoastOut):
     lot: LotOut
+    withdrawals: list[WithdrawalOut]

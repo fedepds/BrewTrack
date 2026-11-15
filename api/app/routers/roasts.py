@@ -5,15 +5,15 @@ from typing import Literal
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field, model_validator
-from sqlalchemy import func, select
+from sqlalchemy import exists, func, select
 from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.deps import admin_only, current_user
 from app.errors import ApiError
-from app.models import GreenLot, Roast, User
-from app.schemas import Page, RoastDetail, RoastOut
-from app.stock import used_kg
+from app.models import GreenLot, Roast, RoastWithdrawal, User
+from app.schemas import Page, RoastDetail, RoastOut, WithdrawalOut
+from app.stock import used_kg, withdrawn_kg
 
 router = APIRouter(prefix="/roasts", tags=["roasts"], dependencies=[Depends(current_user)])
 
@@ -46,6 +46,13 @@ class RoastPatch(BaseModel):
     duration_s: int = Field(default=None, gt=0, le=7200)
     drop_temp_c: Decimal = Field(default=None, gt=0, le=300, max_digits=4, decimal_places=1)
     roast_level: RoastLevel = None
+    notes: str | None = None
+
+
+class WithdrawalIn(BaseModel):
+    withdrawn_at: datetime
+    kg: Decimal = Field(**Kg)
+    reason: Literal["sale", "consumption", "other"]
     notes: str | None = None
 
 
@@ -120,7 +127,10 @@ def create_roast(body: RoastIn, user: User = Depends(current_user), db: Session 
 def patch_roast(
     roast_id: uuid.UUID, body: RoastPatch, user: User = Depends(current_user), db: Session = Depends(get_db)
 ):
-    roast = _roast_or_404(db, roast_id)
+    # of=Roast: los joined (lote, tostador) usan LEFT JOIN y Postgres rechaza FOR UPDATE sobre ellos
+    roast = db.get(Roast, roast_id, with_for_update={"of": Roast})
+    if not roast:
+        raise ApiError(404, "not_found", "Tueste no encontrado")
     if user.role != "admin" and roast.roaster_id != user.id:
         raise ApiError(403, "forbidden", "Solo el autor o un admin puede editar este tueste")
     changes = body.model_dump(exclude_unset=True)
@@ -128,16 +138,53 @@ def patch_roast(
     new_out = changes.get("roasted_out_kg", roast.roasted_out_kg)
     if new_out > new_in:
         raise ApiError(422, "validation_error", "roasted_out_kg no puede superar green_in_kg")
+    if new_out < withdrawn_kg(db, roast.id):
+        raise ApiError(409, "insufficient_roasted_stock", "roasted_out_kg es menor que lo ya retirado")
     lot = db.get(GreenLot, roast.lot_id, with_for_update=True)
     _check_stock(db, lot, new_in, exclude=roast.id)
     for k, v in changes.items():
         setattr(roast, k, v)
     roast.loss_pct = loss_pct(new_in, new_out)
     db.commit()
+    db.refresh(roast)
     return roast
 
 
 @router.delete("/{roast_id}", status_code=204, dependencies=[Depends(admin_only)])
 def delete_roast(roast_id: uuid.UUID, db: Session = Depends(get_db)):
-    db.delete(_roast_or_404(db, roast_id))
+    roast = _roast_or_404(db, roast_id)
+    if db.scalar(select(exists().where(RoastWithdrawal.roast_id == roast.id))):
+        raise ApiError(409, "roast_has_withdrawals", "El tueste tiene salidas y no se puede borrar")
+    db.delete(roast)
+    db.commit()
+
+
+@router.get("/{roast_id}/withdrawals", response_model=list[WithdrawalOut])
+def list_withdrawals(roast_id: uuid.UUID, db: Session = Depends(get_db)):
+    return _roast_or_404(db, roast_id).withdrawals
+
+
+@router.post("/{roast_id}/withdrawals", response_model=WithdrawalOut, status_code=201)
+def create_withdrawal(
+    roast_id: uuid.UUID, body: WithdrawalIn, user: User = Depends(current_user), db: Session = Depends(get_db)
+):
+    roast = db.get(Roast, roast_id, with_for_update={"of": Roast})  # serializa salidas del mismo tueste
+    if not roast:
+        raise ApiError(404, "not_found", "Tueste no encontrado")
+    available = roast.roasted_out_kg - withdrawn_kg(db, roast.id)
+    if body.kg > available:
+        raise ApiError(409, "insufficient_roasted_stock", f"Stock tostado disponible: {available} kg")
+    w = RoastWithdrawal(**body.model_dump(), roast_id=roast.id, user_id=user.id)
+    db.add(w)
+    db.commit()
+    db.refresh(w)
+    return w
+
+
+@router.delete("/{roast_id}/withdrawals/{withdrawal_id}", status_code=204, dependencies=[Depends(admin_only)])
+def delete_withdrawal(roast_id: uuid.UUID, withdrawal_id: uuid.UUID, db: Session = Depends(get_db)):
+    w = db.get(RoastWithdrawal, withdrawal_id)
+    if not w or w.roast_id != roast_id:
+        raise ApiError(404, "not_found", "Salida no encontrada")
+    db.delete(w)
     db.commit()
