@@ -44,7 +44,7 @@ Casos que la spec implica y que conviene cubrir con un test (cada uno va en la t
 
 ---
 
-### Tarea 1: Modelo, migración y stock tostado
+### Task 1: Modelo, migración y stock tostado
 
 **Archivos:**
 - Modificar: `api/app/models.py`
@@ -65,7 +65,7 @@ Casos que la spec implica y que conviene cubrir con un test (cada uno va en la t
 - [ ] **Paso 5:** `cd api && pytest -v` → todo PASA (el fixture aplica `upgrade head` y `downgrade base`).
 - [ ] **Paso 6:** commit `feat(api): tabla roast_withdrawals y stock tostado calculado`.
 
-### Tarea 2: Endpoints de salidas y reglas en tuestes
+### Task 2: Endpoints de salidas y reglas en tuestes
 
 **Archivos:**
 - Modificar: `api/app/schemas.py`, `api/app/routers/roasts.py`
@@ -102,7 +102,7 @@ Casos que la spec implica y que conviene cubrir con un test (cada uno va en la t
 - [ ] **Paso 4:** `cd api && pytest -v` → todo PASA, incluidos `test_roasts.py` y `test_green_lots.py` (sus respuestas ya traen `roasted_stock_kg`).
 - [ ] **Paso 5:** commit `feat(api): salidas de café tostado por tueste`.
 
-### Tarea 3: Frontend
+### Task 3: Frontend
 
 **Archivos:**
 - Modificar: `web/lib/models.dart`, `web/lib/roast_detail_screen.dart`, `web/lib/roasts_screen.dart`
@@ -129,7 +129,7 @@ Casos que la spec implica y que conviene cubrir con un test (cada uno va en la t
 - [ ] **Paso 6:** `cd web && flutter analyze && flutter test` → sin problemas y todo PASA.
 - [ ] **Paso 7:** commit `feat(web): stock tostado y registro de salidas en el detalle del tueste`.
 
-### Tarea 4: Cierre
+### Task 4: Cierre
 
 - [ ] `cd api && pytest`, `cd web && flutter analyze && flutter test`.
 - [ ] `docker compose up --build -d`: `api` queda sano (`/api/v1/health`), la migración `0002` se aplica al arrancar y http://localhost:8081 carga. Registra una salida a mano y comprueba que el stock baja.
