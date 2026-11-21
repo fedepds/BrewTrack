@@ -7,6 +7,8 @@
 
 El Service `web` manda el tráfico al color que diga su selector.
 
+Para instalar con un solo comando y elegir entorno (dev o prod), usa la chart de Helm: ver [`helm-chart/README.md`](../helm-chart/README.md).
+
 ## Levantar
 
 ```sh

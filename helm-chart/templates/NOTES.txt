@@ -1,10 +1,23 @@
 BrewTrack quedó instalado como "{{ .Release.Name }}" en el namespace "{{ .Release.Namespace }}".
 
 1. Abrir la web:
+{{- if .Values.ingress.enabled }}
+
+   http://{{ .Values.ingress.host }}
+
+   El host debe llegar al controlador de Ingress. En minikube, ver
+   helm-chart/README.md (línea de /etc/hosts o minikube tunnel).
+{{- else if eq .Values.web.service.type "NodePort" }}
+
+   El Service es NodePort. En minikube, esto imprime la URL:
+
+   minikube service {{ .Release.Name }}-web -n {{ .Release.Namespace }} --url
+{{- else }}
 
    kubectl -n {{ .Release.Namespace }} port-forward svc/{{ .Release.Name }}-web 8081:{{ .Values.web.service.port }}
 
    Luego abre http://localhost:8081 (si 8081 está ocupado, usa otro puerto local).
+{{- end }}
 
 2. Comprobar que la web llega a la API:
 

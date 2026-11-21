@@ -23,3 +23,7 @@ web:
   replicas: 1
   service: { type: ClusterIP, port: 8080 }
   resources: {}
+
+# Apagado: hace falta un controlador de Ingress en el clúster.
+# className vacío: usa la clase por defecto del clúster.
+ingress: { enabled: false, className: "", host: brewtrack.local, annotations: {} }

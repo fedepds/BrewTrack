@@ -103,5 +103,41 @@ check_not "existingSecret no deja rastro de rel-secrets" "$ext" "rel-secrets"
 count "SEED_ADMIN_* opcionales desde el Secret" "$ext" "key: SEED_ADMIN_(EMAIL|PASSWORD)$" 2
 count "SEED_ADMIN_* marcados optional" "$ext" "optional: true$" 2
 
+# --- #9: Ingress, values-dev y values-prod ---
+for f in values.yaml values-dev.yaml values-prod.yaml; do
+  if helm lint "$CHART" -f "$CHART/$f" >/dev/null 2>&1; then pass "helm lint -f $f"; else fail "helm lint -f $f"; fi
+done
+dev="$(helm template rel "$CHART" -n ns -f "$CHART/values-dev.yaml" 2>&1)"
+prod="$(helm template rel "$CHART" -n ns -f "$CHART/values-prod.yaml" 2>&1)"
+check_not "sin Ingress por defecto" "$out" "^kind: Ingress$"
+check_not "sin Ingress en dev" "$dev" "^kind: Ingress$"
+check "Ingress en prod" "$prod" "^kind: Ingress$"
+check "Ingress con clase nginx en prod" "$prod" "ingressClassName: nginx$"
+check "Ingress con host brewtrack.local en prod" "$prod" "host: \"?brewtrack\.local\"?$"
+check "Ingress manda a rel-web" "$prod" "name: rel-web$"
+ing="$(helm template rel "$CHART" -n ns --set ingress.enabled=true,ingress.host=cafe.test,ingress.className=otra \
+  --set-string 'ingress.annotations.ejemplo\.io/a=b' 2>&1)"
+check "Ingress con ingress.enabled=true" "$ing" "^kind: Ingress$"
+check "host desde los valores" "$ing" "host: \"?cafe\.test\"?$"
+check "clase desde los valores" "$ing" "ingressClassName: otra$"
+check "anotaciones desde los valores" "$ing" 'ejemplo\.io/a: "?b"?$'
+check_not "sin ingressClassName si la clase está vacía" "$(helm template rel "$CHART" --set ingress.enabled=true 2>&1)" "ingressClassName"
+check "dev: 1 réplica de web" "$dev" "replicas: 1$"
+check_not "dev: sin 2 réplicas" "$dev" "replicas: 2$"
+check "prod: 2 réplicas de web" "$prod" "replicas: 2$"
+check "dev: lotes de ejemplo" "$dev" 'SEED_DEMO_LOTS: "true"'
+check "prod: sin lotes de ejemplo" "$prod" 'SEED_DEMO_LOTS: "false"'
+check "dev: web NodePort" "$dev" "type: NodePort$"
+check_not "prod: sin NodePort" "$prod" "type: NodePort$"
+check "prod: volumen de 10Gi" "$prod" "storage: 10Gi"
+count "dev: recursos en los 3" "$dev" "^ *resources:$" 4
+count "prod: recursos en los 3" "$prod" "^ *resources:$" 4
+dres="$(grep -A6 '^ *resources:$' <<<"$dev" | grep -E 'cpu|memory' | sort)"
+pres="$(grep -A6 '^ *resources:$' <<<"$prod" | grep -E 'cpu|memory' | sort)"
+if [ -n "$dres" ] && [ "$dres" != "$pres" ]; then pass "recursos distintos entre dev y prod"; else fail "recursos distintos entre dev y prod"; fi
+check "NOTES: NodePort" "$(cat "$CHART/templates/NOTES.txt")" "NodePort"
+check "NOTES: Ingress" "$(cat "$CHART/templates/NOTES.txt")" "ingress\.enabled"
+check "README de la chart" "$(cat "$CHART/README.md" 2>/dev/null)" "values-prod\.yaml"
+
 if [ "$fails" -eq 0 ]; then echo "todo ok"; else echo "$fails fallos"; fi
 exit "$fails"

@@ -27,6 +27,7 @@ Resumen de lo que no se rompe:
 - **Tests API:** `cd api && pytest` (necesita el Postgres de pruebas; ver `docs/superpowers/plans/2026-10-07-brewtrack.md`, Task 2)
 - **Tests frontend:** `cd web && flutter test`
 - **Backup:** `docker compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql`
+- **Kubernetes con Helm:** `helm install brewtrack ./helm-chart -n brewtrack-dev --create-namespace -f helm-chart/values-dev.yaml` (o `values-prod.yaml`). Ver `helm-chart/README.md`.
 - **CI/CD:** `Jenkinsfile` (tests, Semgrep, Trivy y deploy a minikube en cada push a `master`). Ver `docs/ci/jenkins.md`.
 
 ## Puertos del host
