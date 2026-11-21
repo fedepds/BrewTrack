@@ -1,5 +1,8 @@
 # Valores por defecto: sirven en minikube con las imágenes cargadas a mano.
 # Las claves no van aquí: la chart las genera al instalar.
+# Nombre de un Secret propio con las mismas claves que <release>-secrets y, si
+# quieres, las del primer admin (SEED_ADMIN_*). Vacío: la chart crea el suyo.
+existingSecret: ""
 db:
   image: { repository: localhost/brewtrack-db, tag: "0.1.0", pullPolicy: IfNotPresent }
   service: { port: 5432 }

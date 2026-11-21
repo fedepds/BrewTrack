@@ -43,5 +43,15 @@ check_not "sin claves en archivos de la chart" "$(cat "$CHART"/values*.yaml "$CH
 jwt="$(sed -n 's/^ *JWT_SECRET: *"\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' <<<"$out" | head -1)"
 if [ -n "$jwt" ] && [ "$(printf %s "$jwt" | base64 -d | wc -c)" -ge 32 ]; then pass "JWT_SECRET de 32 caracteres o más"; else fail "JWT_SECRET de 32 caracteres o más"; fi
 
+# --- #7: el Secret dura lo que la instalación, y existingSecret ---
+check "Secret con resource-policy keep" "$out" 'helm\.sh/resource-policy: keep'
+count "Secret y 5 referencias a rel-secrets" "$out" "name: rel-secrets$" 6
+ext="$(helm template rel "$CHART" -n ns --set existingSecret=mio 2>&1)"
+check_not "existingSecret no renderiza Secret" "$ext" "^kind: Secret$"
+count "las 5 referencias leen el Secret indicado" "$ext" "name: mio$" 5
+check_not "existingSecret no deja rastro de rel-secrets" "$ext" "rel-secrets"
+count "SEED_ADMIN_* opcionales desde el Secret" "$ext" "key: SEED_ADMIN_(EMAIL|PASSWORD)$" 2
+count "SEED_ADMIN_* marcados optional" "$ext" "optional: true$" 2
+
 if [ "$fails" -eq 0 ]; then echo "todo ok"; else echo "$fails fallos"; fi
 exit "$fails"

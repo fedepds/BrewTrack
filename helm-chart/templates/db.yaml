@@ -49,7 +49,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
+                  name: {{ include "brewtrack.secretName" . }}
                   key: POSTGRES_PASSWORD
             # Subcarpeta: algunos discos traen "lost+found" en la raíz y Postgres no arranca.
             - name: PGDATA

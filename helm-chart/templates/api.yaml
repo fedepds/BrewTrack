@@ -46,7 +46,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
+                  name: {{ include "brewtrack.secretName" . }}
                   key: POSTGRES_PASSWORD
             # $(VAR) usa una variable definida más arriba en esta lista.
             - name: DATABASE_URL
@@ -54,8 +54,21 @@ spec:
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Release.Name }}-secrets
+                  name: {{ include "brewtrack.secretName" . }}
                   key: JWT_SECRET
+            # Primer admin: solo si el Secret trae estas claves.
+            - name: SEED_ADMIN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "brewtrack.secretName" . }}
+                  key: SEED_ADMIN_EMAIL
+                  optional: true
+            - name: SEED_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "brewtrack.secretName" . }}
+                  key: SEED_ADMIN_PASSWORD
+                  optional: true
           ports:
             - containerPort: 8000
           # Si db no está lista, la API falla y Kubernetes la reinicia hasta que conecta.

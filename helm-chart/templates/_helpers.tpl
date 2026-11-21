@@ -11,3 +11,8 @@ app.kubernetes.io/name: {{ (index . 0).Chart.Name }}
 app.kubernetes.io/instance: {{ (index . 0).Release.Name }}
 app.kubernetes.io/component: {{ index . 1 }}
 {{- end }}
+
+{{/* Secret con las claves: el de existingSecret o el que crea la chart. */}}
+{{- define "brewtrack.secretName" -}}
+{{ .Values.existingSecret | default (printf "%s-secrets" .Release.Name) }}
+{{- end }}
