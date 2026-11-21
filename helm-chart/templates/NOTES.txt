@@ -1,0 +1,19 @@
+BrewTrack quedó instalado como "{{ .Release.Name }}" en el namespace "{{ .Release.Namespace }}".
+
+1. Abrir la web:
+
+   kubectl -n {{ .Release.Namespace }} port-forward svc/{{ .Release.Name }}-web 8081:{{ .Values.web.service.port }}
+
+   Luego abre http://localhost:8081 (si 8081 está ocupado, usa otro puerto local).
+
+2. Comprobar que la web llega a la API:
+
+   helm test {{ .Release.Name }} -n {{ .Release.Namespace }}
+
+3. Leer una clave generada (POSTGRES_PASSWORD o JWT_SECRET):
+
+   kubectl -n {{ .Release.Namespace }} get secret {{ .Release.Name }}-secrets -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d; echo
+
+4. Crear el primer admin (pide la contraseña, de 8 caracteres o más):
+
+   kubectl -n {{ .Release.Namespace }} exec -it deploy/{{ .Release.Name }}-api -- python -m app.cli create-admin --email <correo> --name "<nombre>"

@@ -77,6 +77,12 @@ spec:
               path: /api/v1/health
               port: 8000
             periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 20
       volumes:
         - name: tmp
           emptyDir: {}

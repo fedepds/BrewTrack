@@ -34,9 +34,15 @@ check "API_UPSTREAM con nombre completo" "$out" 'http://rel-api\.ns\.svc\.cluste
 check "uid 70 para db" "$out" "runAsUser: 70$"
 check "uid 1000 para api" "$out" "runAsUser: 1000$"
 check "uid 101 para web" "$out" "runAsUser: 101$"
-count "runAsNonRoot en los 3 pods" "$out" "runAsNonRoot: true" 3
-count "raíz de solo lectura en los 3 contenedores" "$out" "readOnlyRootFilesystem: true" 3
+count "runAsNonRoot en los 3 pods y el de test" "$out" "runAsNonRoot: true" 4
+count "raíz de solo lectura en los 3 contenedores y el de test" "$out" "readOnlyRootFilesystem: true" 4
 count "readiness en los 3" "$out" "readinessProbe:" 3
+
+# --- #8: liveness probes y pod de helm test ---
+count "liveness en los 3" "$out" "livenessProbe:" 3
+check "pod de test con hook" "$out" 'helm\.sh/hook: test'
+check "el test pide /api/v1/health a través de web" "$out" 'http://rel-web:8080/api/v1/health'
+check "NOTES.txt existe" "$(cat "$CHART"/templates/NOTES.txt 2>/dev/null)" "create-admin"
 
 # Las claves se generan al instalar: ningún archivo versionado de la chart las trae.
 check_not "sin claves en archivos de la chart" "$(cat "$CHART"/values*.yaml "$CHART"/Chart.yaml 2>/dev/null)" "(PASSWORD|SECRET)"
