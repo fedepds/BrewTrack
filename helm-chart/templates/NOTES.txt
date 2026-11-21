@@ -12,7 +12,7 @@ BrewTrack quedó instalado como "{{ .Release.Name }}" en el namespace "{{ .Relea
 
 3. Leer una clave generada (POSTGRES_PASSWORD o JWT_SECRET):
 
-   kubectl -n {{ .Release.Namespace }} get secret {{ .Release.Name }}-secrets -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d; echo
+   kubectl -n {{ .Release.Namespace }} get secret {{ include "brewtrack.secretName" . }} -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d; echo
 
 4. Crear el primer admin (pide la contraseña, de 8 caracteres o más):
 
