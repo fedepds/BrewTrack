@@ -68,6 +68,12 @@ spec:
             exec:
               command: ["pg_isready", "-U", "brewtrack"]
             periodSeconds: 5
+          # Margen para el primer initdb antes de reiniciar el pod.
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "brewtrack"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
       volumes:
         - name: run
           emptyDir: {}
