@@ -34,8 +34,8 @@ check "API_UPSTREAM con nombre completo" "$out" 'http://rel-api\.ns\.svc\.cluste
 check "uid 70 para db" "$out" "runAsUser: 70$"
 check "uid 1000 para api" "$out" "runAsUser: 1000$"
 check "uid 101 para web" "$out" "runAsUser: 101$"
-count "runAsNonRoot en los 3 pods" "$out" "runAsNonRoot: true" 3
-count "raíz de solo lectura en los 3 contenedores" "$out" "readOnlyRootFilesystem: true" 3
+count "runAsNonRoot en los 3 pods y el de test" "$out" "runAsNonRoot: true" 4
+count "raíz de solo lectura en los 3 contenedores y el de test" "$out" "readOnlyRootFilesystem: true" 4
 count "readiness en los 3" "$out" "readinessProbe:" 3
 
 # --- #6: valores configurables y ConfigMap ---
@@ -82,11 +82,26 @@ check_not "sin storageClassName por defecto" "$out" "storageClassName"
 
 other="$(helm template otro "$CHART" -n tienda 2>&1)"
 check "API_UPSTREAM con otro release y namespace" "$other" 'API_UPSTREAM: "http://otro-api\.tienda\.svc\.cluster\.local:8000"'
+# --- #8: liveness probes y pod de helm test ---
+count "liveness en los 3" "$out" "livenessProbe:" 3
+check "pod de test con hook" "$out" 'helm\.sh/hook: test'
+check "el test pide /api/v1/health a través de web" "$out" 'http://rel-web:8080/api/v1/health'
+check "NOTES.txt existe" "$(cat "$CHART"/templates/NOTES.txt 2>/dev/null)" "create-admin"
 
 # Las claves se generan al instalar: ningún archivo versionado de la chart las trae.
 check_not "sin claves en archivos de la chart" "$(cat "$CHART"/values*.yaml "$CHART"/Chart.yaml 2>/dev/null)" "(PASSWORD|SECRET)"
 jwt="$(sed -n 's/^ *JWT_SECRET: *"\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' <<<"$out" | head -1)"
 if [ -n "$jwt" ] && [ "$(printf %s "$jwt" | base64 -d | wc -c)" -ge 32 ]; then pass "JWT_SECRET de 32 caracteres o más"; else fail "JWT_SECRET de 32 caracteres o más"; fi
+
+# --- #7: el Secret dura lo que la instalación, y existingSecret ---
+check "Secret con resource-policy keep" "$out" 'helm\.sh/resource-policy: keep'
+count "Secret y 5 referencias a rel-secrets" "$out" "name: rel-secrets$" 6
+ext="$(helm template rel "$CHART" -n ns --set existingSecret=mio 2>&1)"
+check_not "existingSecret no renderiza Secret" "$ext" "^kind: Secret$"
+count "las 5 referencias leen el Secret indicado" "$ext" "name: mio$" 5
+check_not "existingSecret no deja rastro de rel-secrets" "$ext" "rel-secrets"
+count "SEED_ADMIN_* opcionales desde el Secret" "$ext" "key: SEED_ADMIN_(EMAIL|PASSWORD)$" 2
+count "SEED_ADMIN_* marcados optional" "$ext" "optional: true$" 2
 
 if [ "$fails" -eq 0 ]; then echo "todo ok"; else echo "$fails fallos"; fi
 exit "$fails"
