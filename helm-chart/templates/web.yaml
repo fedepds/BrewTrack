@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "brewtrack.labels" (list . "web") | nindent 4 }}
 spec:
+  type: {{ .Values.web.service.type }}
   selector:
     {{- include "brewtrack.selector" (list . "web") | nindent 4 }}
   ports:
@@ -26,6 +27,9 @@ spec:
     metadata:
       labels:
         {{- include "brewtrack.labels" (list . "web") | nindent 8 }}
+      # Cambia si cambia el ConfigMap: helm upgrade reinicia el pod.
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       # uid 101 = usuario nginx de la imagen alpine.
       securityContext:
@@ -42,6 +46,10 @@ spec:
         - name: web
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
           imagePullPolicy: {{ .Values.web.image.pullPolicy }}
+          {{- with .Values.web.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -53,10 +61,9 @@ spec:
               mountPath: /var/cache/nginx
             - name: tmp
               mountPath: /tmp
-          env:
-            # Nombre completo del Service api: el resolver de nginx no completa nombres cortos.
-            - name: API_UPSTREAM
-              value: http://{{ .Release.Name }}-api.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.api.service.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
           ports:
             - containerPort: 8080
           readinessProbe:

@@ -1,0 +1,12 @@
+# Valores no secretos que leen api y web con envFrom.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  labels:
+    {{- include "brewtrack.labels" (list . "api") | nindent 4 }}
+data:
+  TIMEZONE: {{ .Values.api.config.timezone | quote }}
+  SEED_DEMO_LOTS: {{ .Values.api.config.seedDemoLots | toString | quote }}
+  # Nombre completo del Service api: el resolver de nginx no completa nombres cortos.
+  API_UPSTREAM: {{ printf "http://%s-api.%s.svc.cluster.local:%v" .Release.Name .Release.Namespace .Values.api.service.port | quote }}

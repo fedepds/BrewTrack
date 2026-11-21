@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "brewtrack.labels" (list . "api") | nindent 4 }}
 spec:
+  type: {{ .Values.api.service.type }}
   selector:
     {{- include "brewtrack.selector" (list . "api") | nindent 4 }}
   ports:
@@ -18,8 +19,8 @@ metadata:
   labels:
     {{- include "brewtrack.labels" (list . "api") | nindent 4 }}
 spec:
-  # ponytail: 1 réplica fija; con más, cada una corre "alembic upgrade head" al arrancar. Pasar las migraciones a un Job antes de escalar.
-  replicas: 1
+  # ponytail: ignora api.replicas; con más, cada una corre "alembic upgrade head" al arrancar. Pasar las migraciones a un Job antes de escalar.
+  replicas: 1  # fija por las migraciones al arrancar
   selector:
     matchLabels:
       {{- include "brewtrack.selector" (list . "api") | nindent 6 }}
@@ -27,6 +28,9 @@ spec:
     metadata:
       labels:
         {{- include "brewtrack.labels" (list . "api") | nindent 8 }}
+      # Cambia si cambia el ConfigMap: helm upgrade reinicia el pod.
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       # uid numérico: con "USER app" el kubelet no puede comprobar runAsNonRoot.
       securityContext:
@@ -36,12 +40,19 @@ spec:
         - name: api
           image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
           imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          {{- with .Values.api.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:

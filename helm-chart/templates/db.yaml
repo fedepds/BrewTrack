@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "brewtrack.labels" (list . "db") | nindent 4 }}
 spec:
+  type: {{ .Values.db.service.type }}
   selector:
     {{- include "brewtrack.selector" (list . "db") | nindent 4 }}
   ports:
@@ -38,6 +39,10 @@ spec:
         - name: postgres
           image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
           imagePullPolicy: {{ .Values.db.image.pullPolicy }}
+          {{- with .Values.db.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -78,6 +83,9 @@ spec:
         name: pgdata
       spec:
         accessModes: ["ReadWriteOnce"]
+        {{- with .Values.db.persistence.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
         resources:
           requests:
             storage: {{ .Values.db.persistence.size }}

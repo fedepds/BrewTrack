@@ -2,14 +2,21 @@
 # Las claves no van aquí: la chart las genera al instalar.
 db:
   image: { repository: localhost/brewtrack-db, tag: "0.1.0", pullPolicy: IfNotPresent }
-  service: { port: 5432 }
-  persistence: { size: 1Gi }
+  service: { type: ClusterIP, port: 5432 }
+  resources: {}
+  # storageClass vacío: usa la clase por defecto del clúster.
+  persistence: { size: 1Gi, storageClass: "" }
 
 api:
   image: { repository: localhost/brewtrack-api, tag: "0.1.0", pullPolicy: IfNotPresent }
-  service: { port: 8000 }
+  # La plantilla fija 1 réplica, diga lo que diga este valor: ver templates/api.yaml.
+  replicas: 1
+  service: { type: ClusterIP, port: 8000 }
+  resources: {}
+  config: { timezone: America/Argentina/Buenos_Aires, seedDemoLots: "true" }
 
 web:
   image: { repository: localhost/brewtrack-web, tag: "0.1.0", pullPolicy: IfNotPresent }
   replicas: 1
-  service: { port: 8080 }
+  service: { type: ClusterIP, port: 8080 }
+  resources: {}
