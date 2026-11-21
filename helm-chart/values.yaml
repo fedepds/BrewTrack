@@ -1,0 +1,15 @@
+# Valores por defecto: sirven en minikube con las imágenes cargadas a mano.
+# Las claves no van aquí: la chart las genera al instalar.
+db:
+  image: { repository: localhost/brewtrack-db, tag: "0.1.0", pullPolicy: IfNotPresent }
+  service: { port: 5432 }
+  persistence: { size: 1Gi }
+
+api:
+  image: { repository: localhost/brewtrack-api, tag: "0.1.0", pullPolicy: IfNotPresent }
+  service: { port: 8000 }
+
+web:
+  image: { repository: localhost/brewtrack-web, tag: "0.1.0", pullPolicy: IfNotPresent }
+  replicas: 1
+  service: { port: 8080 }

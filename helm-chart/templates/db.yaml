@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-db
+  labels:
+    {{- include "brewtrack.labels" (list . "db") | nindent 4 }}
+spec:
+  selector:
+    {{- include "brewtrack.selector" (list . "db") | nindent 4 }}
+  ports:
+    - port: {{ .Values.db.service.port }}
+      targetPort: 5432
+---
+# StatefulSet: el pod conserva su disco al reiniciarse y helm uninstall no borra el PVC.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-db
+  labels:
+    {{- include "brewtrack.labels" (list . "db") | nindent 4 }}
+spec:
+  serviceName: {{ .Release.Name }}-db
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "brewtrack.selector" (list . "db") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "brewtrack.labels" (list . "db") | nindent 8 }}
+    spec:
+      # uid 70 = usuario postgres de la imagen alpine; fsGroup deja el disco escribible.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        fsGroup: 70
+      containers:
+        - name: postgres
+          image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+          imagePullPolicy: {{ .Values.db.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          env:
+            - name: POSTGRES_USER
+              value: brewtrack
+            - name: POSTGRES_DB
+              value: brewtrack
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secrets
+                  key: POSTGRES_PASSWORD
+            # Subcarpeta: algunos discos traen "lost+found" en la raíz y Postgres no arranca.
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+            # Raíz de solo lectura: el socket y los temporales van a discos en memoria.
+            - name: run
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "brewtrack"]
+            periodSeconds: 5
+      volumes:
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.db.persistence.size }}

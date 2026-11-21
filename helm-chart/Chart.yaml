@@ -1,0 +1,7 @@
+apiVersion: v2
+name: brewtrack
+description: BrewTrack (db, api y web) en Kubernetes.
+type: application
+version: 0.1.0
+# Sigue la etiqueta de la imagen de la API.
+appVersion: "0.1.0"
