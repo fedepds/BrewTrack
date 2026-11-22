@@ -21,9 +21,9 @@ rules:
   - apiGroups: [discovery.k8s.io]
     resources: [endpointslices]
     verbs: [get, list, watch]
-  # Leer /metrics/cadvisor del kubelet a través del API server.
+  # Leer /metrics/cadvisor del kubelet. Sin nodes/proxy: ese permiso deja ejecutar comandos en los pods del nodo (Trivy KSV-0047).
   - apiGroups: [""]
-    resources: [nodes/proxy, nodes/metrics]
+    resources: [nodes/metrics]
     verbs: [get]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -64,22 +64,17 @@ data:
           - source_labels: [__meta_kubernetes_namespace]
             target_label: namespace
 
-      # cAdvisor de cada nodo, pedido al API server (no hace falta llegar al kubelet directo).
+      # cAdvisor de cada nodo, pedido directo al kubelet (IP:10250, la dirección que da el rol node).
+      # El certificado del kubelet es autofirmado y no lo firma la CA del clúster: no se puede verificar.
       - job_name: kubernetes-cadvisor
         scheme: https
+        metrics_path: /metrics/cadvisor
         tls_config:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
         authorization:
           credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
         kubernetes_sd_configs:
           - role: node
-        relabel_configs:
-          - target_label: __address__
-            replacement: kubernetes.default.svc:443
-          - source_labels: [__meta_kubernetes_node_name]
-            regex: (.+)
-            target_label: __metrics_path__
-            replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
         # Solo los contenedores de BrewTrack: el resto del clúster no aporta al dashboard y llena el disco.
         metric_relabel_configs:
           - source_labels: [namespace]

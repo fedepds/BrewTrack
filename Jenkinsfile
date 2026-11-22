@@ -63,7 +63,7 @@ pipeline {
         }
 
         stage('Tests web') {
-          agent { docker { image 'ghcr.io/cirruslabs/flutter:3.47.0'; args '-u root'; reuseNode true } }
+          agent { docker { image 'ghcr.io/cirruslabs/flutter:3.44.0'; args '-u root'; reuseNode true } }
           steps {
             // El SDK es de root; al final se devuelve el workspace al usuario de Jenkins.
             sh '''

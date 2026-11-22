@@ -111,7 +111,7 @@ flowchart LR
 | Imagen | Base | Multi-stage | Usuario | Notas |
 |---|---|---|---|---|
 | `brewtrack-api` | `python:3.13-slim` | Sí: instala en una etapa y copia solo el resultado | `app` (uid 1000) | Quita `pip` y `setuptools` de la imagen final (Trivy los marcaba) |
-| `brewtrack-web` | `ghcr.io/cirruslabs/flutter:3.47.0` → `nginx:1.30-alpine` | Sí: compila Flutter y copia solo `build/web` | `nginx` (uid 101) | Escucha en 8080: un usuario sin privilegios no puede usar el 80 |
+| `brewtrack-web` | `ghcr.io/cirruslabs/flutter:3.44.0` → `nginx:1.30-alpine` | Sí: compila Flutter y copia solo `build/web` | `nginx` (uid 101) | Escucha en 8080: un usuario sin privilegios no puede usar el 80 |
 | `brewtrack-db` | `postgres:17-alpine` | No hace falta | `postgres` (uid 70) | Imagen propia solo para aplicar parches de Alpine |
 
 Todas las versiones están fijas; ninguna imagen usa `latest`, `stable` ni una etiqueta sin versión. Tamaño, capas y optimizaciones: `reports/image-analysis.md` (_pendiente: análisis con Dive_).
@@ -395,7 +395,7 @@ Viene de la entrega anterior (`docs/security/revision_seguridad.md`) y sigue en 
 | 2 | Hubo dos Helm charts en ramas paralelas: la de la spec 008 y otra hecha para este laboratorio. Chocaban en `helm-chart/` y en el número de spec. | Nos quedamos con la de la spec 008, que ya estaba aprobada y tiene nombres por release, `helm test` y su propia prueba de render. Le sumamos lo que pide Kyverno y 17 controles nuevos en `tests/render.sh`. Pipeline, Prometheus, scripts y documentación pasaron a sus nombres. La spec de métricas pasó a ser la 009. |
 | 3 | Imágenes con la misma etiqueta en cada build (`0.1.0`) y `imagePullPolicy: IfNotPresent`: el nodo seguía corriendo la imagen vieja. | Etiqueta `versión-commit` en cada build (`0.1.0-<commit corto>`). |
 | 4 | El registro local habla HTTP y containerd del nodo exige HTTPS. Además, el puerto 5000 lo usan AirPlay en macOS y `flutter run`. | `registry-up.sh` declara el registro en `/etc/containerd/certs.d/brewtrack-registry:5000/hosts.toml`. Publicamos en el 5001 y lo agregamos a la tabla de puertos de `AGENTS.md`. |
-| 5 | Las imágenes usaban `flutter:stable`, `nginx:alpine` y etiquetas como `rebranding` o `master`: dos builds del mismo commit podían dar imágenes distintas. | Versiones fijas (`flutter:3.47.0`, `nginx:1.30-alpine`) y números de versión en la web (`0.1.0`, `0.2.0`). Kyverno ahora rechaza `latest` y las imágenes sin etiqueta. |
+| 5 | Las imágenes usaban `flutter:stable`, `nginx:alpine` y etiquetas como `rebranding` o `master`: dos builds del mismo commit podían dar imágenes distintas. | Versiones fijas (`flutter:3.44.0`, `nginx:1.30-alpine`) y números de versión en la web (`0.1.0`, `0.2.0`). Kyverno ahora rechaza `latest` y las imágenes sin etiqueta. |
 | 6 | Ningún pod tenía límites de CPU ni de memoria por defecto, tampoco el de `helm test`: al activar la política 02 de Kyverno, se habrían rechazado. | Límites por defecto en la chart (incluido el pod de test), Prometheus y Grafana **antes** de activar las políticas. `tests/render.sh` lo controla. |
 | 7 | Kyverno en modo Deny en todo el clúster habría bloqueado los pods del sistema y a Falco, que necesita correr privilegiado. | Excluimos esos namespaces de las cuatro políticas. |
 | 8 | Prometheus contaba sus propios pedidos a `/metrics` como tráfico de la API (uno cada 15 s). | Las consultas del dashboard filtran `handler!="/metrics"`. |

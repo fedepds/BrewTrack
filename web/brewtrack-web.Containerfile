@@ -1,5 +1,5 @@
-# Versiones fijas (nunca "stable" ni "latest"). Flutter >= 3.47 lo pide pubspec.lock.
-ARG FLUTTER_VERSION=3.47.0
+# Versiones fijas (nunca "stable" ni "latest"). 3.44.0 es la última que publica cirruslabs; pubspec.lock pide >= 3.44.
+ARG FLUTTER_VERSION=3.44.0
 FROM ghcr.io/cirruslabs/flutter:${FLUTTER_VERSION} AS build
 WORKDIR /app
 COPY pubspec.yaml pubspec.lock ./
