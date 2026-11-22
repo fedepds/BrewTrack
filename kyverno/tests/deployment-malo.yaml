@@ -1,0 +1,34 @@
+# Incumple 01 y 02 a nivel de Deployment: Kyverno lo rechaza antes de crear pods.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kyverno-deploy-malo
+  namespace: brewtrack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kyverno-deploy-malo
+  template:
+    metadata:
+      labels:
+        app: kyverno-deploy-malo
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: app
+        image: docker.io/library/nginx:latest
+        command:
+        - sleep
+        - '3600'
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL

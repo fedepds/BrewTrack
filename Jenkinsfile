@@ -1,13 +1,45 @@
-// CI/CD de BrewTrack: tests, Semgrep, Trivy y deploy a minikube.
-// Requisitos de Jenkins: docs/ci/jenkins.md
+// CI/CD de BrewTrack: clona, analiza (Semgrep, Snyk, Trivy), prueba, construye, publica en el registro local y despliega con Helm.
+// Requisitos de Jenkins y cómo levantarlo: docs/ci/jenkins.md
 pipeline {
   agent any
-  options { timestamps(); disableConcurrentBuilds() }
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    // La clonación es una etapa propia, para que su registro quede aparte.
+    skipDefaultCheckout()
+  }
   // Jenkins corre en localhost y GitHub no puede avisarle: consulta el repo cada 2 minutos.
   triggers { pollSCM('H/2 * * * *') }
+
+  environment {
+    // Registro local (scripts/registry-up.sh): el host publica en PUSH_REGISTRY y los pods bajan de PULL_REGISTRY.
+    PUSH_REGISTRY = 'localhost:5001'
+    PULL_REGISTRY = 'brewtrack-registry:5000'
+    DB_VERSION  = '0.1.0'
+    API_VERSION = '0.1.0'
+    WEB_VERSION = '0.2.0'
+    HELM_IMAGE  = 'docker.io/alpine/helm:3.19.0'
+    // "stable" o una versión fija de la CLI de Snyk, por ejemplo "v1.1300.0".
+    SNYK_CLI_VERSION = 'stable'
+  }
+
   stages {
-    // Tests y escaneos en paralelo: un test roto no oculta lo que encuentran Semgrep o Trivy.
-    // Si cualquiera falla, no se construye ni se deploya nada.
+    stage('Clonar repositorio') {
+      steps {
+        checkout scm
+        script {
+          env.GIT_SHORT = sh(script: 'git rev-parse --short=7 HEAD', returnStdout: true).trim()
+          // Etiqueta única por commit: con "IfNotPresent", repetir una etiqueta dejaría la imagen vieja en el nodo.
+          env.DB_TAG  = "${env.DB_VERSION}-${env.GIT_SHORT}"
+          env.API_TAG = "${env.API_VERSION}-${env.GIT_SHORT}"
+          env.WEB_TAG = "${env.WEB_VERSION}-${env.GIT_SHORT}"
+        }
+        sh 'git log -1 --format="commit %H%nautor  %an%nfecha  %ad%n%n%s"; mkdir -p reports'
+      }
+    }
+
+    // Tests y escaneos en paralelo: un test roto no oculta lo que encuentran Semgrep, Snyk o Trivy.
+    // Si cualquiera falla, no se construye ni se despliega nada.
     stage('Tests y seguridad') {
       failFast false
       parallel {
@@ -31,7 +63,7 @@ pipeline {
         }
 
         stage('Tests web') {
-          agent { docker { image 'ghcr.io/cirruslabs/flutter:stable'; args '-u root'; reuseNode true } }
+          agent { docker { image 'ghcr.io/cirruslabs/flutter:3.47.0'; args '-u root'; reuseNode true } }
           steps {
             // El SDK es de root; al final se devuelve el workspace al usuario de Jenkins.
             sh '''
@@ -48,13 +80,36 @@ pipeline {
         stage('Semgrep') {
           agent { docker { image 'semgrep/semgrep'; args '--entrypoint= -e HOME=/tmp'; reuseNode true } }
           steps {
+            // --error corta el pipeline si hay hallazgos; tee deja el informe en reports/ además del log.
             sh '''
+              set -o pipefail
               semgrep scan --error --metrics=off \
                 --config p/python --config p/security-audit --config p/secrets --config p/dockerfile \
+                --config semgrep/python-security.yaml \
                 --exclude=.env --exclude=.venv --exclude=.venv-ci --exclude=.pubcache --exclude=.superpowers \
-                --exclude=web/build --exclude=.dart_tool \
-                api web compose.yaml
+                --exclude=web/build --exclude=.dart_tool --exclude=semgrep/python-security.py \
+                api web compose.yaml 2>&1 | tee reports/semgrep-report.txt
             '''
+          }
+        }
+
+        stage('Snyk dependencias') {
+          agent { docker { image 'python:3.13-slim'; args '-e HOME=/tmp'; reuseNode true } }
+          steps {
+            withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+              sh '''#!/bin/bash
+                set -euo pipefail
+                . ci/snyk-cli.sh
+                # Snyk lee las versiones reales de un entorno instalado: se instala la API y se congelan sus dependencias.
+                python -m venv /tmp/venv-snyk && . /tmp/venv-snyk/bin/activate
+                pip install -q ./api
+                pip freeze --exclude-editable | grep -vi '^brewtrack-api' > api/requirements-snyk.txt
+                cd api
+                # Corta solo ante vulnerabilidades críticas; el resto queda en el informe.
+                "$SNYK" test --file=requirements-snyk.txt --package-manager=pip --command=python \
+                  --project-name=brewtrack-api --severity-threshold=critical 2>&1 | tee ../reports/snyk-report.txt
+              '''
+            }
           }
         }
 
@@ -62,8 +117,10 @@ pipeline {
           agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache'; reuseNode true } }
           steps {
             sh '''
+              # kyverno/tests trae manifiestos que incumplen a propósito (casos de prueba de las políticas).
               trivy fs --exit-code 1 --scanners vuln,secret,misconfig --severity HIGH,CRITICAL --ignore-unfixed --quiet \
-                --skip-files .env,docs/security/scan_semgrep.txt --skip-dirs '**/.venv,**/.venv-ci,.pubcache,.superpowers,web/build,**/.dart_tool' .
+                --skip-files .env,docs/security/scan_semgrep.txt,reports/semgrep-report.txt \
+                --skip-dirs '**/.venv,**/.venv-ci,.pubcache,.superpowers,web/build,**/.dart_tool,kyverno/tests' .
             '''
           }
         }
@@ -73,46 +130,120 @@ pipeline {
     stage('Build imágenes') {
       steps {
         sh '''
-          docker build -t localhost/brewtrack-db:0.1.0 -f db/brewtrack-db.Containerfile db
-          docker build -t localhost/brewtrack-api:0.1.0 -f api/brewtrack-api.Containerfile api
-          docker build -t localhost/brewtrack-web:rebranding -f web/brewtrack-web.Containerfile web
+          docker build -t "$PUSH_REGISTRY/brewtrack-db:$DB_TAG"   -f db/brewtrack-db.Containerfile db
+          docker build -t "$PUSH_REGISTRY/brewtrack-api:$API_TAG" -f api/brewtrack-api.Containerfile api
+          docker build -t "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG" -f web/brewtrack-web.Containerfile web
+          docker image ls --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | grep -E "brewtrack-(db|api|web):($DB_TAG|$API_TAG|$WEB_TAG)"
         '''
       }
     }
 
-    stage('Trivy imágenes') {
-      agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache -v /var/run/docker.sock:/var/run/docker.sock'; reuseNode true } }
-      steps {
-        sh '''
-          T="trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --quiet"
-          $T --skip-files usr/local/bin/gosu localhost/brewtrack-db:0.1.0
-          $T localhost/brewtrack-api:0.1.0
-          $T localhost/brewtrack-web:rebranding
-        '''
+    stage('Escaneo de imágenes') {
+      failFast false
+      parallel {
+        stage('Trivy imágenes') {
+          agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache -v /var/run/docker.sock:/var/run/docker.sock'; reuseNode true } }
+          steps {
+            sh '''
+              T="trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --quiet"
+              $T --skip-files usr/local/bin/gosu "$PUSH_REGISTRY/brewtrack-db:$DB_TAG"
+              $T "$PUSH_REGISTRY/brewtrack-api:$API_TAG"
+              $T "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"
+            '''
+          }
+        }
+
+        stage('Snyk imágenes') {
+          steps {
+            // Snyk analiza los .tar: así no necesita acceso al socket de Docker.
+            sh '''
+              mkdir -p images
+              docker save -o images/db.tar  "$PUSH_REGISTRY/brewtrack-db:$DB_TAG"
+              docker save -o images/api.tar "$PUSH_REGISTRY/brewtrack-api:$API_TAG"
+              docker save -o images/web.tar "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"
+            '''
+            script {
+              docker.image('python:3.13-slim').inside('-e HOME=/tmp') {
+                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+                  sh '''#!/bin/bash
+                    set -euo pipefail
+                    . ci/snyk-cli.sh
+                    : > reports/snyk-container-report.txt
+                    rc=0
+                    for c in db api web; do
+                      echo "===== brewtrack-$c" | tee -a reports/snyk-container-report.txt
+                      "$SNYK" container test "docker-archive:images/$c.tar" --severity-threshold=critical \
+                        --file="$c/brewtrack-$c.Containerfile" 2>&1 | tee -a reports/snyk-container-report.txt || rc=1
+                    done
+                    exit $rc
+                  '''
+                }
+              }
+            }
+          }
+        }
       }
     }
 
-    stage('Deploy minikube') {
+    stage('Publicar imágenes') {
       steps {
-        // se usa el kubectl del propio nodo minikube (runtime containerd).
         sh '''
-          for img in localhost/brewtrack-db:0.1.0 localhost/brewtrack-api:0.1.0 localhost/brewtrack-web:rebranding; do
-            docker save "$img" | docker exec -i minikube ctr -n k8s.io images import -
+          bash scripts/registry-up.sh
+          for img in "brewtrack-db:$DB_TAG" "brewtrack-api:$API_TAG" "brewtrack-web:$WEB_TAG"; do
+            docker push "$PUSH_REGISTRY/$img"
           done
-          V=$(docker exec minikube ls /var/lib/minikube/binaries | tail -1)
-          K="docker exec -i minikube /var/lib/minikube/binaries/$V/kubectl --kubeconfig=/etc/kubernetes/admin.conf"
-          $K apply -f - < k8s/brewtrack.yaml
-          $K apply -f - < k8s/web-bluegreen.yaml
-          $K -n brewtrack rollout restart statefulset/db deploy/api deploy/web-green
-          $K -n brewtrack rollout status statefulset/db --timeout=180s
-          $K -n brewtrack rollout status deploy/api --timeout=180s
-          $K -n brewtrack rollout status deploy/web-green --timeout=180s
         '''
+      }
+    }
+
+    stage('Deploy Helm') {
+      steps {
+        script {
+          // kubectl del propio nodo de minikube: sirve para las comprobaciones previas y para sacar el kubeconfig.
+          def k = 'docker exec -i minikube /var/lib/minikube/binaries/$(docker exec minikube ls /var/lib/minikube/binaries | tail -1)/kubectl --kubeconfig=/etc/kubernetes/admin.conf'
+
+          // Los YAML viejos de k8s/ (api, db, web-blue, web-green) no chocan por nombre con la chart (brewtrack-*),
+          // pero dejarían una segunda base corriendo. Se corta con un mensaje en vez de borrarlos sin avisar.
+          def legacy = sh(script: "${k} -n brewtrack get deploy/api statefulset/db --ignore-not-found -o name", returnStdout: true).trim()
+          if (legacy) {
+            error("Quedan recursos de los YAML de k8s/ en el namespace brewtrack (${legacy.replace('\n', ', ')}). Bórralos una vez: kubectl delete -f k8s/brewtrack.yaml -f k8s/web-bluegreen.yaml")
+          }
+
+          sh 'docker exec minikube cat /etc/kubernetes/admin.conf > .kubeconfig && chmod 600 .kubeconfig'
+          def nodeIp = sh(script: "docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' minikube | awk '{print \$1}'", returnStdout: true).trim()
+
+          // Helm corre en un contenedor en la red de minikube; el kubeconfig apunta a control-plane.minikube.internal.
+          docker.image(env.HELM_IMAGE).inside("--entrypoint= --network minikube --add-host control-plane.minikube.internal:${nodeIp} -e HOME=/tmp") {
+            sh """
+              export KUBECONFIG=\$PWD/.kubeconfig
+              helm lint ./helm-chart -f helm-chart/values-dev.yaml
+              # Las imágenes se bajan del registro local con la etiqueta de este build.
+              helm upgrade --install brewtrack ./helm-chart -n brewtrack --create-namespace \
+                -f helm-chart/values-dev.yaml \
+                --set db.image.repository=${env.PULL_REGISTRY}/brewtrack-db  --set db.image.tag=${env.DB_TAG} \
+                --set api.image.repository=${env.PULL_REGISTRY}/brewtrack-api --set api.image.tag=${env.API_TAG} \
+                --set web.image.repository=${env.PULL_REGISTRY}/brewtrack-web --set web.image.tag=${env.WEB_TAG} \
+                --wait --timeout 5m
+              # GET a /api/v1/health a través de web: prueba web, el proxy de nginx y la API.
+              helm test brewtrack -n brewtrack --logs --timeout 2m
+              helm -n brewtrack status brewtrack
+              helm -n brewtrack history brewtrack --max 5
+            """
+          }
+          sh "${k} -n brewtrack get pods,svc,ingress -o wide"
+        }
       }
     }
   }
 
   post {
-    always { junit allowEmptyResults: true, testResults: 'api/pytest.xml' }
+    always {
+      junit allowEmptyResults: true, testResults: 'api/pytest.xml'
+      archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
+      sh 'rm -rf images .kubeconfig api/requirements-snyk.txt'
+    }
+    failure {
+      echo 'El pipeline falló: revisa la etapa en rojo y los informes en reports/ (Semgrep, Snyk).'
+    }
   }
 }

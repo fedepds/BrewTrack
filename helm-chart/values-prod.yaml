@@ -16,5 +16,5 @@ web:
   service: { type: ClusterIP }
   resources:
     requests: { cpu: 100m, memory: 64Mi }
-    limits: { cpu: 500m, memory: 128Mi }
+    limits: { cpu: "1", memory: 128Mi }
 ingress: { enabled: true, className: nginx, host: brewtrack.local }

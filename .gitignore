@@ -14,3 +14,7 @@ web/build/
 !.claude/agents/
 .venv-ci/
 api/pytest.xml
+# CI: temporales del Jenkinsfile
+images/
+.kubeconfig
+api/requirements-snyk.txt

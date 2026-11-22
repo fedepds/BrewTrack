@@ -130,14 +130,29 @@ check "prod: sin lotes de ejemplo" "$prod" 'SEED_DEMO_LOTS: "false"'
 check "dev: web NodePort" "$dev" "type: NodePort$"
 check_not "prod: sin NodePort" "$prod" "type: NodePort$"
 check "prod: volumen de 10Gi" "$prod" "storage: 10Gi"
-count "dev: recursos en los 3" "$dev" "^ *resources:$" 4
-count "prod: recursos en los 3" "$prod" "^ *resources:$" 4
+count "dev: recursos en los 3, el pod de test y el volumen" "$dev" "^ *resources:$" 5
+count "prod: recursos en los 3, el pod de test y el volumen" "$prod" "^ *resources:$" 5
 dres="$(grep -A6 '^ *resources:$' <<<"$dev" | grep -E 'cpu|memory' | sort)"
 pres="$(grep -A6 '^ *resources:$' <<<"$prod" | grep -E 'cpu|memory' | sort)"
 if [ -n "$dres" ] && [ "$dres" != "$pres" ]; then pass "recursos distintos entre dev y prod"; else fail "recursos distintos entre dev y prod"; fi
 check "NOTES: NodePort" "$(cat "$CHART/templates/NOTES.txt")" "NodePort"
 check "NOTES: Ingress" "$(cat "$CHART/templates/NOTES.txt")" "ingress\.enabled"
 check "README de la chart" "$(cat "$CHART/README.md" 2>/dev/null)" "values-prod\.yaml"
+
+# --- Laboratorio 4: lo que exigen las políticas de Kyverno (kyverno/policies/) ---
+for v in values.yaml values-dev.yaml values-prod.yaml; do
+  o="$(helm template rel "$CHART" -n ns -f "$CHART/$v" 2>&1)"
+  count "$v: limits en los 3 contenedores y el de test" "$o" "^ *limits:$" 4
+  count "$v: requests en los 3 contenedores, el de test y el volumen" "$o" "^ *requests:$" 5
+  cpu_lim="$(grep -A2 '^ *limits:$' <<<"$o" | grep -E '^ *cpu:')"
+  check_not "$v: límites de CPU sin fracciones (Semgrep no-fractional-cpu-limits)" "$cpu_lim" 'm"?$'
+  check_not "$v: ninguna imagen latest" "$o" 'image: "[^"]*:latest"'
+done
+count "seccomp RuntimeDefault en los 3 pods y el de test" "$out" "type: RuntimeDefault$" 4
+count "sin token de ServiceAccount en los 3 pods y el de test" "$out" "automountServiceAccountToken: false$" 4
+count "sin escalada de privilegios en los 3 contenedores y el de test" "$out" "allowPrivilegeEscalation: false$" 4
+count "capabilities drop ALL en los 3 contenedores y el de test" "$out" 'drop: \["ALL"\]$' 4
+check "web por defecto es la UI actual (0.2.0)" "$out" 'image: "localhost/brewtrack-web:0\.2\.0"'
 
 if [ "$fails" -eq 0 ]; then echo "todo ok"; else echo "$fails fallos"; fi
 exit "$fails"

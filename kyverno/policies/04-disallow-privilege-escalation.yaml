@@ -1,0 +1,58 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: brewtrack-disallow-privilege-escalation
+  annotations:
+    policies.kyverno.io/title: Prohibir contenedores privilegiados y escalada de privilegios
+    policies.kyverno.io/category: BrewTrack
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/minversion: 1.19.1
+    policies.kyverno.io/description: >-
+      Buena práctica elegida por el equipo. Cada contenedor tiene que fijar allowPrivilegeEscalation false y no puede ser privileged. Un contenedor privilegiado ve los dispositivos del nodo; la escalada deja que un proceso gane permisos con setuid.
+spec:
+  # Deny: el API server rechaza el recurso. Audit solo lo anotaría en un PolicyReport.
+  validationActions: [Deny]
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    # Todo el clúster salvo los namespaces del sistema y de las herramientas que necesitan privilegios (Falco).
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values: [kube-system, kube-public, kube-node-lease, kyverno, falco, ingress-nginx]
+    # Pods y todo lo que crea pods: así Helm recibe el rechazo al crear el Deployment, no después.
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods, replicationcontrollers]
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [deployments, statefulsets, daemonsets, replicasets]
+      - apiGroups: [batch]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [jobs, cronjobs]
+  variables:
+    # La especificación del pod, esté donde esté según el tipo de recurso.
+    - name: podSpec
+      expression: >-
+        object.kind == 'CronJob' ? object.spec.jobTemplate.spec.template.spec :
+        (has(object.spec.template) ? object.spec.template.spec : object.spec)
+    - name: containers
+      expression: >-
+        variables.podSpec.containers +
+        (has(variables.podSpec.initContainers) ? variables.podSpec.initContainers : [])
+  validations:
+    - expression: >-
+        variables.containers.all(c,
+          has(c.securityContext) && has(c.securityContext.allowPrivilegeEscalation) &&
+          c.securityContext.allowPrivilegeEscalation == false)
+      message: "Cada contenedor tiene que fijar securityContext.allowPrivilegeEscalation en false."
+    - expression: >-
+        variables.containers.all(c,
+          !(has(c.securityContext) && has(c.securityContext.privileged) && c.securityContext.privileged == true))
+      message: "Los contenedores privileged no están permitidos."

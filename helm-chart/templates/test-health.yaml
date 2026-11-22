@@ -11,16 +11,25 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation
 spec:
   restartPolicy: Never
+  automountServiceAccountToken: false
   securityContext:
     runAsNonRoot: true
     runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
   containers:
     - name: health
       image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
       imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+      {{- with .Values.tests.resources }}
+      resources:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       securityContext:
         allowPrivilegeEscalation: false
         readOnlyRootFilesystem: true
+        capabilities:
+          drop: ["ALL"]
       # urlopen lanza una excepción, y python sale con 1, si la respuesta no es 2xx.
       command:
         - python

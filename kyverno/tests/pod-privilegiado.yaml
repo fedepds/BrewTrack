@@ -1,0 +1,31 @@
+# Incumple 04: contenedor privileged con escalada de privilegios.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kyverno-privilegiado
+  namespace: brewtrack
+  labels:
+    app: kyverno-test
+spec:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: app
+    image: docker.io/library/busybox:1.37.0
+    command:
+    - sleep
+    - '3600'
+    resources:
+      requests:
+        cpu: 10m
+        memory: 16Mi
+      limits:
+        cpu: 50m
+        memory: 32Mi
+    securityContext:
+      privileged: true
+      allowPrivilegeEscalation: true

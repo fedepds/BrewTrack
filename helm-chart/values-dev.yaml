@@ -3,16 +3,16 @@
 db:
   resources:
     requests: { cpu: 50m, memory: 128Mi }
-    limits: { cpu: 500m, memory: 256Mi }
+    limits: { cpu: "1", memory: 256Mi }
 api:
   resources:
     requests: { cpu: 50m, memory: 128Mi }
-    limits: { cpu: 500m, memory: 384Mi }
+    limits: { cpu: "1", memory: 384Mi }
   config: { seedDemoLots: "true" }
 web:
   replicas: 1
   service: { type: NodePort }
   resources:
     requests: { cpu: 20m, memory: 32Mi }
-    limits: { cpu: 200m, memory: 64Mi }
+    limits: { cpu: "1", memory: 64Mi }
 ingress: { enabled: false }

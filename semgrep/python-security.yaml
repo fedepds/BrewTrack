@@ -1,0 +1,134 @@
+# Reglas de seguridad propias para la API de BrewTrack (Python, FastAPI, SQLAlchemy, PyJWT).
+# Complementan los paquetes p/python y p/security-audit del registro de Semgrep.
+# Probarlas: semgrep --test semgrep/
+rules:
+  - id: brewtrack-jwt-decode-sin-verificar
+    languages: [python]
+    severity: ERROR
+    message: >-
+      jwt.decode sin "algorithms" o con la firma apagada acepta tokens que nadie firmó
+      (o firmados con "none"). Siempre: jwt.decode(token, clave, algorithms=["HS256"]).
+    metadata:
+      category: security
+      cwe: "CWE-347: Improper Verification of Cryptographic Signature"
+      owasp: ["A02:2021 - Cryptographic Failures"]
+      subcategory: [vuln]
+      technology: [python, pyjwt, jwt]
+      confidence: HIGH
+      likelihood: MEDIUM
+      impact: HIGH
+      references:
+        - https://pyjwt.readthedocs.io/en/stable/api.html#jwt.decode
+    pattern-either:
+      - patterns:
+          - pattern: jwt.decode(...)
+          - pattern-not: jwt.decode(..., algorithms=$ALGS, ...)
+      - pattern: 'jwt.decode(..., options={..., "verify_signature": False, ...}, ...)'
+      - pattern: 'jwt.decode(..., algorithms=[..., "none", ...], ...)'
+
+  - id: brewtrack-sql-armado-con-texto
+    languages: [python]
+    severity: ERROR
+    message: >-
+      SQL armado con f-string, % o + : si algún pedazo viene del usuario es inyección SQL.
+      Usar el ORM o text("... :param") con parámetros.
+    metadata:
+      category: security
+      cwe: "CWE-89: SQL Injection"
+      owasp: ["A03:2021 - Injection"]
+      subcategory: [vuln]
+      technology: [python, sqlalchemy]
+      confidence: MEDIUM
+      likelihood: MEDIUM
+      impact: HIGH
+      references:
+        - https://docs.sqlalchemy.org/en/20/core/sqlelement.html#sqlalchemy.sql.expression.text
+    pattern-either:
+      - pattern: sqlalchemy.text(f"...")
+      - pattern: sqlalchemy.text("..." % $X)
+      - pattern: sqlalchemy.text("...".format(...))
+      - pattern: sqlalchemy.text("..." + $X)
+      - pattern: $DB.execute(f"...", ...)
+      - pattern: $DB.execute("..." % $X, ...)
+      - pattern: $DB.execute("...".format(...), ...)
+      - pattern: $DB.execute("..." + $X, ...)
+
+  - id: brewtrack-like-sin-escape
+    languages: [python]
+    severity: WARNING
+    message: >-
+      Patrón LIKE armado con f-string: si el usuario manda "%" o "_" cambia la búsqueda
+      (y "%%%%..." obliga a la base a recorrer toda la tabla). Usar
+      columna.icontains(valor, autoescape=True).
+    metadata:
+      category: security
+      cwe: "CWE-943: Improper Neutralization of Special Elements in Data Query Logic"
+      owasp: ["A03:2021 - Injection"]
+      subcategory: [vuln]
+      technology: [python, sqlalchemy]
+      confidence: HIGH
+      likelihood: HIGH
+      impact: LOW
+      references:
+        - https://docs.sqlalchemy.org/en/20/core/sqlelement.html#sqlalchemy.sql.expression.ColumnOperators.icontains
+    pattern-either:
+      - pattern: $COL.like(f"...", ...)
+      - pattern: $COL.ilike(f"...", ...)
+      - pattern: $COL.like("..." + $X + "...", ...)
+      - pattern: $COL.ilike("..." + $X + "...", ...)
+
+  - id: brewtrack-hash-debil-para-claves
+    languages: [python]
+    severity: ERROR
+    message: >-
+      MD5 y SHA-1 son rápidos y están rotos: no sirven para contraseñas ni para firmas.
+      Para contraseñas usar argon2 (app.security.hash_password); para integridad, hashlib.sha256.
+    metadata:
+      category: security
+      cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+      owasp: ["A02:2021 - Cryptographic Failures"]
+      subcategory: [vuln]
+      technology: [python, hashlib]
+      confidence: MEDIUM
+      likelihood: LOW
+      impact: HIGH
+      references:
+        - https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+    pattern-either:
+      - pattern: hashlib.md5(...)
+      - pattern: hashlib.sha1(...)
+      - pattern: hashlib.new("md5", ...)
+      - pattern: hashlib.new("sha1", ...)
+
+  - id: brewtrack-secreto-en-log
+    languages: [python]
+    severity: ERROR
+    message: >-
+      Un secreto (JWT_SECRET, contraseña, token) va a un log o a la salida estándar.
+      La constitución prohíbe imprimir secretos: los logs se guardan y los lee más gente.
+    metadata:
+      category: security
+      cwe: "CWE-532: Insertion of Sensitive Information into Log File"
+      owasp: ["A09:2021 - Security Logging and Monitoring Failures"]
+      subcategory: [vuln]
+      technology: [python, logging]
+      confidence: MEDIUM
+      likelihood: LOW
+      impact: HIGH
+      references:
+        - https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+    patterns:
+      - pattern-either:
+          - pattern: print(...)
+          - pattern: $LOG.debug(...)
+          - pattern: $LOG.info(...)
+          - pattern: $LOG.warning(...)
+          - pattern: $LOG.error(...)
+          - pattern: $LOG.exception(...)
+          - pattern: $LOG.critical(...)
+      - pattern-either:
+          - pattern-inside: $F(..., <... $X.jwt_secret ...>, ...)
+          - pattern-inside: $F(..., <... $X.seed_admin_password ...>, ...)
+          - pattern-inside: $F(..., <... $X.password ...>, ...)
+          - pattern-inside: $F(..., <... password ...>, ...)
+          - pattern-inside: $F(..., <... token ...>, ...)

@@ -1,0 +1,45 @@
+===== pip-audit (base de vulnerabilidades de PyPI) — 2026-11-22 14:12:35 -0300
+pip-audit 2.10.1
+Qué se revisa: las versiones exactas que instala 'pip install ./api', igual que el Containerfile.
+Es una revisión previa; el informe de Snyk que pide el laboratorio es reports/snyk-report.txt.
+
+$ pip-audit -r requirements.txt --no-deps -s pypi
+No known vulnerabilities found
+
+===== Dependencias revisadas (36 paquetes)
+alembic==1.20.1
+annotated-doc==0.0.7
+annotated-types==0.8.0
+anyio==4.16.0
+argon2-cffi==25.1.0
+argon2-cffi-bindings==26.2.0
+cffi==2.1.1
+click==8.5.1
+dnspython==2.9.2
+email-validator==2.4.0
+fastapi==0.165.0
+h11==0.16.0
+httptools==0.9.0
+idna==3.20
+Mako==1.4.3
+MarkupSafe==3.0.4
+opentelemetry-api==1.45.2
+prometheus-fastapi-instrumentator==8.1.0
+prometheus_client==0.26.0
+psycopg==3.3.9
+psycopg-binary==3.3.9
+pycparser==3.12
+pydantic==2.14.4
+pydantic-settings==2.16.3
+pydantic_core==2.50.5
+PyJWT==2.15.1
+python-dotenv==1.2.4
+PyYAML==6.0.4
+SQLAlchemy==2.1.9
+starlette==1.10.0
+typing-inspection==0.4.5
+typing_extensions==4.16.0
+uvicorn==0.54.0
+uvloop==0.23.0
+watchfiles==1.3.0
+websockets==17.4

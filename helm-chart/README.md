@@ -10,12 +10,12 @@ Necesitas `kubectl`, `helm` y un clúster. Estos pasos usan minikube:
 minikube start --driver=docker
 ```
 
-La chart usa por defecto las imágenes `localhost/brewtrack-db`, `localhost/brewtrack-api` y `localhost/brewtrack-web` con la etiqueta `0.1.0` y no las baja de ningún registro. Constrúyelas con `docker compose` y cárgalas en minikube, desde la raíz del repo:
+La chart usa por defecto las imágenes `localhost/brewtrack-db:0.1.0`, `localhost/brewtrack-api:0.1.0` y `localhost/brewtrack-web:0.2.0` y no las baja de ningún registro. Constrúyelas con `docker compose` y cárgalas en minikube, desde la raíz del repo:
 
 ```sh
 docker compose build
-for i in db api web; do
-  docker save localhost/brewtrack-$i:0.1.0 -o /tmp/$i.tar && minikube image load /tmp/$i.tar
+for img in db:0.1.0 api:0.1.0 web:0.2.0; do
+  docker save localhost/brewtrack-$img -o /tmp/${img%%:*}.tar && minikube image load /tmp/${img%%:*}.tar
 done
 minikube image ls | grep brewtrack    # deben salir las tres
 ```
@@ -132,23 +132,30 @@ Cambia cualquiera con `--set` o con tu propio archivo `-f`.
 | `existingSecret` | `""` | Nombre de un Secret propio con `POSTGRES_PASSWORD`, `JWT_SECRET` (32 caracteres o más) y, si quieres, `SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD`. Vacío: la chart crea `<release>-secrets`. |
 | `db.image.repository`, `.tag`, `.pullPolicy` | `localhost/brewtrack-db`, `0.1.0`, `IfNotPresent` | Imagen de la base. |
 | `db.service.type`, `.port` | `ClusterIP`, `5432` | Service de la base. |
-| `db.resources` | `{}` | Requests y limits de CPU y memoria. |
+| `db.resources` | requests `100m`/`128Mi`, limits `1`/`512Mi` | Requests y limits de CPU y memoria. |
 | `db.persistence.size` | `1Gi` | Tamaño del volumen. |
 | `db.persistence.storageClass` | `""` | Clase de almacenamiento. Vacío: la del clúster. |
 | `api.image.*` | `localhost/brewtrack-api`, `0.1.0`, `IfNotPresent` | Imagen de la API. |
 | `api.replicas` | `1` | Sin efecto: la API corre migraciones al arrancar y queda en 1 réplica. |
 | `api.service.type`, `.port` | `ClusterIP`, `8000` | Service de la API. |
-| `api.resources` | `{}` | Requests y limits. |
+| `api.resources` | requests `100m`/`128Mi`, limits `1`/`512Mi` | Requests y limits. |
 | `api.config.timezone` | `America/Argentina/Buenos_Aires` | `TIMEZONE` de la API. |
 | `api.config.seedDemoLots` | `"true"` | Crea lotes de ejemplo si la base está vacía. |
-| `web.image.*` | `localhost/brewtrack-web`, `0.1.0`, `IfNotPresent` | Imagen de la web. |
+| `web.image.*` | `localhost/brewtrack-web`, `0.2.0`, `IfNotPresent` | Imagen de la web. `0.2.0` es la UI actual; `0.1.0`, la anterior. |
 | `web.replicas` | `1` | Réplicas de la web. |
 | `web.service.type`, `.port` | `ClusterIP`, `8080` | `ClusterIP` o `NodePort`. |
-| `web.resources` | `{}` | Requests y limits. |
+| `web.resources` | requests `50m`/`32Mi`, limits `1`/`128Mi` | Requests y limits. |
+| `tests.resources` | requests `10m`/`32Mi`, limits `1`/`64Mi` | Requests y limits del pod de `helm test`. |
 | `ingress.enabled` | `false` | Crea el Ingress de la web. |
 | `ingress.className` | `""` | Clase de Ingress. Vacío: la del clúster. |
 | `ingress.host` | `brewtrack.local` | Nombre con el que se abre la web. |
 | `ingress.annotations` | `{}` | Anotaciones del Ingress. |
+
+## Seguridad de los pods
+
+Los tres pods y el de `helm test` corren sin root, con la raíz de solo lectura, sin escalada de privilegios, sin capabilities (`drop: ALL`), con `seccompProfile: RuntimeDefault` y sin el token de la ServiceAccount.
+
+Todos traen `requests` y `limits` por defecto. Las políticas de Kyverno del repo (`kyverno/policies/`) rechazan los pods sin límites, con `latest`, como root o con privilegios. Si cambias `resources` con `--set`, no dejes un contenedor sin `limits`. Los límites de CPU son de 1 núcleo: con fracciones (`500m`), Kubernetes frena el proceso aunque el nodo tenga CPU libre. Lo que se reserva son los `requests`.
 
 ## Actualizar y borrar
 
@@ -169,4 +176,4 @@ kubectl delete namespace brewtrack-prod
 bash helm-chart/tests/render.sh
 ```
 
-Corre `helm lint` y `helm template` con cada archivo de valores y sale con un código distinto de 0 si algo falla.
+Corre `helm lint` y `helm template` con cada archivo de valores y sale con un código distinto de 0 si algo falla. Incluye los controles de seguridad de la sección anterior.

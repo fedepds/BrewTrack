@@ -28,7 +28,7 @@ Resumen de lo que no se rompe:
 - **Tests frontend:** `cd web && flutter test`
 - **Backup:** `docker compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql`
 - **Kubernetes con Helm:** `helm install brewtrack ./helm-chart -n brewtrack-dev --create-namespace -f helm-chart/values-dev.yaml` (o `values-prod.yaml`). Ver `helm-chart/README.md`.
-- **CI/CD:** `Jenkinsfile` (tests, Semgrep, Trivy y deploy a minikube en cada push a `master`). Ver `docs/ci/jenkins.md`.
+- **CI/CD:** `Jenkinsfile` (tests, Semgrep, Snyk, Trivy, publicación en el registro local y deploy con Helm a minikube, namespace `brewtrack`, en cada push a `master`). Ver `docs/ci/jenkins.md`.
 
 ## Puertos del host
 Cada servicio tiene un puerto fijo para que no choquen entre sí ni con Jenkins, que corre en la misma máquina.
@@ -41,6 +41,9 @@ Cada servicio tiene un puerto fijo para que no choquen entre sí ni con Jenkins,
 | 8000 | API en desarrollo (`uvicorn --reload`) | Solo en el host. En compose, `api` no publica puerto. |
 | 5000 | Frontend en desarrollo (`flutter run`) | Origen permitido por CORS. |
 | 55432 | Postgres de pruebas (`brewtrack-test-db`) | Solo para `pytest`. |
+| 5001 | Registro local de imágenes (`brewtrack-registry`) | Solo en 127.0.0.1. Lo levanta `scripts/registry-up.sh`; Jenkins publica ahí. |
+| 3000 | Grafana (`port-forward`) | `kubectl -n brewtrack port-forward svc/grafana 3000:3000`. |
+| 9090 | Prometheus (`port-forward`) | `kubectl -n brewtrack port-forward svc/prometheus 9090:9090`. |
 
 Antes de publicar un puerto nuevo, revisa que esté libre (`lsof -nP -iTCP:<puerto> -sTCP:LISTEN`) y agrégalo a esta tabla.
 
