@@ -3,9 +3,11 @@
 # algunos logins fallidos y algunos 404. Crea su propio lote de café verde (código LOAD-...).
 #
 # Uso:
-#   kubectl -n brewtrack port-forward svc/brewtrack-web 8081:8080 &     # o usar el Ingress
-#   ADMIN_EMAIL=admin@taller.uy ADMIN_PASSWORD=... scripts/load.sh
+#   bash scripts/load.sh                                   # después de scripts/up.sh: no hace falta nada más
+#   ADMIN_EMAIL=… ADMIN_PASSWORD=… BASE_URL=… scripts/load.sh
 #
+# Sin ADMIN_EMAIL/ADMIN_PASSWORD, los lee del Secret brewtrack-admin que crea scripts/up.sh.
+# Si BASE_URL no responde y es localhost:8081, abre él mismo el port-forward a svc/brewtrack-web.
 # Variables: BASE_URL (http://localhost:8081), DURATION en segundos (300), RPS aproximado (5).
 set -euo pipefail
 export LC_ALL=C   # awk con locale de coma decimal rompe sleep y el JSON
@@ -14,10 +16,22 @@ BASE_URL=${BASE_URL:-http://localhost:8081}
 API="$BASE_URL/api/v1"
 DURATION=${DURATION:-300}
 RPS=${RPS:-5}
-: "${ADMIN_EMAIL:?define ADMIN_EMAIL}"
-: "${ADMIN_PASSWORD:?define ADMIN_PASSWORD}"
 
 log() { printf '[load %s] %s\n' "$(date +%H:%M:%S)" "$*"; }
+
+secret() { kubectl -n brewtrack get secret brewtrack-admin -o jsonpath="{.data.$1}" 2>/dev/null | base64 -d; }
+ADMIN_EMAIL=${ADMIN_EMAIL:-$(secret email)}
+ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(secret password)}
+: "${ADMIN_EMAIL:?define ADMIN_EMAIL o corre scripts/up.sh}"
+: "${ADMIN_PASSWORD:?define ADMIN_PASSWORD o corre scripts/up.sh}"
+
+if ! curl -sf "$API/health" >/dev/null && [ "$BASE_URL" = http://localhost:8081 ]; then
+  log "abriendo port-forward a svc/brewtrack-web en 8081"
+  kubectl -n brewtrack port-forward svc/brewtrack-web 8081:8080 >/dev/null 2>&1 &
+  PF=$!
+  trap 'kill $PF 2>/dev/null' EXIT
+  for _ in $(seq 1 20); do curl -sf "$API/health" >/dev/null && break; sleep 1; done
+fi
 # Extrae un campo de nivel superior de un JSON chico sin depender de jq.
 field() { sed -n "s/.*\"$1\":\"\\{0,1\\}\\([^\",}]*\\).*/\\1/p"; }
 

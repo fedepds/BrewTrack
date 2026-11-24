@@ -20,7 +20,12 @@ helm upgrade --install kyverno kyverno/kyverno -n kyverno --create-namespace --v
   --wait --timeout 5m
 
 log "aplicando políticas"
-kubectl apply -f kyverno/policies/
+# --wait espera los pods, no al webhook que valida políticas: en una instalación nueva rechaza conexiones unos segundos.
+for i in $(seq 1 30); do
+  kubectl apply -f kyverno/policies/ && break
+  [ "$i" = 30 ] && { log "el webhook de Kyverno no respondió en 60 s"; exit 1; }
+  sleep 2
+done
 
 # El webhook tarda unos segundos en tomar las políticas nuevas: espera a que rechace un pod que debe rechazar.
 log "esperando a que las políticas estén activas"

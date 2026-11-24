@@ -1,0 +1,45 @@
+===== Falco: evento de seguridad en tiempo de ejecución — 2026-11-24 17:48:16 -0300
+Falco: docker.io/falcosecurity/falco:0.45.2
+Pod atacado: brewtrack/brewtrack-api-7cc47d6799-65w5h
+
+Escenario: alguien consiguió ejecutar comandos dentro del contenedor de la API (por ejemplo, con una
+dependencia vulnerable) y busca llaves SSH o credenciales de AWS para saltar a otros sistemas.
+Es un paso típico de "acceso a credenciales" (MITRE ATT&CK T1552). La API nunca corre find ni grep,
+así que cualquier búsqueda de ese tipo dentro de su contenedor es sospechosa.
+
+===== Acciones
+$ kubectl -n brewtrack exec brewtrack-api-7cc47d6799-65w5h -c api -- find / -xdev -name id_rsa
+find: ‘/etc/ssl/private’: Permission denied
+find: ‘/root’: Permission denied
+find: ‘/var/cache/apt/archives/partial’: Permission denied
+find: ‘/var/cache/ldconfig’: Permission denied
+command terminated with exit code 1
+
+$ kubectl -n brewtrack exec brewtrack-api-7cc47d6799-65w5h -c api -- grep -rl BEGIN RSA PRIVATE /etc /srv
+grep: /etc/.pwd.lock: Permission denied
+grep: /etc/shadow: Permission denied
+grep: /etc/gshadow: Permission denied
+grep: /etc/security/opasswd: Permission denied
+grep: /etc/gshadow-: Permission denied
+
+$ kubectl -n brewtrack exec brewtrack-api-7cc47d6799-65w5h -c api -- find / -xdev -path */.aws/credentials
+find: ‘/etc/ssl/private’: Permission denied
+find: ‘/root’: Permission denied
+find: ‘/var/cache/apt/archives/partial’: Permission denied
+find: ‘/var/cache/ldconfig’: Permission denied
+command terminated with exit code 1
+
+===== Alertas de Falco (JSON, una por línea)
+{"hostname":"minikube","output":"20:48:16.390596415: Warning Grep private keys or passwords activities found | evt_type=execve user=<NA> user_uid=1000 user_loginuid=-1 process=find proc_exepath=/usr/bin/find parent=containerd-shim command=find / -xdev -name id_rsa terminal=0 exe_flags=EXE_LOWER_LAYER container_id=f263cbd6c894 container_name=api container_image_repository=brewtrack-registry:5000/brewtrack-api container_image_tag=0.1.0-e046683 k8s_pod_name=brewtrack-api-7cc47d6799-65w5h k8s_ns_name=brewtrack","output_fields":{"container.id":"f263cbd6c894","container.image.repository":"brewtrack-registry:5000/brewtrack-api","container.image.tag":"0.1.0-e046683","container.name":"api","evt.arg.flags":"EXE_LOWER_LAYER","evt.time":1795553296390596415,"evt.type":"execve","k8s.ns.name":"brewtrack","k8s.pod.name":"brewtrack-api-7cc47d6799-65w5h","proc.cmdline":"find / -xdev -name id_rsa","proc.exepath":"/usr/bin/find","proc.name":"find","proc.pname":"containerd-shim","proc.tty":0,"user.loginuid":-1,"user.name":"<NA>","user.uid":1000},"priority":"Warning","rule":"Search Private Keys or Passwords","source":"syscall","tags":["T1552.001","container","filesystem","host","maturity_stable","mitre_credential_access","process"],"time":"2026-11-24T20:48:16.390596415Z"}
+{"hostname":"minikube","output":"20:48:16.488365286: Warning Grep private keys or passwords activities found | evt_type=execve user=<NA> user_uid=1000 user_loginuid=-1 process=grep proc_exepath=/usr/bin/grep parent=containerd-shim command=grep -rl BEGIN RSA PRIVATE /etc /srv terminal=0 exe_flags=EXE_LOWER_LAYER container_id=f263cbd6c894 container_name=api container_image_repository=brewtrack-registry:5000/brewtrack-api container_image_tag=0.1.0-e046683 k8s_pod_name=brewtrack-api-7cc47d6799-65w5h k8s_ns_name=brewtrack","output_fields":{"container.id":"f263cbd6c894","container.image.repository":"brewtrack-registry:5000/brewtrack-api","container.image.tag":"0.1.0-e046683","container.name":"api","evt.arg.flags":"EXE_LOWER_LAYER","evt.time":1795553296488365286,"evt.type":"execve","k8s.ns.name":"brewtrack","k8s.pod.name":"brewtrack-api-7cc47d6799-65w5h","proc.cmdline":"grep -rl BEGIN RSA PRIVATE /etc /srv","proc.exepath":"/usr/bin/grep","proc.name":"grep","proc.pname":"containerd-shim","proc.tty":0,"user.loginuid":-1,"user.name":"<NA>","user.uid":1000},"priority":"Warning","rule":"Search Private Keys or Passwords","source":"syscall","tags":["T1552.001","container","filesystem","host","maturity_stable","mitre_credential_access","process"],"time":"2026-11-24T20:48:16.488365286Z"}
+{"hostname":"minikube","output":"20:48:16.555582887: Warning Detected AWS credentials search activity | proc_pcmdline=runc --root /run/containerd/runc/k8s.io --log /run/containerd/io.containerd.runtime.v2.task/k8s.io/f263cbd6c8944436d67b198ca7c3d44d10191f2e20a489b918e531f8073beb08/log.json --log-format json exec --process /tmp/runc-process279112836 --detach --pid-file /run/containerd/io.containerd.runtime.v2.task/k8s.io/f263cbd6c8944436d67b198ca7c3d44d10191f2e20a489b918e531f8073beb08/a84c0c693897da42ff84e14869433477f62685a336d635eb451c3fb7d3bf6aee.pid f263cbd6c8944436d67b198ca7c3d44d10191f2e20a489b918e531f8073beb08 proc_cwd=/srv/ group_gid=1000 group_name=<NA> user_loginname=<NA> evt_type=execve user=<NA> user_uid=1000 user_loginuid=-1 process=find proc_exepath=/usr/bin/find parent=runc command=find / -xdev -path */.aws/credentials terminal=0 exe_flags=EXE_LOWER_LAYER container_id=f263cbd6c894 container_name=api container_image_repository=brewtrack-registry:5000/brewtrack-api container_image_tag=0.1.0-e046683 k8s_pod_name=brewtrack-api-7cc47d6799-65w5h k8s_ns_name=brewtrack","output_fields":{"container.id":"f263cbd6c894","container.image.repository":"brewtrack-registry:5000/brewtrack-api","container.image.tag":"0.1.0-e046683","container.name":"api","evt.arg.flags":"EXE_LOWER_LAYER","evt.time":1795553296555582887,"evt.type":"execve","group.gid":1000,"group.name":"<NA>","k8s.ns.name":"brewtrack","k8s.pod.name":"brewtrack-api-7cc47d6799-65w5h","proc.cmdline":"find / -xdev -path */.aws/credentials","proc.cwd":"/srv/","proc.exepath":"/usr/bin/find","proc.name":"find","proc.pcmdline":"runc --root /run/containerd/runc/k8s.io --log /run/containerd/io.containerd.runtime.v2.task/k8s.io/f263cbd6c8944436d67b198ca7c3d44d10191f2e20a489b918e531f8073beb08/log.json --log-format json exec --process /tmp/runc-process279112836 --detach --pid-file /run/containerd/io.containerd.runtime.v2.task/k8s.io/f263cbd6c8944436d67b198ca7c3d44d10191f2e20a489b918e531f8073beb08/a84c0c693897da42ff84e14869433477f62685a336d635eb451c3fb7d3bf6aee.pid f263cbd6c8944436d67b198ca7c3d44d10191f2e20a489b918e531f8073beb08","proc.pname":"runc","proc.tty":0,"user.loginname":"<NA>","user.loginuid":-1,"user.name":"<NA>","user.uid":1000},"priority":"Warning","rule":"Find AWS Credentials","source":"syscall","tags":["T1552","aws","container","host","maturity_stable","mitre_credential_access","process"],"time":"2026-11-24T20:48:16.555582887Z"}
+
+===== Resumen
+2026-11-24T20:48:16  Warning  Search Private Keys or Passwords
+    pod=brewtrack-api-7cc47d6799-65w5h  usuario=<NA>  uid=1000  comando=find / -xdev -name id_rsa
+2026-11-24T20:48:16  Warning  Search Private Keys or Passwords
+    pod=brewtrack-api-7cc47d6799-65w5h  usuario=<NA>  uid=1000  comando=grep -rl BEGIN RSA PRIVATE /etc /srv
+2026-11-24T20:48:16  Warning  Find AWS Credentials
+    pod=brewtrack-api-7cc47d6799-65w5h  usuario=<NA>  uid=1000  comando=find / -xdev -path */.aws/credentials
+
+Total: 3 alertas

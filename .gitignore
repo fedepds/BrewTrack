@@ -21,3 +21,6 @@ api/requirements-snyk.txt
 
 # Informes de SlimToolkit (spec 010): uno por build
 reports/slimtoolkit/
+
+# Lo crea pip install ./api (scripts/snyk-scan.sh)
+api/build/

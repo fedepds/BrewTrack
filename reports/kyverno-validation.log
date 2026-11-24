@@ -1,0 +1,81 @@
+
+===== Kyverno: validación de políticas — 2026-11-24 17:48:15 -0300
+Clúster: minikube
+Kyverno: reg.kyverno.io/kyverno/kyverno:v1.19.2
+
+===== Políticas instaladas
+NOMBRE                                    ACCIÓN   SEVERIDAD
+brewtrack-disallow-latest-tag             [Deny]   medium
+brewtrack-disallow-privilege-escalation   [Deny]   high
+brewtrack-require-requests-limits         [Deny]   medium
+brewtrack-require-run-as-non-root         [Deny]   high
+
+===== deployment-malo — Incumple 01 y 02 a nivel de Deployment: Kyverno lo rechaza antes de crear pods.
+$ kubectl apply -f kyverno/tests/deployment-malo.yaml
+Error from server: error when creating "kyverno/tests/deployment-malo.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy brewtrack-disallow-latest-tag failed: La etiqueta latest no está permitida: usa una versión fija.; Policy brewtrack-require-requests-limits failed: Cada contenedor necesita resources.requests y resources.limits de cpu y memory.
+RESULTADO: rechazado (esperado: rechazado) -> OK
+
+===== pod-latest — Incumple 01: imagen con la etiqueta latest.
+$ kubectl apply -f kyverno/tests/pod-latest.yaml
+Error from server: error when creating "kyverno/tests/pod-latest.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy brewtrack-disallow-latest-tag failed: La etiqueta latest no está permitida: usa una versión fija.
+RESULTADO: rechazado (esperado: rechazado) -> OK
+
+===== pod-ok — Cumple las cuatro políticas: Kyverno lo admite.
+$ kubectl apply -f kyverno/tests/pod-ok.yaml
+pod/kyverno-ok created
+RESULTADO: admitido (esperado: admitido) -> OK
+
+===== pod-privilegiado — Incumple 04: contenedor privileged con escalada de privilegios.
+$ kubectl apply -f kyverno/tests/pod-privilegiado.yaml
+Error from server: error when creating "kyverno/tests/pod-privilegiado.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy brewtrack-disallow-privilege-escalation failed: Cada contenedor tiene que fijar securityContext.allowPrivilegeEscalation en false.
+RESULTADO: rechazado (esperado: rechazado) -> OK
+
+===== pod-root — Incumple 03: runAsUser 0 y runAsNonRoot false (root).
+$ kubectl apply -f kyverno/tests/pod-root.yaml
+Error from server: error when creating "kyverno/tests/pod-root.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy brewtrack-require-run-as-non-root failed: runAsNonRoot tiene que ser true, en el securityContext del pod o en el de cada contenedor.
+RESULTADO: rechazado (esperado: rechazado) -> OK
+
+===== pod-sin-etiqueta — Incumple 01: imagen sin etiqueta (Docker la trata como latest).
+$ kubectl apply -f kyverno/tests/pod-sin-etiqueta.yaml
+Error from server: error when creating "kyverno/tests/pod-sin-etiqueta.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy brewtrack-disallow-latest-tag failed: Cada imagen tiene que llevar etiqueta. Ejemplo: brewtrack-api:0.1.0 en vez de brewtrack-api.
+RESULTADO: rechazado (esperado: rechazado) -> OK
+
+===== pod-sin-limites — Incumple 02: sin resources.
+$ kubectl apply -f kyverno/tests/pod-sin-limites.yaml
+Error from server: error when creating "kyverno/tests/pod-sin-limites.yaml": admission webhook "vpol.validate.kyverno.svc-fail" denied the request: Policy brewtrack-require-requests-limits failed: Cada contenedor necesita resources.requests y resources.limits de cpu y memory.
+RESULTADO: rechazado (esperado: rechazado) -> OK
+
+===== Los pods de BrewTrack cumplen las políticas (siguen corriendo)
+NAME                             READY   STATUS        RESTARTS      AGE   IP            NODE       NOMINATED NODE   READINESS GATES
+brewtrack-api-7cc47d6799-65w5h   1/1     Running       1 (29s ago)   30s   10.244.0.18   minikube   <none>           <none>
+brewtrack-db-0                   1/1     Running       0             29s   10.244.0.20   minikube   <none>           <none>
+brewtrack-test-health            0/1     Completed     0             26s   10.244.0.21   minikube   <none>           <none>
+brewtrack-web-8464776f5c-6m9qz   1/1     Running       0             30s   10.244.0.19   minikube   <none>           <none>
+grafana-858ddd5f6f-6cgbk         1/1     Running       2 (18m ago)   19h   10.244.0.3    minikube   <none>           <none>
+kyverno-ok                       0/1     Terminating   0             1s    <none>        minikube   <none>           <none>
+prometheus-7cd597d877-kppj9      1/1     Running       2 (18m ago)   19h   10.244.0.4    minikube   <none>           <none>
+
+===== PolicyReports del namespace brewtrack (resultado de la auditoría en segundo plano)
+RECURSO       NOMBRE                        PASS   FAIL
+ReplicaSet    brewtrack-api-7bb8bbd579      4      0
+Pod           grafana-858ddd5f6f-6cgbk      4      0
+ReplicaSet    grafana-858ddd5f6f            4      0
+ReplicaSet    brewtrack-api-58c6f797cf      4      0
+StatefulSet   brewtrack-db                  4      0
+Pod           prometheus-7cd597d877-kppj9   4      0
+Deployment    prometheus                    4      0
+ReplicaSet    brewtrack-api-77dd9c8f78      4      0
+ReplicaSet    brewtrack-web-6b9cffcc7b      4      0
+ReplicaSet    brewtrack-web-5cdb9fbd65      4      0
+ReplicaSet    brewtrack-web-68f586944b      4      0
+Deployment    brewtrack-web                 4      0
+ReplicaSet    brewtrack-api-64d6db47d6      4      0
+ReplicaSet    brewtrack-api-6d4b598b8d      4      0
+ReplicaSet    prometheus-7cd597d877         4      0
+Deployment    brewtrack-api                 4      0
+ReplicaSet    brewtrack-web-86795fd698      4      0
+ReplicaSet    brewtrack-web-68b59ddc54      4      0
+Deployment    grafana                       4      0
+ReplicaSet    brewtrack-api-86895c5f9d      4      0
+
+===== Resumen: 7 OK, 0 fallas

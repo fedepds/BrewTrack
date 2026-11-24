@@ -10,15 +10,18 @@ El frontend (Dart/pub) no tiene soporte en Snyk. Sus dependencias se revisan con
 
 ## Resultado
 
-> **Pendiente:** completar con la salida de `scripts/snyk-scan.sh`. Desde el entorno donde se preparó esto no se llega a `api.snyk.io`.
-
-Revisión previa con pip-audit, contra la base de vulnerabilidades de PyPI, sobre los mismos 36 paquetes (`reports/pip-audit-report.txt`): **ninguna vulnerabilidad conocida**.
+Snyk CLI 1.1309.0, 36 dependencias: **0 vulnerabilidades, 0 caminos vulnerables**. pip-audit, contra la base de PyPI y sobre los mismos 36 paquetes (`reports/pip-audit-report.txt`), coincide.
 
 | Severidad | Snyk (dependencias) | pip-audit |
 |---|---|---|
-| Crítica | _completar_ | 0 |
-| Alta | _completar_ | 0 |
-| Media / baja | _completar_ | 0 |
+| Crítica | 0 | 0 |
+| Alta | 0 | 0 |
+| Media / baja | 0 | 0 |
+
+```
+Tested 36 dependencies for known issues, found 0 issues, 0 vulnerable paths.
+Sin vulnerabilidades críticas: el pipeline sigue.
+```
 
 ## Qué hace el pipeline con una crítica
 

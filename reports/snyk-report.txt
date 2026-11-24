@@ -1,0 +1,38 @@
+===== Snyk: dependencias de la API — 2026-11-24 17:57:53 -0300
+Snyk CLI 1.1309.0
+Archivo: api/requirements-snyk.txt (36 paquetes, generado con pip freeze tras pip install ./api)
+
+$ snyk test --file=requirements-snyk.txt --package-manager=pip --severity-threshold=low
+Testing  (requirements-snyk.txt) ...
+
+Tested 36 dependencies for known issues, found 0 issues, 0 vulnerable paths.
+
+Open Security issues: 0
+
+╭───────────────────────────────────────────────────────────────────────╮
+│ Test Summary                                                          │
+│                                                                       │
+│   Organization:      fedepds                                          │
+│   Test type:         Software Composition Analysis                    │
+│   Project name:      brewtrack-api                                    │
+│   Project path:      /Users/federicopizarro/Desktop/BrewTrack2/api    │
+│   Target file:       requirements-snyk.txt                            │
+│                                                                       │
+│   Total security issues: 0                                            │
+╰───────────────────────────────────────────────────────────────────────╯
+
+
+💡 Tip
+
+   You are currently viewing results with --severity-threshold applied.
+   To view all issues, remove the --severity-threshold flag            
+                                                                       
+
+💡 Tip
+
+   To view ignored issues, use the --include-ignores option.
+                                                            
+
+
+===== Corte del pipeline: solo vulnerabilidades críticas
+Sin vulnerabilidades críticas: el pipeline sigue.

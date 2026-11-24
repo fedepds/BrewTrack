@@ -2,7 +2,7 @@
 # Corre Snyk sobre las dependencias de la API y escribe reports/snyk-report.txt.
 # Con IMAGES=1 también analiza las imágenes de compose (snyk container test) en reports/snyk-container-report.txt.
 #
-# Uso: SNYK_TOKEN=<token> scripts/snyk-scan.sh        (token: snyk.io → Account settings → Auth Token)
+# Uso: scripts/snyk-scan.sh   (token: SNYK_TOKEN o, mejor, guardado una vez con "snyk auth"; ver ci/snyk-cli.sh)
 # Sale con código 1 si hay alguna vulnerabilidad crítica, igual que el pipeline.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1

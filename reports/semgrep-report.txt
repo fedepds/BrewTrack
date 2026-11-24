@@ -1,6 +1,6 @@
-===== Semgrep — 2026-11-22 19:01:45 +0000
+===== Semgrep — 2026-11-24 17:41:49 -0300
 Semgrep 1.186.0
-Reglas de la comunidad: semgrep-rules @ a5ad171
+Reglas de la comunidad: semgrep-rules @ 16b9e6d
 Reglas propias: semgrep/python-security.yaml
 
 ===== 1. Prueba de las reglas propias (semgrep --test)
@@ -14,14 +14,14 @@ Rule third-party-action-not-pinned-to-commit-sha contains an include pattern '.g
 ┌─────────────┐
 │ Scan Status │
 └─────────────┘
-  Scanning 153 files tracked by git with 751 Code rules:
+  Scanning 177 files tracked by git with 751 Code rules:
                                                                                                                         
   Language      Rules   Files          Origin   Rules                                                                   
  ─────────────────────────────        ────────────────                                                                  
-  <multilang>     233     153          Custom     751                                                                   
+  <multilang>     233     177          Custom     751                                                                   
   yaml             92      24                                                                                           
-  python          373      21                                                                                           
-  json              2       3                                                                                           
+  python          373      22                                                                                           
+  json              2      13                                                                                           
                                                                                                                         
 Rule third-party-action-not-pinned-to-commit-sha contains an include pattern '.github/workflows' that will soon be interpreted as '/.github/workflows' to comply with the Semgrepignore v2 and Gitignore specifications. To make this pattern permanently unanchored, edit rule third-party-action-not-pinned-to-commit-sha and change it to '**/.github/workflows'. To confirm the anchored behavior and avoid this warning, change it to '/.github/workflows'.
                 
@@ -30,31 +30,47 @@ Rule third-party-action-not-pinned-to-commit-sha contains an include pattern '.g
 │ Scan Summary │
 └──────────────┘
 ✅ Scan completed successfully.
- • Findings: 1 (1 blocking)
+ • Findings: 3 (3 blocking)
  • Rules run: 698
- • Targets scanned: 153
+ • Targets scanned: 177
  • Parsed lines: ~100.0%
  • Scan skipped: 
-   ◦ Matching --exclude patterns: 39
-   ◦ Files larger than  files 1.0 MB: 1
+   ◦ Matching --exclude patterns: 49
+   ◦ Files larger than  files 1.0 MB: 2
    ◦ Files matching .semgrepignore patterns: 20
  • Scan was limited to files tracked by git
  • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
-Ran 698 rules on 153 files: 1 finding.
-                  
-                  
-┌────────────────┐
-│ 1 Code Finding │
-└────────────────┘
-                    
-    web/pubspec.lock
-     ❱ facebook-page-access-token
+Ran 698 rules on 177 files: 3 findings.
+                   
+                   
+┌─────────────────┐
+│ 3 Code Findings │
+└─────────────────┘
+                     
+    ci/slimtoolkit.sh
+     ❱ generic-api-key
           ❰❰ Blocking ❱❱
-          A gitleaks facebook-page-access-token was detected which attempts to identify hard-coded            
-          credentials. It is not recommended to store credentials in source-code, as this risks secrets being 
-          leaked and used by either an internal or external malicious adversary. It is recommended to use     
-          environment variables to securely provide credentials or retrieve credentials from a secure vault or
-          HSM (Hardware Security Module).                                                                     
+          A gitleaks generic-api-key was detected which attempts to identify hard-coded credentials.  It is   
+          not recommended to store credentials in source-code, as this risks secrets being leaked  and used by
+          either an internal or external malicious adversary. It is recommended to use  environment variables 
+          to securely provide credentials or retrieve credentials from a  secure vault or HSM (Hardware       
+          Security Module). This rule can introduce a lot of false positives,  it is not recommended to be    
+          used in PR comments.                                                                                
                                                                                                               
-          172┆ sha256: eaac480a35ec0814146c2c48d96aaa829e0e44a7662c88ae84c9edf4bc35651f
+            8┆ # Una REF es repositorio:etiqueta, por ejemplo localhost:5001/brewtrack-api:0.1.0-abc1234.
+            ⋮┆----------------------------------------
+           46┆ # Nombre de archivo: localhost:5001/brewtrack-api:0.1.0-abc1234 -> brewtrack-
+               api-0.1.0-abc1234                                                            
+                            
+    docs/guia-paso-a-paso.md
+     ❱ generic-api-key
+          ❰❰ Blocking ❱❱
+          A gitleaks generic-api-key was detected which attempts to identify hard-coded credentials.  It is   
+          not recommended to store credentials in source-code, as this risks secrets being leaked  and used by
+          either an internal or external malicious adversary. It is recommended to use  environment variables 
+          to securely provide credentials or retrieve credentials from a  secure vault or HSM (Hardware       
+          Security Module). This rule can introduce a lot of false positives,  it is not recommended to be    
+          used in PR comments.                                                                                
+                                                                                                              
+          182┆ localhost:5001/brewtrack-api:0.1.0-31d6f23
 
