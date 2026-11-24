@@ -6,4 +6,4 @@
 4. [x] `Jenkinsfile`: análisis en paralelo (10, 11), reducción y Trivy (18, 20), publicación (21), deploy intacto (22), limpieza.
 5. [x] `.gitignore` de `reports/slimtoolkit/` (25). El archivado de `reports/**` ya lo cubre (7, 8).
 6. [x] Prueba local de `xray` y de la lógica de `reduce` (ver dev-notes).
-7. [ ] Prueba de `slim build` real y corrida en Jenkins: pendiente (ver dev-notes).
+7. [x] `slim build` real en local. Corrida en Jenkins: pendiente (ver dev-notes).
