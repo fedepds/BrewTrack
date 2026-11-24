@@ -8,6 +8,7 @@
 #
 # Variables: BASE_URL (http://localhost:8081), DURATION en segundos (300), RPS aproximado (5).
 set -euo pipefail
+export LC_ALL=C   # awk con locale de coma decimal rompe sleep y el JSON
 
 BASE_URL=${BASE_URL:-http://localhost:8081}
 API="$BASE_URL/api/v1"
