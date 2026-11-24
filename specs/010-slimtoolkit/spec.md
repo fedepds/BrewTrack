@@ -1,6 +1,6 @@
 # 010 — SlimToolkit: análisis de capas y una imagen `web` reducida
 
-Estado: borrador
+Estado: aprobada
 Fecha: 2026-11-23
 
 ## Problema
