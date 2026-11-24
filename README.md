@@ -52,51 +52,7 @@ Fuera de alcance: curvas de tueste, empaque, precios, clientes y facturación, r
 
 ## 2. Arquitectura final
 
-```mermaid
-flowchart LR
-  dev([Desarrollador]) -->|git push| gh[(GitHub)]
-  gh -->|pollSCM cada 2 min| jk
-
-  subgraph host["Máquina local (Colima + Docker)"]
-    jk[Jenkins] -->|docker push| reg[("brewtrack-registry<br/>localhost:5001")]
-    jk -->|helm upgrade --install| api_server
-
-    subgraph mk["minikube (containerd)"]
-      api_server{{API server}}
-
-      subgraph ns_k["ns kyverno"]
-        kyv[Kyverno<br/>admission webhook]
-      end
-      api_server -.->|valida pods y controladores<br/>salvo ns del sistema y falco| kyv
-
-      kubelet[kubelet del nodo]
-
-      subgraph ns_b["ns brewtrack · release brewtrack"]
-        ing[Ingress opcional<br/>brewtrack.local] --> svc_web[Service<br/>brewtrack-web]
-        svc_web --> web[brewtrack-web<br/>nginx + Flutter]
-        web -->|/api/| svc_api[Service<br/>brewtrack-api]
-        svc_api --> apipod[brewtrack-api]
-        apipod --> db[(brewtrack-db<br/>StatefulSet + PVC)]
-        test[[helm test<br/>GET /api/v1/health]] -.-> svc_web
-      end
-
-      subgraph mon["ns brewtrack · k8s/, fuera del release"]
-        prom[Prometheus]
-        graf[Grafana] --> prom
-      end
-      prom -->|/metrics| apipod
-      prom -->|cAdvisor :10250| kubelet
-
-      subgraph ns_f["ns falco"]
-        falco[Falco DaemonSet<br/>eBPF]
-      end
-    end
-    reg -->|pull brewtrack-registry:5000| mk
-  end
-
-  user([Usuario]) --> ing
-  falco -.->|lee las llamadas al sistema de los pods del nodo| ns_b
-```
+![Arquitectura final de BrewTrack](docs/img/arquitectura.svg)
 
 **Recorrido de un pedido.** El usuario entra por el Ingress (o por un `port-forward` en dev). nginx (`brewtrack-web`) sirve la UI y reenvía `/api/` al Service `api`. La API lee y escribe en Postgres (`db`), que guarda sus datos en un PersistentVolumeClaim de 1 GiB (10 GiB en prod).
 
@@ -170,53 +126,6 @@ bash helm-chart/tests/render.sh            # prueba de la chart sin clúster
 ```
 
 > _Pendiente: salida de `kubectl -n brewtrack get pods,svc` con los pods en `Running`, salida de `helm test` y captura de la web (`docs/img/helm-pods.png`, `docs/img/web.png`)._
-
-### 2.3 Diagrama de despliegue
-
-Quién publica, quién baja las imágenes y qué corre en cada namespace. Las flechas punteadas son lecturas de monitoreo.
-
-```mermaid
-flowchart TB
-  dev([Desarrollador]) -->|git push| gh[(GitHub)]
-  jk -.->|pollSCM cada 2 min| gh
-
-  subgraph host["Máquina local (Colima + Docker)"]
-    jk["Jenkins<br/>host :8080"] -->|docker push :5001| reg[("brewtrack-registry<br/>127.0.0.1:5001")]
-
-    subgraph mk["minikube (containerd)"]
-      api_server{{API server}}
-      node["Nodo minikube<br/>kubelet + containerd"]
-
-      subgraph ns_k["ns kyverno"]
-        kyv["Kyverno<br/>4 políticas · Deny"]
-      end
-      api_server -->|valida pods| kyv
-      api_server -->|programa pods| node
-
-      subgraph ns_b["ns brewtrack"]
-        subgraph rel["release brewtrack (Helm)"]
-          web["brewtrack-web<br/>nginx · 1 réplica, 2 en prod"] -->|/api/ :8000| apipod["brewtrack-api<br/>FastAPI · 1 réplica"]
-          apipod -->|SQL :5432| db[("brewtrack-db<br/>StatefulSet + PVC")]
-        end
-        subgraph mon["k8s/, fuera del release"]
-          graf[Grafana] -->|PromQL| prom["Prometheus<br/>scrape cada 15 s"]
-        end
-        prom -.->|/metrics| apipod
-      end
-
-      subgraph ns_f["ns falco"]
-        falco["Falco<br/>DaemonSet · eBPF"]
-      end
-      prom -.->|cAdvisor :10250| node
-      falco -.->|llamadas al sistema| node
-    end
-
-    jk -->|helm upgrade --install| api_server
-    node -->|pull brewtrack-registry:5000| reg
-  end
-
-  user([Usuario]) -->|Ingress en prod, port-forward en dev| web
-```
 
 ---
 
