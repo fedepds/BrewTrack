@@ -173,11 +173,17 @@ pipeline {
         stage('Trivy imágenes') {
           agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache -v /var/run/docker.sock:/var/run/docker.sock'; reuseNode true } }
           steps {
-            sh '''
+            // Escanea las tres aunque falle una; tee deja el informe en reports/ además del log.
+            sh '''#!/bin/sh
+              set -o pipefail
+              R=reports/trivy-images-report.txt; : > "$R"; rc=0
               T="trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --quiet"
-              $T --skip-files usr/local/bin/gosu "$PUSH_REGISTRY/brewtrack-db:$DB_TAG"
-              $T "$PUSH_REGISTRY/brewtrack-api:$API_TAG"
-              $T "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"
+              for args in "--skip-files usr/local/bin/gosu $PUSH_REGISTRY/brewtrack-db:$DB_TAG" \
+                          "$PUSH_REGISTRY/brewtrack-api:$API_TAG" "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"; do
+                echo "===== ${args##* }" | tee -a "$R"
+                $T $args 2>&1 | tee -a "$R" || rc=1
+              done
+              exit $rc
             '''
           }
         }
@@ -187,36 +193,6 @@ pipeline {
           steps {
             catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
               sh 'ci/slimtoolkit.sh xray "$PUSH_REGISTRY/brewtrack-db:$DB_TAG" "$PUSH_REGISTRY/brewtrack-api:$API_TAG" "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"'
-            }
-          }
-        }
-
-        stage('Snyk imágenes') {
-          steps {
-            // Snyk analiza los .tar: así no necesita acceso al socket de Docker.
-            sh '''
-              mkdir -p images
-              docker save -o images/db.tar  "$PUSH_REGISTRY/brewtrack-db:$DB_TAG"
-              docker save -o images/api.tar "$PUSH_REGISTRY/brewtrack-api:$API_TAG"
-              docker save -o images/web.tar "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"
-            '''
-            script {
-              docker.image('python:3.13-slim').inside('-e HOME=/tmp') {
-                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
-                  sh '''#!/bin/bash
-                    set -euo pipefail
-                    . ci/snyk-cli.sh
-                    : > reports/snyk-container-report.txt
-                    rc=0
-                    for c in db api web; do
-                      echo "===== brewtrack-$c" | tee -a reports/snyk-container-report.txt
-                      "$SNYK" container test "docker-archive:images/$c.tar" --severity-threshold=critical \
-                        --file="$c/brewtrack-$c.Containerfile" 2>&1 | tee -a reports/snyk-container-report.txt || rc=1
-                    done
-                    exit $rc
-                  '''
-                }
-              }
             }
           }
         }
@@ -281,10 +257,10 @@ pipeline {
       junit allowEmptyResults: true, testResults: 'api/pytest.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
       // El dind de SlimToolkit se borra solo al salir el script; esto cubre un corte brusco. La -slim ya está en el registro o no se publica: no se guarda en el host.
-      sh 'docker rm -f brewtrack-slim-dind >/dev/null 2>&1 || true; docker rmi "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG-slim" >/dev/null 2>&1 || true; rm -rf images .kubeconfig api/requirements-snyk.txt'
+      sh 'docker rm -f brewtrack-slim-dind >/dev/null 2>&1 || true; docker rmi "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG-slim" >/dev/null 2>&1 || true; rm -rf .kubeconfig api/requirements-snyk.txt'
     }
     failure {
-      echo 'El pipeline falló: revisa la etapa en rojo y los informes en reports/ (Semgrep, Snyk).'
+      echo 'El pipeline falló: revisa la etapa en rojo y los informes en reports/ (Semgrep, Snyk, Trivy).'
     }
   }
 }

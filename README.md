@@ -185,7 +185,6 @@ flowchart LR
   C --> D
   subgraph D[Escaneo de imágenes · en paralelo]
     D1[Trivy imágenes]
-    D2[Snyk container]
   end
   D --> E[Publicar en<br/>localhost:5001] --> F[Deploy Helm<br/>--wait]
 ```
@@ -199,8 +198,7 @@ flowchart LR
 | 2d | Snyk dependencias | Snyk CLI | hay una vulnerabilidad **crítica** | `reports/snyk-report.txt` |
 | 2e | Trivy fs | Trivy (vulnerabilidades, secretos, configuración) | HIGH o CRITICAL con arreglo publicado | log |
 | 3 | Build imágenes | `docker build` | falla una compilación | tamaño de cada imagen |
-| 4a | Trivy imágenes | Trivy | HIGH o CRITICAL con arreglo publicado | log |
-| 4b | Snyk imágenes | `snyk container test` | hay una vulnerabilidad **crítica** | `reports/snyk-container-report.txt` |
+| 4a | Trivy imágenes | Trivy | HIGH o CRITICAL con arreglo publicado | `reports/trivy-images-report.txt` |
 | 5 | Publicar imágenes | `docker push` al registro local | el registro no responde | imágenes etiquetadas `versión-commit` |
 | 6 | Deploy Helm | `helm upgrade --install --wait` y `helm test` | un pod no queda listo en 5 min, o la web no llega a la API | `helm status`, salida del test, historial y pods |
 
@@ -274,7 +272,7 @@ Las 19 consultas se validaron con un parser de PromQL, y todas las métricas que
 | Herramienta | Qué revisa | Resultado |
 |---|---|---|
 | Semgrep | Código, Containerfiles, YAML, nginx, secretos | 37 hallazgos → **1** (falso positivo justificado). Además encontró y corrigió un bug real. |
-| Snyk | Dependencias de la API e imágenes | _Pendiente_. Revisión previa con pip-audit: **0** vulnerabilidades conocidas en 36 paquetes |
+| Snyk | Dependencias de la API | _Pendiente_. Revisión previa con pip-audit: **0** vulnerabilidades conocidas en 36 paquetes |
 | Trivy | Repo e imágenes | Sin HIGH ni CRITICAL con arreglo publicado. Riesgo aceptado: `gosu` en `db` |
 | Kyverno | Pods al entrar al clúster | 4 políticas en modo Deny. La chart (incluido el pod de `helm test`), Prometheus y Grafana las cumplen. |
 | Falco | Pods en ejecución | Detecta la búsqueda de credenciales dentro del pod de la API |

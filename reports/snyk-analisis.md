@@ -22,7 +22,7 @@ Revisión previa con pip-audit, contra la base de vulnerabilidades de PyPI, sobr
 
 ## Qué hace el pipeline con una crítica
 
-Las etapas *Snyk dependencias* y *Snyk imágenes* corren con `--severity-threshold=critical`. Si aparece una vulnerabilidad crítica, Snyk sale con código 1, la etapa falla y no se construye ni se despliega nada. El informe queda en los artefactos del build.
+La etapa *Snyk dependencias* corre con `--severity-threshold=critical`. Si aparece una vulnerabilidad crítica, Snyk sale con código 1, la etapa falla y no se construye ni se despliega nada. Las imágenes las revisa Trivy, que corta con HIGH y CRITICAL: un segundo escáner con un umbral más alto no frenaba nada nuevo. El informe queda en los artefactos del build.
 
 ## Correcciones propuestas
 
