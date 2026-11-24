@@ -14,7 +14,9 @@ Fuente: `slim xray` y `slim build` (SlimToolkit) en el build 16 de Jenkins, comm
 | `brewtrack-web:0.2.0` | `nginx:1.30-alpine` | 114,7 MB (46,2 MB) | 11 | 62,0 MB | 52,8 MB |
 | `brewtrack-web:0.2.0-slim` | reducida con `slim build` | 55,3 MB | 1 | — | — |
 
-La `web` reducida pesa 59,4 MB menos (51,8 %). Pasa la sonda HTTP, la prueba de la ruta interna de la SPA y Trivy sin hallazgos HIGH ni CRITICAL. Se publica en el registro, pero el clúster sigue usando la normal.
+La `web` reducida pesa 59,4 MB menos (51,8 %). Pasa la sonda HTTP, la prueba de la ruta interna de la SPA y Trivy sin hallazgos HIGH ni CRITICAL. El clúster usa la normal.
+
+Desde el cambio 1 de la spec 010, el pipeline solo corre `xray`. La reducida se mide a mano con `ci/slimtoolkit.sh reduce <imagen web>`, que no pasa Trivy: el resultado de Trivy de arriba es del build 16, y una medición local nueva no lo renueva.
 
 ## db
 

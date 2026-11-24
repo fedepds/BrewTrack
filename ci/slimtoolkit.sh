@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# SlimToolkit para BrewTrack (spec 010). Lo llama el Jenkinsfile y se corre igual en local.
+# SlimToolkit para BrewTrack (spec 010). El Jenkinsfile llama a xray en cada build; reduce se corre a mano
+# para volver a medir la web reducida y actualizar reports/image-analysis.md.
 #
 #   ci/slimtoolkit.sh xray   DB_REF API_REF WEB_REF   # informes de capas de las tres imágenes
 #   ci/slimtoolkit.sh reduce WEB_REF                  # imagen web reducida: <WEB_REF>-slim, probada con curl

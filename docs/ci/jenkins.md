@@ -13,14 +13,12 @@ El `Jenkinsfile` de la raíz clona el repo, analiza el código y las dependencia
 | 2d | Snyk dependencias | Snyk CLI sobre las dependencias de la API | hay una vulnerabilidad **crítica** | `reports/snyk-report.txt` |
 | 2e | Trivy fs | Trivy (vulnerabilidades, secretos, configuración) | hay hallazgos HIGH o CRITICAL con arreglo | log |
 | 3 | Build imágenes | docker build | falla una compilación | tamaño de cada imagen en el log |
-| 3b | Reducir web (SlimToolkit) | `ci/slimtoolkit.sh reduce`: `slim build` de `web` y prueba con `curl` | nunca (amarillo si falla) | `reports/slimtoolkit/*.compare.txt`, `*.build.json` |
-| 3c | Trivy web reducida | Trivy sobre `brewtrack-web:<tag>-slim` | nunca (amarillo si hay hallazgos) | log |
 | 4a | Trivy imágenes | Trivy | hay hallazgos HIGH o CRITICAL con arreglo | `reports/trivy-images-report.txt` |
 | 4b | SlimToolkit análisis | `ci/slimtoolkit.sh xray` de `db`, `api` y `web` | nunca (amarillo si falla) | `reports/slimtoolkit/*.xray.json`, `*.xray.log`, `*.txt` |
-| 5 | Publicar imágenes | docker push a `localhost:5001` | el registro no responde | imágenes en el registro; la `-slim` solo si pasó 3b y 3c |
+| 5 | Publicar imágenes | docker push a `localhost:5001` | el registro no responde | imágenes en el registro |
 | 6 | Deploy Helm | `helm upgrade --install --wait` y `helm test` | un pod no queda listo en 5 minutos, o `/api/v1/health` no responde a través de la web | `helm status`, salida del test, historial y pods en el log |
 
-El parámetro `WEB_CHECK_PATHS` fija las rutas que prueba la etapa 3b; con una ruta que no existe, el build queda amarillo y no publica la `-slim`. El deploy usa siempre la imagen normal.
+La imagen `web` reducida no se construye en el pipeline. Para volver a medirla, corre a mano `ci/slimtoolkit.sh reduce <imagen web>` y actualiza `reports/image-analysis.md`. La variable `WEB_CHECK_PATHS` cambia las rutas que prueba.
 
 Las etapas 2 y 4 corren en paralelo y sin `failFast`: si falla una, las demás terminan igual, así se ven todos los problemas de una vez.
 

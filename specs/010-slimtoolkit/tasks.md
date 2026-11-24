@@ -7,3 +7,4 @@
 5. [x] `.gitignore` de `reports/slimtoolkit/` (25). El archivado de `reports/**` ya lo cubre (7, 8).
 6. [x] Prueba local de `xray` y de la lógica de `reduce` (ver dev-notes).
 7. [x] `slim build` real en local. Corrida en Jenkins: pendiente (ver dev-notes).
+8. [x] Cambio 1: quitar del `Jenkinsfile` `Reducir web`, `Trivy web reducida`, `WEB_CHECK_PATHS`, el push y el `rmi` de la `-slim`. Docs, README, `image-analysis.md` y plan al día.

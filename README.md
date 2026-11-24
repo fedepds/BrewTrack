@@ -185,6 +185,7 @@ flowchart LR
   C --> D
   subgraph D[Escaneo de imágenes · en paralelo]
     D1[Trivy imágenes]
+    D2[SlimToolkit<br/>análisis]
   end
   D --> E[Publicar en<br/>localhost:5001] --> F[Deploy Helm<br/>--wait]
 ```
@@ -199,6 +200,7 @@ flowchart LR
 | 2e | Trivy fs | Trivy (vulnerabilidades, secretos, configuración) | HIGH o CRITICAL con arreglo publicado | log |
 | 3 | Build imágenes | `docker build` | falla una compilación | tamaño de cada imagen |
 | 4a | Trivy imágenes | Trivy | HIGH o CRITICAL con arreglo publicado | `reports/trivy-images-report.txt` |
+| 4b | SlimToolkit análisis | `slim xray` de `db`, `api` y `web` | nunca (amarillo si falla) | `reports/slimtoolkit/` |
 | 5 | Publicar imágenes | `docker push` al registro local | el registro no responde | imágenes etiquetadas `versión-commit` |
 | 6 | Deploy Helm | `helm upgrade --install --wait` y `helm test` | un pod no queda listo en 5 min, o la web no llega a la API | `helm status`, salida del test, historial y pods |
 

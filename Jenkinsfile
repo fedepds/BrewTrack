@@ -11,11 +11,6 @@ pipeline {
   // Jenkins corre en localhost y GitHub no puede avisarle: consulta el repo cada 2 minutos.
   triggers { pollSCM('H/2 * * * *') }
 
-  parameters {
-    // Rutas que la imagen web reducida debe servir con 200. QA puede poner una que no exista para forzar la falla.
-    string(name: 'WEB_CHECK_PATHS', defaultValue: '/ /index.html /lotes/ejemplo /main.dart.js', description: 'Rutas que prueba la imagen web reducida (spec 010)')
-  }
-
   environment {
     // Registro local (scripts/registry-up.sh): el host publica en PUSH_REGISTRY y los pods bajan de PULL_REGISTRY.
     PUSH_REGISTRY = 'localhost:5001'
@@ -143,30 +138,6 @@ pipeline {
       }
     }
 
-    // Spec 010: imagen web reducida. Falla = build UNSTABLE; el deploy sigue con la imagen normal.
-    stage('Reducir web (SlimToolkit)') {
-      steps {
-        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-          sh 'ci/slimtoolkit.sh reduce "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"'
-          script { env.SLIM_BUILT = 'true' }
-        }
-      }
-    }
-
-    stage('Trivy web reducida') {
-      when { beforeAgent true; environment name: 'SLIM_BUILT', value: 'true' }
-      steps {
-        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
-          script {
-            docker.image('aquasec/trivy').inside('--entrypoint= -u root -v trivy-cache:/root/.cache -v /var/run/docker.sock:/var/run/docker.sock') {
-              sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --quiet "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG-slim"'
-            }
-            env.SLIM_OK = 'true'
-          }
-        }
-      }
-    }
-
     stage('Escaneo de imágenes') {
       failFast false
       parallel {
@@ -206,8 +177,6 @@ pipeline {
           for img in "brewtrack-db:$DB_TAG" "brewtrack-api:$API_TAG" "brewtrack-web:$WEB_TAG"; do
             docker push "$PUSH_REGISTRY/$img"
           done
-          # La reducida sube solo si pasó la prueba y Trivy. El deploy no la usa.
-          if [ "${SLIM_OK:-}" = true ]; then docker push "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG-slim"; fi
         '''
       }
     }
@@ -256,8 +225,8 @@ pipeline {
     always {
       junit allowEmptyResults: true, testResults: 'api/pytest.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
-      // El dind de SlimToolkit se borra solo al salir el script; esto cubre un corte brusco. La -slim ya está en el registro o no se publica: no se guarda en el host.
-      sh 'docker rm -f brewtrack-slim-dind >/dev/null 2>&1 || true; docker rmi "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG-slim" >/dev/null 2>&1 || true; rm -rf .kubeconfig api/requirements-snyk.txt'
+      // El dind de SlimToolkit se borra solo al salir el script; esto cubre un corte brusco.
+      sh 'docker rm -f brewtrack-slim-dind >/dev/null 2>&1 || true; rm -rf .kubeconfig api/requirements-snyk.txt'
     }
     failure {
       echo 'El pipeline falló: revisa la etapa en rojo y los informes en reports/ (Semgrep, Snyk, Trivy).'
