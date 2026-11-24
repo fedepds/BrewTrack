@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "40c90c1f-94ea-4b86-9a7e-e4d2fe3bdb2c",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/federicopizarro/Desktop/BrewTrack2/.archify/architecture-despliegue-20261124-151202/candidate.json",
+  "output": "/Users/federicopizarro/Desktop/BrewTrack2/.archify/architecture-despliegue-20261124-151202/despliegue.html",
+  "specification": {
+    "sha256": "9471625cbdaaa139f028bfbf17880f447785fdc361101b90a71115dbbd4d135c",
+    "bytes": 35673
+  },
+  "artifact": {
+    "sha256": "824716bb0b5621c2deed74215a5f7c53dca46368a759d35b03f7b6bf91f1821b",
+    "bytes": 782298
+  }
+}

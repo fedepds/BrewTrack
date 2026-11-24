@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "7fdae549-668c-41cb-8863-0293d0a887ff",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/federicopizarro/Desktop/BrewTrack2/.archify/architecture-brewtrack-20261124-150232/candidate.json",
+  "output": "/Users/federicopizarro/Desktop/BrewTrack2/.archify/architecture-brewtrack-20261124-150232/brewtrack.html",
+  "specification": {
+    "sha256": "05649d89cc0c1e28f7faab2cfe2ab5bdc932d4a9c4a2a78378544b9dade794b8",
+    "bytes": 32400
+  },
+  "artifact": {
+    "sha256": "ea8db1c0701d8f5a026e922c185149b0fa2d85c76930ec39dadf0dd4e4c2127a",
+    "bytes": 763733
+  }
+}
