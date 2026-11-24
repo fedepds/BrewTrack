@@ -1,4 +1,4 @@
-// CI/CD de BrewTrack: clona, analiza (Semgrep, Snyk, Trivy), prueba, construye, publica en el registro local y despliega con Helm.
+// CI/CD de BrewTrack: clona, analiza (Semgrep, Snyk, Trivy, SlimToolkit), prueba, construye, publica en el registro local y despliega con Helm.
 // Requisitos de Jenkins y cómo levantarlo: docs/ci/jenkins.md
 pipeline {
   agent any
@@ -138,6 +138,27 @@ pipeline {
       }
     }
 
+    // Spec 010: imagen web reducida. Falla = build UNSTABLE; el deploy sigue con la imagen normal.
+    stage('Reducir web (SlimToolkit)') {
+      steps {
+        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+          sh 'ci/slimtoolkit.sh reduce "$PUSH_REGISTRY/brewtrack-db:$DB_TAG" "$PUSH_REGISTRY/brewtrack-api:$API_TAG" "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"'
+          script { env.SLIM_BUILT = 'true' }
+        }
+      }
+    }
+
+    stage('Trivy web reducida') {
+      when { environment name: 'SLIM_BUILT', value: 'true' }
+      agent { docker { image 'aquasec/trivy'; args '--entrypoint= -u root -v trivy-cache:/root/.cache -v /var/run/docker.sock:/var/run/docker.sock'; reuseNode true } }
+      steps {
+        catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+          sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed --quiet "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG-slim"'
+          script { env.SLIM_OK = 'true' }
+        }
+      }
+    }
+
     stage('Escaneo de imágenes') {
       failFast false
       parallel {
@@ -150,6 +171,15 @@ pipeline {
               $T "$PUSH_REGISTRY/brewtrack-api:$API_TAG"
               $T "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"
             '''
+          }
+        }
+
+        stage('SlimToolkit análisis') {
+          // Solo informa: si falla, la etapa queda UNSTABLE y el pipeline sigue.
+          steps {
+            catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+              sh 'ci/slimtoolkit.sh xray "$PUSH_REGISTRY/brewtrack-db:$DB_TAG" "$PUSH_REGISTRY/brewtrack-api:$API_TAG" "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG"'
+            }
           }
         }
 
@@ -192,6 +222,8 @@ pipeline {
           for img in "brewtrack-db:$DB_TAG" "brewtrack-api:$API_TAG" "brewtrack-web:$WEB_TAG"; do
             docker push "$PUSH_REGISTRY/$img"
           done
+          # La reducida sube solo si pasó la prueba y Trivy. El deploy no la usa.
+          if [ "${SLIM_OK:-}" = true ]; then docker push "$PUSH_REGISTRY/brewtrack-web:$WEB_TAG-slim"; fi
         '''
       }
     }
@@ -240,7 +272,7 @@ pipeline {
     always {
       junit allowEmptyResults: true, testResults: 'api/pytest.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
-      sh 'rm -rf images .kubeconfig api/requirements-snyk.txt'
+      sh 'docker rm -f brewtrack-slim-dind web-slim >/dev/null 2>&1 || true; rm -rf images .kubeconfig api/requirements-snyk.txt reports/slimtoolkit/.state'
     }
     failure {
       echo 'El pipeline falló: revisa la etapa en rojo y los informes en reports/ (Semgrep, Snyk).'
