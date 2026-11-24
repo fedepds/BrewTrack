@@ -67,7 +67,9 @@ flowchart LR
       subgraph ns_k["ns kyverno"]
         kyv[Kyverno<br/>admission webhook]
       end
-      api_server -.->|valida cada pod| kyv
+      api_server -.->|valida pods y controladores<br/>salvo ns del sistema y falco| kyv
+
+      kubelet[kubelet del nodo]
 
       subgraph ns_b["ns brewtrack · release brewtrack"]
         ing[Ingress opcional<br/>brewtrack.local] --> svc_web[Service<br/>brewtrack-web]
@@ -76,10 +78,14 @@ flowchart LR
         svc_api --> apipod[brewtrack-api]
         apipod --> db[(brewtrack-db<br/>StatefulSet + PVC)]
         test[[helm test<br/>GET /api/v1/health]] -.-> svc_web
-        prom[Prometheus] -->|/metrics| apipod
-        prom -->|cAdvisor vía API server| api_server
+      end
+
+      subgraph mon["ns brewtrack · k8s/, fuera del release"]
+        prom[Prometheus]
         graf[Grafana] --> prom
       end
+      prom -->|/metrics| apipod
+      prom -->|cAdvisor :10250| kubelet
 
       subgraph ns_f["ns falco"]
         falco[Falco DaemonSet<br/>eBPF]
@@ -89,14 +95,14 @@ flowchart LR
   end
 
   user([Usuario]) --> ing
-  falco -.->|lee las llamadas al sistema| apipod
+  falco -.->|lee las llamadas al sistema de los pods del nodo| ns_b
 ```
 
 **Recorrido de un pedido.** El usuario entra por el Ingress (o por un `port-forward` en dev). nginx (`brewtrack-web`) sirve la UI y reenvía `/api/` al Service `api`. La API lee y escribe en Postgres (`db`), que guarda sus datos en un PersistentVolumeClaim de 1 GiB (10 GiB en prod).
 
 **Nombres por release.** Cada recurso lleva el nombre del release (`brewtrack-db`, `brewtrack-api`, `brewtrack-web`, `brewtrack-secrets`), así que se pueden instalar dev y prod en el mismo clúster, en namespaces distintos. La `DATABASE_URL` y la dirección de la API que usa nginx se arman con esos nombres.
 
-**Seguridad en dos momentos.** Kyverno revisa cada pod cuando llega al API server y rechaza los que incumplen. Falco mira lo que hacen los pods ya en marcha.
+**Seguridad en dos momentos.** Kyverno revisa cada pod, y lo que crea pods, cuando llega al API server, y rechaza los que incumplen. Deja fuera los namespaces del sistema, `kyverno`, `falco` e `ingress-nginx`. Falco mira lo que hacen los pods ya en marcha.
 
 **Medidas comunes a todos los pods de la app:**
 - Usuario sin privilegios (`runAsNonRoot`, uid numérico).
@@ -165,6 +171,53 @@ bash helm-chart/tests/render.sh            # prueba de la chart sin clúster
 
 > _Pendiente: salida de `kubectl -n brewtrack get pods,svc` con los pods en `Running`, salida de `helm test` y captura de la web (`docs/img/helm-pods.png`, `docs/img/web.png`)._
 
+### 2.3 Diagrama de despliegue
+
+Quién publica, quién baja las imágenes y qué corre en cada namespace. Las flechas punteadas son lecturas de monitoreo.
+
+```mermaid
+flowchart TB
+  dev([Desarrollador]) -->|git push| gh[(GitHub)]
+  jk -.->|pollSCM cada 2 min| gh
+
+  subgraph host["Máquina local (Colima + Docker)"]
+    jk["Jenkins<br/>host :8080"] -->|docker push :5001| reg[("brewtrack-registry<br/>127.0.0.1:5001")]
+
+    subgraph mk["minikube (containerd)"]
+      api_server{{API server}}
+      node["Nodo minikube<br/>kubelet + containerd"]
+
+      subgraph ns_k["ns kyverno"]
+        kyv["Kyverno<br/>4 políticas · Deny"]
+      end
+      api_server -->|valida pods| kyv
+      api_server -->|programa pods| node
+
+      subgraph ns_b["ns brewtrack"]
+        subgraph rel["release brewtrack (Helm)"]
+          web["brewtrack-web<br/>nginx · 1 réplica, 2 en prod"] -->|/api/ :8000| apipod["brewtrack-api<br/>FastAPI · 1 réplica"]
+          apipod -->|SQL :5432| db[("brewtrack-db<br/>StatefulSet + PVC")]
+        end
+        subgraph mon["k8s/, fuera del release"]
+          graf[Grafana] -->|PromQL| prom["Prometheus<br/>scrape cada 15 s"]
+        end
+        prom -.->|/metrics| apipod
+      end
+
+      subgraph ns_f["ns falco"]
+        falco["Falco<br/>DaemonSet · eBPF"]
+      end
+      prom -.->|cAdvisor :10250| node
+      falco -.->|llamadas al sistema| node
+    end
+
+    jk -->|helm upgrade --install| api_server
+    node -->|pull brewtrack-registry:5000| reg
+  end
+
+  user([Usuario]) -->|Ingress en prod, port-forward en dev| web
+```
+
 ---
 
 ## 3. Pipeline implementado
@@ -185,7 +238,7 @@ flowchart LR
   C --> D
   subgraph D[Escaneo de imágenes · en paralelo]
     D1[Trivy imágenes]
-    D2[Snyk container]
+    D2[SlimToolkit<br/>análisis]
   end
   D --> E[Publicar en<br/>localhost:5001] --> F[Deploy Helm<br/>--wait]
 ```
@@ -199,8 +252,8 @@ flowchart LR
 | 2d | Snyk dependencias | Snyk CLI | hay una vulnerabilidad **crítica** | `reports/snyk-report.txt` |
 | 2e | Trivy fs | Trivy (vulnerabilidades, secretos, configuración) | HIGH o CRITICAL con arreglo publicado | log |
 | 3 | Build imágenes | `docker build` | falla una compilación | tamaño de cada imagen |
-| 4a | Trivy imágenes | Trivy | HIGH o CRITICAL con arreglo publicado | log |
-| 4b | Snyk imágenes | `snyk container test` | hay una vulnerabilidad **crítica** | `reports/snyk-container-report.txt` |
+| 4a | Trivy imágenes | Trivy | HIGH o CRITICAL con arreglo publicado | `reports/trivy-images-report.txt` |
+| 4b | SlimToolkit análisis | `slim xray` de `db`, `api` y `web` | nunca (amarillo si falla) | `reports/slimtoolkit/` |
 | 5 | Publicar imágenes | `docker push` al registro local | el registro no responde | imágenes etiquetadas `versión-commit` |
 | 6 | Deploy Helm | `helm upgrade --install --wait` y `helm test` | un pod no queda listo en 5 min, o la web no llega a la API | `helm status`, salida del test, historial y pods |
 
@@ -274,7 +327,7 @@ Las 19 consultas se validaron con un parser de PromQL, y todas las métricas que
 | Herramienta | Qué revisa | Resultado |
 |---|---|---|
 | Semgrep | Código, Containerfiles, YAML, nginx, secretos | 37 hallazgos → **1** (falso positivo justificado). Además encontró y corrigió un bug real. |
-| Snyk | Dependencias de la API e imágenes | _Pendiente_. Revisión previa con pip-audit: **0** vulnerabilidades conocidas en 36 paquetes |
+| Snyk | Dependencias de la API | _Pendiente_. Revisión previa con pip-audit: **0** vulnerabilidades conocidas en 36 paquetes |
 | Trivy | Repo e imágenes | Sin HIGH ni CRITICAL con arreglo publicado. Riesgo aceptado: `gosu` en `db` |
 | Kyverno | Pods al entrar al clúster | 4 políticas en modo Deny. La chart (incluido el pod de `helm test`), Prometheus y Grafana las cumplen. |
 | Falco | Pods en ejecución | Detecta la búsqueda de credenciales dentro del pod de la API |

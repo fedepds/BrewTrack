@@ -1,0 +1,367 @@
+cmd=xray state=started
+cmd=xray info=cmd.input.params target.type='tt.image.ref' add-image-manifest='false' add-image-config='false' rm-file-artifacts='false' runtime='auto/docker' target='localhost:5001/brewtrack-api:0.1.0-31d6f23' 
+cmd=xray state=image.api.inspection.start
+cmd=xray info=image size.human='0 B' architecture='arm64' id='sha256:972af51daf7bbd01f138d486ac9ad5362466af3ccbfd7d534c1d9cbb5087d56b' size.bytes='0' 
+cmd=xray info=image.users exe='app' all='app' 
+cmd=xray info=image.stack index='0' name='localhost:5001/brewtrack-api:0.1.0-31d6f23' id='sha256:972af51daf7bbd01f138d486ac9ad5362466af3ccbfd7d534c1d9cbb5087d56b' instructions='18' message='see report file for details' 
+cmd=xray info=image.exposed_ports list='8000' 
+cmd=xray state=image.api.inspection.done
+cmd=xray state=image.data.inspection.start
+cmd=xray info=image.data.inspection.save.image.start
+cmd=xray info=image.data.inspection.save.image.end
+cmd=xray info=image.data.inspection.process.image.start
+cmd=xray info=image.data.inspection.process.image.end
+cmd=xray state=image.data.inspection.done
+cmd=xray info=image.package.details
+cmd=xray info=layers.count value='8' 
+cmd=xray info=image.identities.stats user_count='19' group_count='39' 
+cmd=xray info=image.identities.user no_login_shell='true' no_password_login='true' username='bin' uid='2' home='/bin' shell='/usr/sbin/nologin' 
+cmd=xray info=image.identities.user uid='8' home='/var/mail' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' username='mail' 
+cmd=xray info=image.identities.user no_password_login='true' username='uucp' uid='10' home='/var/spool/uucp' shell='/usr/sbin/nologin' no_login_shell='true' 
+cmd=xray info=image.identities.user uid='13' home='/bin' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' username='proxy' 
+cmd=xray info=image.identities.user username='list' uid='38' home='/var/list' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' 
+cmd=xray info=image.identities.user home='/nonexistent' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' username='nobody' uid='65534' 
+cmd=xray info=image.identities.user no_login_shell='true' no_password_login='true' username='sys' uid='3' home='/dev' shell='/usr/sbin/nologin' 
+cmd=xray info=image.identities.user no_password_login='true' username='man' uid='6' home='/var/cache/man' shell='/usr/sbin/nologin' no_login_shell='true' 
+cmd=xray info=image.identities.user home='/var/www' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' username='www-data' uid='33' 
+cmd=xray info=image.identities.user username='_apt' uid='42' home='/nonexistent' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' 
+cmd=xray info=image.identities.user shell='/bin/bash' no_login_shell='false' no_password_login='true' username='root' uid='0' home='/root' 
+cmd=xray info=image.identities.user shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' username='games' uid='5' home='/usr/games' 
+cmd=xray info=image.identities.user no_login_shell='true' no_password_login='true' username='news' uid='9' home='/var/spool/news' shell='/usr/sbin/nologin' 
+cmd=xray info=image.identities.user home='/run/ircd' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' username='irc' uid='39' 
+cmd=xray info=image.identities.user username='daemon' uid='1' home='/usr/sbin' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' 
+cmd=xray info=image.identities.user no_login_shell='false' no_password_login='true' username='sync' uid='4' home='/bin' shell='/bin/sync' 
+cmd=xray info=image.identities.user no_password_login='true' username='lp' uid='7' home='/var/spool/lpd' shell='/usr/sbin/nologin' no_login_shell='true' 
+cmd=xray info=image.identities.user username='backup' uid='34' home='/var/backups' shell='/usr/sbin/nologin' no_login_shell='true' no_password_login='true' 
+cmd=xray info=image.identities.user shell='/bin/sh' no_login_shell='false' no_password_login='true' username='app' uid='1000' home='/home/app' 
+cmd=xray info=image.stats.duplicates file_total_size.bytes='5762121' file_total_size.human='5.8 MB' wasted.bytes='3008966' wasted.human='3.0 MB' file_count='88' file_total_count='382' file_size.bytes='2753155' file_size.human='2.8 MB' 
+cmd=xray info=layer.start
+cmd=xray info=layer index='0' id='04e61ff9ed2c84e88795bf7562d69d0980188e2bb6d6152d6fe721383e10db9e' path='blobs/sha256/04e61ff9ed2c84e88795bf7562d69d0980188e2bb6d6152d6fe721383e10db9e' 
+cmd=xray info=distro name='Debian GNU/Linux' version='13' display='Debian GNU/Linux 13 (trixie)' 
+cmd=xray info=change.instruction index='0:0' type='RUN' snippet='RUN []' all='RUN []' 
+cmd=xray info=other.instructions count='2' 
+cmd=xray info=other.instruction pos='0' index='0:1' type='ENV' snippet='ENV PATH=/usr/local/bin:/usr/local/sbin:/usr...' all='ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' 
+cmd=xray info=other.instruction snippet='ENV LANG=C.UTF-8' all='ENV LANG=C.UTF-8' pos='1' index='0:2' type='ENV' 
+cmd=xray info=layer.stats all_size.human='101 MB' all_size.bytes='100681557' 
+cmd=xray info=layer.stats object_count='3266' 
+cmd=xray info=layer.stats dir_count='415' 
+cmd=xray info=layer.stats file_count='2677' 
+cmd=xray info=layer.stats link_count='174' 
+cmd=xray info=layer.stats max_file_size.bytes='6302952' max_file_size.human='6.3 MB' 
+cmd=xray info=layer.stats added_size.human='101 MB' added_size.bytes='100681557' 
+cmd=xray info=layer.change.summary deleted='0' modified='0' added='3266' all='3266' 
+cmd=xray info=layer.objects.count value='3266' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object H='[A:0/M:4]' mode='-rw-r--r--' gid='0' uid='0' mtime='2026-09-29T20:10:28Z' hash='5db518655ac2926d0c809800b057a627f8e218f1' object.name='/usr/lib/aarch64-linux-gnu/libcrypto.so.3' size.human='6.3 MB' size.bytes='6302952' 
+cmd=xray info=object object.name='/usr/bin/perl' uid='0' mtime='2026-08-30T08:53:55Z' H='[A:0]' gid='0' hash='dc373b98338063cd3ab8ac4f66b495266e195abc' mode='-rwxr-xr-x' size.human='3.8 MB' size.bytes='3813416' 
+cmd=xray info=object mode='-rw-r--r--' hash='d1aaaad742567fa74224616105ee0dc96c0dba27' object.name='/usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.33' size.human='2.5 MB' size.bytes='2502136' uid='0' gid='0' mtime='2025-03-15T01:47:42Z' H='[A:0]' 
+cmd=xray info=object mode='-rw-r--r--' uid='0' gid='0' mtime='2026-11-02T13:41:34Z' size.human='2.4 MB' size.bytes='2363792' H='[A:0]' hash='cb8aa30ac3fe5141628dd0fcb5276f1dd92ab972' object.name='/usr/lib/aarch64-linux-gnu/libapt-pkg.so.7.0.0' 
+cmd=xray info=object hash='dac81a1933bbad12892f5e9cbcaa7c95ed204a35' object.name='/usr/lib/aarch64-linux-gnu/libdb-5.3.so' mode='-rw-r--r--' size.human='1.8 MB' size.bytes='1783072' uid='0' H='[A:0]' gid='0' mtime='2024-10-15T11:40:15Z' 
+cmd=xray info=object size.bytes='1716616' uid='0' object.name='/usr/lib/aarch64-linux-gnu/libc.so.6' mode='-rwxr-xr-x' size.human='1.7 MB' gid='0' mtime='2026-06-29T21:37:52Z' H='[A:0/M:4]' hash='61f580120f9185759e59db54bfefc31d581ae361' 
+cmd=xray info=object object.name='/usr/bin/sqv' size.bytes='1640840' uid='0' mtime='2025-12-26T20:58:32Z' H='[A:0]' hash='2410f4b4f7629b7109558632adf878a5b98ccea2' mode='-rwxr-xr-x' size.human='1.6 MB' gid='0' 
+cmd=xray info=object mode='-rw-r--r--' size.bytes='1592144' mtime='2026-06-14T12:32:03Z' H='[A:0]' hash='cfe0b3c6c9ccae7c11613cf2f5e1c2d43ac5ed27' size.human='1.6 MB' uid='0' gid='0' object.name='/usr/lib/aarch64-linux-gnu/libsqlite3.so.0.8.6' 
+cmd=xray info=object mtime='2026-07-12T16:58:18Z' H='[A:0]' hash='138a7c9300785c729dcb0bb22acbfe8993e32155' size.human='1.4 MB' size.bytes='1412096' gid='0' mode='-rwxr-xr-x' uid='0' object.name='/usr/bin/bash' 
+cmd=xray info=object mode='-rw-r--r--' size.human='1.2 MB' size.bytes='1195960' uid='0' mtime='2026-09-29T20:10:28Z' H='[A:0/M:4]' hash='6463c96c97d2f818dd5c772122f503dc6d8162e2' gid='0' object.name='/usr/lib/aarch64-linux-gnu/libssl.so.3' 
+cmd=xray info=object H='[A:0]' hash='c244e5673a8de1833e23795db67cc1b356f6dbdf' mode='-rw-r--r--' size.human='1.2 MB' gid='0' object.name='/usr/lib/aarch64-linux-gnu/libsystemd.so.0.40.0' size.bytes='1186360' uid='0' mtime='2026-04-13T19:38:05Z' 
+cmd=xray info=object mode='-rwxr-xr-x' uid='0' gid='0' H='[A:0/M:4]' hash='adc8905ed9b90e67cb7462aaecbb134edc823669' size.human='861 kB' size.bytes='860744' mtime='2026-06-29T21:37:52Z' object.name='/usr/sbin/ldconfig' 
+cmd=xray info=object object.name='/usr/lib/aarch64-linux-gnu/libsepol.so.2' mode='-rw-r--r--' size.bytes='854160' uid='0' gid='0' hash='ecf78d69a299518ac2c15c0cf641dd495279a9ec' size.human='854 kB' mtime='2025-03-16T06:23:19Z' H='[A:0]' 
+cmd=xray info=object size.human='782 kB' size.bytes='781774' gid='0' mtime='2026-11-04T21:23:39Z' hash='cc9b664d8a8491a0712a7c38700b7de94becad4a' mode='-rw-r--r--' uid='0' H='[A:0/M:1,2,4]' object.name='/var/cache/debconf/templates.dat-old' 
+cmd=xray info=object mode='-rw-r--r--' size.human='782 kB' size.bytes='781774' uid='0' hash='cc9b664d8a8491a0712a7c38700b7de94becad4a' gid='0' mtime='2026-11-04T21:23:39Z' H='[A:0/M:1,2,4]' object.name='/var/cache/debconf/templates.dat' 
+cmd=xray info=object mode='-rw-r--r--' uid='0' gid='0' mtime='2026-11-02T13:41:34Z' H='[A:0]' hash='4dcc95339fa38c265369cfe3d96ec16ad932813f' size.human='724 kB' size.bytes='724144' object.name='/usr/lib/aarch64-linux-gnu/libapt-private.so.0.0.0' 
+cmd=xray info=object gid='0' H='[A:0]' hash='10d640924669e4de449e4a1bbb22f1e91639492e' size.bytes='723048' uid='0' mtime='2025-03-13T21:58:55Z' object.name='/usr/lib/aarch64-linux-gnu/libzstd.so.1.5.7' mode='-rw-r--r--' size.human='723 kB' 
+cmd=xray info=object H='[A:0]' hash='129335d90052e6b81617031528b604c9a7f2ca48' object.name='/usr/lib/aarch64-linux-gnu/perl-base/auto/re/re.so' mode='-rw-r--r--' size.human='660 kB' mtime='2026-08-30T08:53:55Z' size.bytes='659872' uid='0' gid='0' 
+cmd=xray info=object size.human='658 kB' uid='0' gid='0' mtime='2026-09-28T14:07:53Z' H='[A:0]' object.name='/usr/lib/aarch64-linux-gnu/libpcre2-8.so.0.14.0' mode='-rw-r--r--' size.bytes='657952' hash='00f00c5dc9062964d3c7b63bd84b5b923433b538' 
+cmd=xray info=object gid='0' mtime='2026-07-31T15:34:36Z' H='[A:0]' mode='-rw-r--r--' size.human='593 kB' size.bytes='592688' uid='0' hash='399ab4776f218e8e845cd2f5ea1ad0c57e741305' object.name='/usr/lib/aarch64-linux-gnu/libmount.so.1.1.0' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='1' id='c8c33587c60cc1dd8d7b2cdba9a74e29190fdf1bae201ef39a7a4847d618d602' path='blobs/sha256/c8c33587c60cc1dd8d7b2cdba9a74e29190fdf1bae201ef39a7a4847d618d602' 
+cmd=xray info=change.instruction index='0:3' type='RUN' snippet='RUN set -eux; 	apt-get update; 	apt-get inst...' all='RUN set -eux; 	apt-get update; 	apt-get install -y --no-install-recommends 		ca-certificates 		netbase 		tzdata 	; 	apt-get dist-clean' 
+cmd=xray info=other.instructions count='3' 
+cmd=xray info=other.instruction pos='0' index='0:4' type='ENV' snippet='ENV GPG_KEY=7169605F62C751356D054A26A821E680...' all='ENV GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305' 
+cmd=xray info=other.instruction index='0:5' type='ENV' snippet='ENV PYTHON_VERSION=3.13.18' all='ENV PYTHON_VERSION=3.13.18' pos='1' 
+cmd=xray info=other.instruction all='ENV PYTHON_SHA256=abb0102e6d4ae027509bcb82327d9dd85515b44a3ba8ad538cfc5e9847029f68' pos='2' index='0:6' type='ENV' snippet='ENV PYTHON_SHA256=abb0102e6d4ae027509bcb8232...' 
+cmd=xray info=layer.stats all_size.human='3.8 MB' all_size.bytes='3837170' 
+cmd=xray info=layer.stats object_count='547' 
+cmd=xray info=layer.stats dir_count='44' 
+cmd=xray info=layer.stats file_count='202' 
+cmd=xray info=layer.stats link_count='301' 
+cmd=xray info=layer.stats max_file_size.human='1.1 MB' max_file_size.bytes='1148168' 
+cmd=xray info=layer.stats added_size.human='2.0 MB' added_size.bytes='2029789' 
+cmd=xray info=layer.stats modified_size.bytes='1807381' modified_size.human='1.8 MB' 
+cmd=xray info=layer.change.summary deleted='0' modified='32' added='515' all='547' 
+cmd=xray info=layer.objects.count value='547' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object hash='61571f60445690ae1a28c36cc37dd84e78a9d9ab' uid='0' gid='0' mtime='2026-09-29T20:10:28Z' H='[A:1/M:4]' mode='-rwxr-xr-x' size.human='1.1 MB' size.bytes='1148168' object.name='/usr/bin/openssl' 
+cmd=xray info=object hash='d0b1d3c2b34cf6313bc06ae01de682e2de11126d' size.human='810 kB' size.bytes='810159' mtime='2026-11-05T07:57:16Z' H='[A:0/M:1,2,4]' mode='-rw-r--r--' uid='0' gid='0' object.name='/var/cache/debconf/templates.dat' 
+cmd=xray info=object mode='-rw-r--r--' size.bytes='810159' gid='0' mtime='2026-11-05T07:57:14Z' hash='d0b1d3c2b34cf6313bc06ae01de682e2de11126d' size.human='810 kB' uid='0' H='[A:0/M:1,2,4]' object.name='/var/cache/debconf/templates.dat-old' 
+cmd=xray info=object mode='-rw-r--r--' uid='0' mtime='2026-11-05T07:57:16Z' object.name='/etc/ssl/certs/ca-certificates.crt' hash='5f19489d7b08ebde71791629a8d20984736e2faa' size.human='222 kB' size.bytes='222073' gid='0' H='[A:1]' 
+cmd=xray info=object size.human='140 kB' uid='0' mtime='2026-09-12T07:59:10Z' object.name='/var/lib/apt/lists/deb.debian.org_debian_dists_trixie_InRelease' mode='-rw-r--r--' size.bytes='140421' gid='0' H='[A:1/D:4]' hash='aa33cb317177428f33c9ff72fc3e9b634645f6ae' 
+cmd=xray info=object size.bytes='72446' gid='0' hash='342f6deb6ad0e0a88094c9a54d3733fa612668c9' object.name='/var/lib/dpkg/status' mode='-rw-r--r--' uid='0' mtime='2026-11-05T07:57:16Z' H='[A:0/M:1,2,4]' size.human='72 kB' 
+cmd=xray info=object size.bytes='72338' object.name='/var/lib/dpkg/status-old' mtime='2026-11-05T07:57:14Z' H='[A:0/M:1,2,4]' hash='9b82acb415dd9cb6ea7df4c7c66708753322b0a2' mode='-rw-r--r--' size.human='72 kB' uid='0' gid='0' 
+cmd=xray info=object uid='0' gid='0' mtime='2026-11-05T02:09:16Z' H='[A:1/D:4]' mode='-rw-r--r--' size.bytes='47340' object.name='/var/lib/apt/lists/deb.debian.org_debian_dists_trixie-updates_InRelease' size.human='47 kB' hash='8fe0b685f6c4bc8d62a8c28a0e2dc55afb280507' 
+cmd=xray info=object mode='-rw-r--r--' size.bytes='43409' mtime='2026-11-04T21:43:54Z' H='[A:1/D:4]' hash='837dbb3d6385641c787f480912ed80a459f27a28' size.human='43 kB' uid='0' gid='0' object.name='/var/lib/apt/lists/deb.debian.org_debian-security_dists_trixie-security_InRelease' 
+cmd=xray info=object size.bytes='26265' uid='0' mtime='2026-10-20T14:57:59Z' H='[A:1]' hash='0a5feabd9a24f42e73c487a5ecef56559a426e8b' object.name='/var/lib/dpkg/info/ca-certificates.templates' size.human='26 kB' gid='0' mode='-rw-r--r--' 
+cmd=xray info=object gid='0' hash='4c49e10ddbcfc0f36816df7f9cb503d665621017' object.name='/usr/share/doc/ca-certificates/copyright' size.human='19 kB' uid='0' mtime='2026-10-20T14:27:55Z' H='[A:1]' mode='-rw-r--r--' size.bytes='18940' 
+cmd=xray info=object hash='5a874c6850456f0910635115d6a77799dd6876f3' mode='-rw-r--r--' size.bytes='18294' gid='0' H='[A:1/M:4]' object.name='/var/lib/dpkg/info/openssl.md5sums' size.human='18 kB' uid='0' mtime='2026-09-29T20:10:28Z' 
+cmd=xray info=object mode='-rw-r--r--' size.human='17 kB' mtime='2026-11-05T07:57:14Z' H='[A:0/M:1,2]' object.name='/var/cache/debconf/config.dat-old' size.bytes='16829' uid='0' gid='0' hash='0888ad186a8e5c28b07b12784773e7f86042c201' 
+cmd=xray info=object size.bytes='16817' uid='0' object.name='/var/cache/debconf/config.dat' size.human='17 kB' gid='0' mtime='2026-11-05T07:57:16Z' H='[A:0/M:1,2]' hash='7b7d3d073bab368f290db6ce6b7f58ac8b29c5b2' mode='-rw-r--r--' 
+cmd=xray info=object mode='-rw-r--r--' uid='0' gid='0' H='[A:1/M:4]' hash='c03eab73a28a8381bac1d39c4ea19da91c062119' object.name='/var/lib/dpkg/info/openssl.list' size.human='17 kB' size.bytes='16689' mtime='2026-11-05T07:57:14Z' 
+cmd=xray info=object mtime='2026-10-20T14:57:59Z' H='[A:1]' object.name='/var/lib/dpkg/info/ca-certificates.md5sums' size.bytes='16471' uid='0' gid='0' hash='d5c312066ae42e684825b2dbf3f75174274c4a1b' mode='-rw-r--r--' size.human='16 kB' 
+cmd=xray info=object mode='-rwxr-xr-x' uid='0' H='[A:1/M:4]' hash='9408c3e008fe7dc4186bd995a572b6e88a08a801' object.name='/usr/lib/ssl/misc/CA.pl' size.human='13 kB' size.bytes='13397' gid='0' mtime='2026-09-29T20:10:28Z' 
+cmd=xray info=object object.name='/etc/services' size.bytes='12990' uid='0' gid='0' H='[A:1]' hash='02097dd56b92ba86e6ee9bedf0e81840ac0742f1' mode='-rw-r--r--' size.human='13 kB' mtime='2025-03-15T22:55:22Z' 
+cmd=xray info=object size.bytes='12411' gid='0' H='[A:1]' hash='5ff8070dceaa742043d8171f98abe95e5abd02e5' object.name='/etc/ssl/openssl.cnf' mode='-rw-r--r--' size.human='12 kB' uid='0' mtime='2026-09-29T20:10:28Z' 
+cmd=xray info=object uid='0' mtime='2026-11-05T07:57:14Z' H='[A:1]' hash='40698a4b478842b4d185c1c9f8857ecec1333fa8' object.name='/var/lib/dpkg/info/ca-certificates.list' size.human='12 kB' size.bytes='11593' mode='-rw-r--r--' gid='0' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='2' id='d16ce3ec0751594884f0f0576157ae498426695d87797ebaede9e2197faa282d' path='blobs/sha256/d16ce3ec0751594884f0f0576157ae498426695d87797ebaede9e2197faa282d' 
+cmd=xray info=change.instruction type='RUN' snippet='RUN set -eux; 		savedAptMark="$(apt-mark sho...' all='RUN set -eux; 		savedAptMark="$(apt-mark showmanual)"; 	apt-get update; 	apt-get install -y --no-install-recommends 		dpkg-dev 		g++ 		gcc 		gnupg 		libbluetooth-dev 		libbz2-dev 		libc6-dev 		libdb-dev 		libffi-dev 		libgdbm-dev 		liblzma-dev 		libncursesw5-dev 		libreadline-dev 		libsqlite3-dev 		libssl-dev 		make 		tk-dev 		uuid-dev 		wget 		xz-utils 		zlib1g-dev 	; 		wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz"; 	echo "$PYTHON_SHA256 *python.tar.xz" | sha256sum -c -; 	wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc"; 	GNUPGHOME="$(mktemp -d)"; export GNUPGHOME; 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$GPG_KEY"; 	gpg --batch --verify python.tar.xz.asc python.tar.xz; 	gpgconf --kill all; 	rm -rf "$GNUPGHOME" python.tar.xz.asc; 	mkdir -p /usr/src/python; 	tar --extract --directory /usr/src/python --strip-components=1 --file python.tar.xz; 	rm python.tar.xz; 		cd /usr/src/python; 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; 	./configure 		--build="$gnuArch" 		--enable-loadable-sqlite-extensions 		--enable-optimizations 		--enable-option-checking=fatal 		--enable-shared 		$(test "${gnuArch%%-*}" != 'riscv64' && \
+	echo '--with-lto') 		--with-ensurepip 	; 	nproc="$(nproc)"; 	EXTRA_CFLAGS="$(dpkg-buildflags --get CFLAGS)"; 	LDFLAGS="$(dpkg-buildflags --get LDFLAGS)"; 	LDFLAGS="${LDFLAGS:-} -Wl,--strip-all"; 	arch="$(dpkg --print-architecture)"; arch="${arch##*-}"; 	case "$arch" in 		amd64|arm64) 			EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer"; 			;; 		i386) 			;; 		*) 			EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer"; 			;; 	esac; 	make -j "$nproc" 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" 		"LDFLAGS=${LDFLAGS:-}" 	; 	rm python; 	make -j "$nproc" 		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" 		"LDFLAGS=${LDFLAGS:-} -Wl,-rpath='\$\$ORIGIN/../lib'" 		python 	; 	make install; 		cd /; 	rm -rf /usr/src/python; 		find /usr/local -depth 		\( 			\( -type d -a \( -name test -o -name tests -o -name idle_test \) \) 			-o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) 		\) -exec rm -rf '{}' + 	; 		ldconfig; 		apt-mark auto '.*' > /dev/null; 	apt-mark manual $savedAptMark; 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' 		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' 		| sort -u 		| xargs -rt dpkg-query --search 		| awk 'sub(":$", "", $1) { print $1 }' 		| sort -u 		| xargs -r apt-mark manual 	; 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; 	apt-get dist-clean; 		export PYTHONDONTWRITEBYTECODE=1; 	python3 --version; 	pip3 --version' index='0:7' 
+cmd=xray info=layer.stats all_size.human='39 MB' all_size.bytes='39033113' 
+cmd=xray info=layer.stats object_count='1886' 
+cmd=xray info=layer.stats dir_count='273' 
+cmd=xray info=layer.stats file_count='1594' 
+cmd=xray info=layer.stats link_count='19' 
+cmd=xray info=layer.stats max_file_size.human='5.3 MB' max_file_size.bytes='5306944' 
+cmd=xray info=layer.stats added_size.bytes='36920652' added_size.human='37 MB' 
+cmd=xray info=layer.stats modified_size.human='2.1 MB' modified_size.bytes='2112461' 
+cmd=xray info=layer.change.summary deleted='0' modified='45' added='1841' all='1886' 
+cmd=xray info=layer.objects.count value='1886' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object mode='-rwxr-xr-x' size.human='5.3 MB' size.bytes='5306944' mtime='2026-11-05T08:11:06Z' H='[A:2]' hash='98d4a73e3b128985abe614168a106457ca1f5823' uid='0' gid='0' object.name='/usr/local/lib/libpython3.13.so.1.0' 
+cmd=xray info=object H='[A:2]' hash='a46082791d1cd145853b3896875dea3153cfe3ae' object.name='/usr/local/lib/python3.13/ensurepip/_bundled/pip-26.2.2-py3-none-any.whl' gid='0' mtime='2026-11-05T08:11:07Z' mode='-rw-r--r--' size.human='1.8 MB' size.bytes='1819850' uid='0' 
+cmd=xray info=object mode='-rw-r--r--' uid='0' mtime='2026-11-05T07:57:36Z' H='[A:0/M:1,2,4]' hash='74798bf2eaede126ee47c9c041a16cccb91d6318' object.name='/var/cache/debconf/templates.dat-old' size.human='864 kB' size.bytes='864224' gid='0' 
+cmd=xray info=object size.human='810 kB' hash='d0b1d3c2b34cf6313bc06ae01de682e2de11126d' object.name='/var/cache/debconf/templates.dat' H='[A:0/M:1,2,4]' mode='-rw-r--r--' size.bytes='810159' uid='0' gid='0' mtime='2026-11-05T08:11:27Z' 
+cmd=xray info=object mode='-rwxr-xr-x' size.bytes='726120' uid='0' gid='0' size.human='726 kB' mtime='2026-11-05T08:11:13Z' H='[A:2]' hash='dd181a80cd43f679ef06a231ce256ca28718152f' object.name='/usr/local/lib/python3.13/lib-dynload/unicodedata.cpython-313-aarch64-linux-gnu.so' 
+cmd=xray info=object mode='-rw-r--r--' size.human='564 kB' mtime='2026-11-05T08:11:07Z' H='[A:2]' size.bytes='563555' uid='0' gid='0' hash='136fd7d21c07b0ebac5214b50b625a458c205b0c' object.name='/usr/local/lib/python3.13/pydoc_data/topics.py' 
+cmd=xray info=object size.human='420 kB' uid='0' gid='0' hash='d8e06e9274611c5f0a8a4b672fdc4d36734d9f3a' mode='-rw-r--r--' mtime='2024-12-13T13:31:14Z' H='[A:2]' object.name='/usr/lib/aarch64-linux-gnu/libreadline.so.8.2' size.bytes='420224' 
+cmd=xray info=object mode='-rwxr-xr-x' size.bytes='366528' hash='aa782f2fe8adbed0bf273a13d697bac164d1db4c' object.name='/usr/local/lib/python3.13/lib-dynload/_testcapi.cpython-313-aarch64-linux-gnu.so' size.human='366 kB' uid='0' gid='0' mtime='2026-11-05T08:11:13Z' H='[A:2]' 
+cmd=xray info=object hash='9353317bf5a2fe11f9338adad47e12f76af724d8' object.name='/usr/local/lib/python3.13/lib-dynload/_decimal.cpython-313-aarch64-linux-gnu.so' gid='0' mtime='2026-11-05T08:11:13Z' size.bytes='338728' uid='0' H='[A:2]' mode='-rwxr-xr-x' size.human='339 kB' 
+cmd=xray info=object size.bytes='330368' mtime='2026-11-05T08:11:13Z' H='[A:2]' size.human='330 kB' uid='0' gid='0' hash='df179ff3d882666a7de8ec9c7d5233dcd8944730' object.name='/usr/local/lib/python3.13/lib-dynload/_codecs_jp.cpython-313-aarch64-linux-gnu.so' mode='-rwxr-xr-x' 
+cmd=xray info=object gid='0' H='[A:2]' mtime='2026-11-05T08:11:13Z' hash='92b2a6fdb00f6925fe7c3b3d005d3b0c85090542' object.name='/usr/local/lib/python3.13/lib-dynload/_ssl.cpython-313-aarch64-linux-gnu.so' mode='-rwxr-xr-x' size.human='302 kB' size.bytes='301808' uid='0' 
+cmd=xray info=object H='[A:2]' hash='b4be409703142bc42f086b6d30b1decf1f618b57' mode='-rwxr-xr-x' size.human='271 kB' gid='0' object.name='/usr/local/lib/python3.13/lib-dynload/pyexpat.cpython-313-aarch64-linux-gnu.so' size.bytes='271168' uid='0' mtime='2026-11-05T08:11:13Z' 
+cmd=xray info=object mtime='2025-03-06T16:01:55Z' H='[A:2]' hash='97070690408de105a73a57f33edc14ab1c4e79c7' object.name='/usr/lib/aarch64-linux-gnu/libncursesw.so.6.5' mode='-rw-r--r--' size.human='264 kB' size.bytes='264128' uid='0' gid='0' 
+cmd=xray info=object size.bytes='238856' gid='0' object.name='/usr/local/lib/python3.13/site-packages/pip/_vendor/certifi/cacert.pem' mode='-rw-r--r--' uid='0' mtime='2026-11-05T08:11:14Z' H='[A:2]' hash='7c4b3adfa5875adb9bb1bf134a9cf3ae1ef873ab' size.human='239 kB' 
+cmd=xray info=object uid='0' gid='0' mtime='2026-11-05T08:11:14Z' H='[A:2]' hash='50045823f9298d84d11b5c8201201a1884385435' object.name='/usr/local/lib/python3.13/site-packages/pip/_vendor/idna/uts46data.py' mode='-rw-r--r--' size.bytes='234325' size.human='234 kB' 
+cmd=xray info=object size.bytes='227616' gid='0' H='[A:2]' object.name='/usr/local/lib/python3.13/_pydecimal.py' mode='-rw-r--r--' size.human='228 kB' uid='0' mtime='2026-11-05T08:11:06Z' hash='18a44353e93dd4a1b55f7c360f3f40c382c8d41b' 
+cmd=xray info=object size.human='212 kB' size.bytes='212336' H='[A:2]' hash='c768ba79dfcf33a142036a1d2d66d6269b712aa0' mode='-rwxr-xr-x' gid='0' mtime='2026-11-05T08:11:13Z' object.name='/usr/local/lib/python3.13/lib-dynload/_testlimitedcapi.cpython-313-aarch64-linux-gnu.so' uid='0' 
+cmd=xray info=object mode='-rw-r--r--' size.bytes='208039' uid='0' gid='0' mtime='2026-11-05T08:11:12Z' H='[A:2]' hash='1bbdd3d6cb21e5481314d63e2fbfba3969affa08' object.name='/usr/local/lib/python3.13/config-3.13-aarch64-linux-gnu/Makefile' size.human='208 kB' 
+cmd=xray info=object gid='0' hash='c6b3222a0229a1508036411041e85d3d6033096d' object.name='/usr/local/lib/python3.13/lib-dynload/_codecs_hk.cpython-313-aarch64-linux-gnu.so' uid='0' mtime='2026-11-05T08:11:13Z' H='[A:2]' mode='-rwxr-xr-x' size.human='199 kB' size.bytes='199128' 
+cmd=xray info=object mtime='2026-11-05T08:11:13Z' H='[A:2]' hash='af219ee0a2492bb8dab3261f0d7023fb80e140a0' uid='0' gid='0' object.name='/usr/local/lib/python3.13/lib-dynload/_codecs_cn.cpython-313-aarch64-linux-gnu.so' mode='-rwxr-xr-x' size.human='199 kB' size.bytes='199120' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='3' id='ca8a921086fad0ab07ba836693c942565d4837aaeab719b659cd1e4db9dae57c' path='blobs/sha256/ca8a921086fad0ab07ba836693c942565d4837aaeab719b659cd1e4db9dae57c' 
+cmd=xray info=change.instruction all='RUN set -eux; 	for src in idle3 pip3 pydoc3 python3 python3-config; do 		dst="$(echo "$src" | tr -d 3)"; 		[ -s "/usr/local/bin/$src" ]; 		[ ! -e "/usr/local/bin/$dst" ]; 		ln -svT "$src" "/usr/local/bin/$dst"; 	done' index='0:8' type='RUN' snippet='RUN set -eux; 	for src in idle3 pip3 pydoc3 ...' 
+cmd=xray info=other.instructions count='1' 
+cmd=xray info=other.instruction pos='0' index='0:9' type='CMD' snippet='CMD ["python3"]
+' all='CMD ["python3"]
+' 
+cmd=xray info=layer.stats object_count='8' 
+cmd=xray info=layer.stats dir_count='3' 
+cmd=xray info=layer.stats link_count='5' 
+cmd=xray info=layer.change.summary all='8' deleted='0' modified='3' added='5' 
+cmd=xray info=layer.objects.count value='8' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object mode='drwxr-xr-x' size.human='0 B' mtime='2026-11-04T21:23:39Z' H='[A:0/M:1,2,3,4,5]' object.name='/usr/local' size.bytes='0' uid='0' gid='0' hash='' 
+cmd=xray info=object size.human='0 B' uid='0' hash='' object.name='/usr/local/bin' mode='drwxr-xr-x' size.bytes='0' gid='0' mtime='2026-11-05T08:11:28Z' H='[A:0/M:2,3,4,5]' 
+cmd=xray info=object mode='Lrwxrwxrwx' size.human='0 B' gid='0' hash='' object.name='/usr/local/bin/idle' size.bytes='0' uid='0' mtime='2026-11-05T08:11:28Z' H='[A:3]' link.target='idle3' 
+cmd=xray info=object mode='Lrwxrwxrwx' H='[A:3/D:4]' hash='' gid='0' mtime='2026-11-05T08:11:28Z' object.name='/usr/local/bin/pip' link.target='pip3' size.human='0 B' size.bytes='0' uid='0' 
+cmd=xray info=object size.human='0 B' size.bytes='0' H='[A:3]' link.target='pydoc3' mode='Lrwxrwxrwx' gid='0' mtime='2026-11-05T08:11:28Z' hash='' object.name='/usr/local/bin/pydoc' uid='0' 
+cmd=xray info=object uid='0' gid='0' H='[A:3]' hash='' size.human='0 B' size.bytes='0' object.name='/usr/local/bin/python' link.target='python3' mode='Lrwxrwxrwx' mtime='2026-11-05T08:11:28Z' 
+cmd=xray info=object mode='Lrwxrwxrwx' uid='0' hash='' link.target='python3-config' H='[A:3]' object.name='/usr/local/bin/python-config' size.human='0 B' size.bytes='0' gid='0' mtime='2026-11-05T08:11:28Z' 
+cmd=xray info=object mode='drwxr-xr-x' mtime='2026-11-04T21:23:39Z' object.name='/usr' size.human='0 B' size.bytes='0' uid='0' gid='0' H='[A:0/M:1,2,3,4,5]' hash='' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='4' id='395fe5b34a22ba027d7f4adb94dd823b200ead42fd4fb9fed3a2612552c03ba4' path='blobs/sha256/395fe5b34a22ba027d7f4adb94dd823b200ead42fd4fb9fed3a2612552c03ba4' 
+cmd=xray info=distro name='Debian GNU/Linux' version='13' display='Debian GNU/Linux 13 (trixie)' 
+cmd=xray info=change.instruction type='RUN' snippet='RUN apt-get update && \
+	apt-get upgrade -y ...' all='RUN apt-get update && \
+	apt-get upgrade -y && \
+	rm -rf /var/lib/apt/lists/* && \
+	pip uninstall -y pip setuptools && \
+	useradd --create-home --uid 1000 app' index='0:10' 
+cmd=xray info=layer.stats all_size.human='42 MB' all_size.bytes='41637321' 
+cmd=xray info=layer.stats object_count='648' 
+cmd=xray info=layer.stats dir_count='82' 
+cmd=xray info=layer.stats file_count='555' 
+cmd=xray info=layer.stats link_count='11' 
+cmd=xray info=layer.stats max_file_size.human='6.3 MB' max_file_size.bytes='6302952' 
+cmd=xray info=layer.stats deleted_count='11' 
+cmd=xray info=layer.stats deleted_file_count='11' 
+cmd=xray info=layer.stats deleted_size='231526' 
+cmd=xray info=layer.stats added_size.human='4.1 MB' added_size.bytes='4117048' 
+cmd=xray info=layer.stats modified_size.human='38 MB' modified_size.bytes='37520273' 
+cmd=xray info=layer.change.summary deleted='11' modified='481' added='156' all='648' 
+cmd=xray info=layer.objects.count value='648' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object gid='0' mtime='2026-10-03T16:00:50Z' H='[A:0/M:4]' hash='fc32f94be0c7c1eede3ed292e6df4c0eb3c63552' size.human='6.3 MB' uid='0' object.name='/usr/lib/aarch64-linux-gnu/libcrypto.so.3' mode='-rw-r--r--' size.bytes='6302952' 
+cmd=xray info=object size.human='1.7 MB' object.name='/usr/lib/aarch64-linux-gnu/libc.so.6' mtime='2026-10-10T17:56:39Z' H='[A:0/M:4]' hash='2487da7661b5a9c75b55203c2419c3a23e5b8111' mode='-rwxr-xr-x' size.bytes='1716616' uid='0' gid='0' 
+cmd=xray info=object size.human='1.2 MB' uid='0' gid='0' mtime='2026-10-03T16:00:50Z' hash='b64c8cb4b412303b94ec31837c419253dc24cac8' mode='-rw-r--r--' size.bytes='1195960' H='[A:0/M:4]' object.name='/usr/lib/aarch64-linux-gnu/libssl.so.3' 
+cmd=xray info=object object.name='/usr/bin/openssl' size.human='1.1 MB' size.bytes='1148120' gid='0' mtime='2026-10-03T16:00:50Z' H='[A:1/M:4]' hash='ec4a44948716dc7ffa0e3b177cb28a95d2e09b00' mode='-rwxr-xr-x' uid='0' 
+cmd=xray info=object mtime='2026-10-10T17:56:39Z' hash='e965219320a05ef3bbe13c6ba3fa64ac13214a63' object.name='/usr/sbin/ldconfig' uid='0' size.human='861 kB' size.bytes='860744' gid='0' H='[A:0/M:4]' mode='-rwxr-xr-x' 
+cmd=xray info=object mode='-rw-r--r--' size.bytes='814301' gid='0' mtime='2026-11-21T10:58:10Z' H='[A:0/M:1,2,4]' object.name='/var/cache/debconf/templates.dat-old' size.human='814 kB' uid='0' hash='15480616693c5e282ac3e1a7a277efe6bb038ed8' 
+cmd=xray info=object mode='-rw-r--r--' size.human='814 kB' size.bytes='814301' mtime='2026-11-21T10:58:10Z' hash='15480616693c5e282ac3e1a7a277efe6bb038ed8' uid='0' gid='0' H='[A:0/M:1,2,4]' object.name='/var/cache/debconf/templates.dat' 
+cmd=xray info=object size.bytes='591960' gid='0' mtime='2026-10-10T17:56:39Z' H='[A:0/M:4]' object.name='/usr/lib/aarch64-linux-gnu/libm.so.6' mode='-rw-r--r--' size.human='592 kB' uid='0' hash='f598059acab63450c575e1c450c740389da5f1a6' 
+cmd=xray info=object mode='-rw-r--r--' size.human='526 kB' uid='0' gid='0' mtime='2026-10-10T17:56:39Z' H='[A:0/M:4]' hash='460a9e6395b94338e11e36fa3a5e15aeee3b9759' object.name='/usr/lib/aarch64-linux-gnu/gconv/libCNS.so' size.bytes='526344' 
+cmd=xray info=object mode='-rw-r--r--' size.human='368 kB' size.bytes='367708' H='[A:0/M:4]' hash='9ea59ae9d04d878a2c4538d7591f4a417d11c27e' object.name='/usr/lib/locale/C.utf8/LC_CTYPE' uid='0' gid='0' mtime='2026-10-10T17:56:39Z' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='339 kB' gid='0' mtime='2026-10-10T17:56:39Z' H='[A:0/M:4]' hash='ef240e08b8fee202a231679f2c232a6e66cddb75' object.name='/usr/bin/localedef' size.bytes='339144' uid='0' 
+cmd=xray info=object H='[A:0/M:4]' hash='6bbd1ee687efb452d1f9708b0f4ca17788f0014d' object.name='/var/lib/dpkg/info/libssl3t64:arm64.symbols' size.bytes='274434' gid='0' uid='0' mtime='2026-10-03T16:00:50Z' mode='-rw-r--r--' size.human='274 kB' 
+cmd=xray info=object mode='-rw-r--r--' size.human='264 kB' uid='0' gid='0' mtime='2026-10-10T17:56:39Z' H='[A:0/M:4]' object.name='/usr/lib/aarch64-linux-gnu/gconv/IBM1399.so' size.bytes='264200' hash='6781ecc9fa3e4a55e45e88d18cbd6a991751e59c' 
+cmd=xray info=object size.human='264 kB' H='[A:0/M:4]' gid='0' mtime='2026-10-10T17:56:39Z' hash='350c41e52a06b51d3fd5f264146051eb831b91cc' object.name='/usr/lib/aarch64-linux-gnu/gconv/IBM1390.so' mode='-rw-r--r--' size.bytes='264200' uid='0' 
+cmd=xray info=object object.name='/usr/lib/aarch64-linux-gnu/gconv/BIG5HKSCS.so' mode='-rw-r--r--' uid='0' hash='8434164c1d0fc205b2b9b91cedd780c4dd8854de' mtime='2026-10-10T17:56:39Z' H='[A:0/M:4]' size.human='264 kB' size.bytes='264200' gid='0' 
+cmd=xray info=object size.human='201 kB' uid='0' H='[A:0/M:4]' hash='bbb2df5d67295445ca61c42ba84ef3e3db52342a' mode='-rwxr-xr-x' size.bytes='201344' gid='0' mtime='2026-10-10T17:56:39Z' object.name='/usr/lib/aarch64-linux-gnu/ld-linux-aarch64.so.1' 
+cmd=xray info=object size.bytes='198736' gid='0' mtime='2026-10-10T17:56:39Z' hash='4fc699c6e78af8245b22c11e4bdb3211a356fd08' object.name='/usr/lib/aarch64-linux-gnu/libmvec.so.1' mode='-rw-r--r--' size.human='199 kB' uid='0' H='[A:0/M:4]' 
+cmd=xray info=object mode='-rw-r--r--' size.human='199 kB' mtime='2026-10-10T17:56:39Z' hash='3671312d26c1a10a4b240124df37274121525cb0' object.name='/usr/lib/aarch64-linux-gnu/gconv/IBM1364.so' size.bytes='198664' uid='0' gid='0' H='[A:0/M:4]' 
+cmd=xray info=object size.bytes='198664' uid='0' gid='0' H='[A:0/M:4]' object.name='/usr/lib/aarch64-linux-gnu/gconv/IBM1388.so' mode='-rw-r--r--' size.human='199 kB' mtime='2026-10-10T17:56:39Z' hash='4f6adab71b1f13f16cf4500aaa42629969d642f0' 
+cmd=xray info=object size.bytes='198664' uid='0' mtime='2026-10-10T17:56:39Z' hash='5bf67e1c6da73b7eb3a0a886d9e0e596e7e3a05f' mode='-rw-r--r--' size.human='199 kB' gid='0' H='[A:0/M:4]' object.name='/usr/lib/aarch64-linux-gnu/gconv/GB18030.so' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.deleted.start
+cmd=xray info=layer.objects.deleted.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='5' id='bfb0f7f506c058540395b4f4d40a0c98e5a4324949d381e6375203e76da20cd9' path='blobs/sha256/bfb0f7f506c058540395b4f4d40a0c98e5a4324949d381e6375203e76da20cd9' 
+cmd=xray info=change.instruction index='0:11' type='COPY' snippet='COPY dir:87ffb5b121ad1b6075d709a97c1eec81d73...' all='COPY dir:87ffb5b121ad1b6075d709a97c1eec81d73799ff55defba19d2bf7e52ab6b4f0 /usr/local' 
+cmd=xray info=other.instructions count='1' 
+cmd=xray info=other.instruction snippet='WORKDIR /srv' all='WORKDIR /srv' pos='0' index='0:12' type='WORKDIR' 
+cmd=xray info=layer.stats all_size.human='95 MB' all_size.bytes='94932875' 
+cmd=xray info=layer.stats object_count='3205' 
+cmd=xray info=layer.stats dir_count='371' 
+cmd=xray info=layer.stats file_count='2834' 
+cmd=xray info=layer.stats max_file_size.human='16 MB' max_file_size.bytes='16343264' 
+cmd=xray info=layer.stats added_size.human='95 MB' added_size.bytes='94932875' 
+cmd=xray info=layer.change.summary all='3205' deleted='0' modified='6' added='3199' 
+cmd=xray info=layer.objects.count value='3205' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object size.human='16 MB' uid='0' mtime='2026-11-22T19:42:53Z' hash='634ab61b81bf614bdbe8be659295befb49063022' object.name='/usr/local/lib/python3.13/site-packages/uvloop/loop.cpython-313-aarch64-linux-gnu.so' mode='-rwxr-xr-x' size.bytes='16343264' gid='0' H='[A:5]' 
+cmd=xray info=object object.name='/usr/local/lib/python3.13/site-packages/psycopg_binary.libs/libcrypto-5e36fb0e.so.3' uid='0' gid='0' mtime='2026-11-22T19:42:53Z' H='[A:5]' mode='-rwxr-xr-x' size.human='5.5 MB' size.bytes='5543705' hash='a616d9f546961076ea66cbabddbe734b842dbdfc' 
+cmd=xray info=object mode='-rwxr-xr-x' uid='0' gid='0' H='[A:5]' hash='2b57a62c58d34bd809e3ae711f35b39ad511c9b7' object.name='/usr/local/lib/python3.13/site-packages/pydantic_core/_pydantic_core.cpython-313-aarch64-linux-gnu.so' size.human='4.5 MB' size.bytes='4548720' mtime='2026-11-22T19:42:54Z' 
+cmd=xray info=object size.human='2.8 MB' object.name='/usr/local/lib/python3.13/site-packages/yaml/_yaml.cpython-313-aarch64-linux-gnu.so' mode='-rwxr-xr-x' size.bytes='2805392' uid='0' gid='0' mtime='2026-11-22T19:42:53Z' H='[A:5]' hash='4fd96f08594d3b8b397ca9ace4349e4e66a3074f' 
+cmd=xray info=object H='[A:5]' hash='6ce57172504bdaebe2ee6a888409890bc00abeee' object.name='/usr/local/lib/python3.13/site-packages/sqlalchemy/engine/_result_cy.cpython-313-aarch64-linux-gnu.so' size.human='2.3 MB' size.bytes='2253280' uid='0' gid='0' mtime='2026-11-22T19:42:54Z' mode='-rwxr-xr-x' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='2.0 MB' gid='0' mtime='2026-11-22T19:42:54Z' H='[A:5]' object.name='/usr/local/lib/python3.13/site-packages/sqlalchemy/util/_collections_cy.cpython-313-aarch64-linux-gnu.so' size.bytes='2018312' uid='0' hash='8827d4edfbbea32b471b5b5bb1f7387cc0fb989b' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='1.5 MB' gid='0' mtime='2026-11-22T19:42:54Z' hash='17de849d76dd2decde8ed8a3634e020d6efd32c4' object.name='/usr/local/lib/python3.13/site-packages/sqlalchemy/sql/_cache_key_cy.cpython-313-aarch64-linux-gnu.so' size.bytes='1487328' uid='0' H='[A:5]' 
+cmd=xray info=object size.bytes='1340680' uid='0' gid='0' mtime='2026-11-22T19:42:54Z' H='[A:5]' object.name='/usr/local/lib/python3.13/site-packages/sqlalchemy/util/_immutabledict_cy.cpython-313-aarch64-linux-gnu.so' mode='-rwxr-xr-x' hash='ec19680b9b08b15c5b7d0cb42c0713c71e5292a1' size.human='1.3 MB' 
+cmd=xray info=object object.name='/usr/local/lib/python3.13/site-packages/httptools/parser/parser.cpython-313-aarch64-linux-gnu.so' mode='-rwxr-xr-x' uid='0' gid='0' mtime='2026-11-22T19:42:53Z' H='[A:5]' hash='6790e9057ad110781606658050bed608421d9d3a' size.human='1.3 MB' size.bytes='1289432' 
+cmd=xray info=object mtime='2026-11-22T19:42:53Z' H='[A:5]' hash='b2175750501158bbd12d46b39db9e35b935226f6' gid='0' object.name='/usr/local/lib/python3.13/site-packages/psycopg_binary.libs/libssl-8f8630a8.so.3' mode='-rwxr-xr-x' size.human='1.2 MB' size.bytes='1204601' uid='0' 
+cmd=xray info=object uid='0' gid='0' H='[A:5]' object.name='/usr/local/lib/python3.13/site-packages/watchfiles/_rust_notify.abi3.so' mode='-rwxr-xr-x' size.bytes='1167952' mtime='2026-11-22T19:42:54Z' hash='c44c7547abb3ba59a9293e8444b1be98942a0f05' size.human='1.2 MB' 
+cmd=xray info=object size.human='1.1 MB' size.bytes='1067705' uid='0' H='[A:5]' hash='68453b197ad07f63ede65f9e6d007ceb88fc73dd' object.name='/usr/local/lib/python3.13/site-packages/psycopg_binary.libs/libkrb5-138a6e7a.so.3.3' mode='-rwxr-xr-x' gid='0' mtime='2026-11-22T19:42:53Z' 
+cmd=xray info=object mode='-rw-r--r--' size.human='989 kB' H='[A:5]' hash='08195c3b71ed1aec5350ac7ff949d671e2597906' size.bytes='988801' uid='0' gid='0' mtime='2026-11-22T19:42:53Z' object.name='/usr/local/lib/python3.13/site-packages/psycopg_binary/_psycopg.cpython-313-aarch64-linux-gnu.so' 
+cmd=xray info=object size.human='908 kB' mtime='2026-11-22T19:42:54Z' H='[A:5]' object.name='/usr/local/lib/python3.13/site-packages/sqlalchemy/engine/_processors_cy.cpython-313-aarch64-linux-gnu.so' mode='-rwxr-xr-x' size.bytes='907480' uid='0' gid='0' hash='0d60024b3366f67a94038012da2ca3592dcf4e95' 
+cmd=xray info=object hash='1cff5c8b2689de1b8eeebf27a18e1148c9dfeae1' object.name='/usr/local/lib/python3.13/site-packages/sqlalchemy/engine/_row_cy.cpython-313-aarch64-linux-gnu.so' gid='0' mtime='2026-11-22T19:42:54Z' size.bytes='905464' uid='0' H='[A:5]' mode='-rwxr-xr-x' size.human='906 kB' 
+cmd=xray info=object size.bytes='747416' uid='0' gid='0' mtime='2026-11-22T19:42:54Z' H='[A:5]' hash='7802436e0c9208b36bfe6744bdbf22182e163fac' mode='-rwxr-xr-x' object.name='/usr/local/lib/python3.13/site-packages/sqlalchemy/sql/_util_cy.cpython-313-aarch64-linux-gnu.so' size.human='747 kB' 
+cmd=xray info=object uid='0' gid='0' H='[A:5]' object.name='/usr/local/lib/python3.13/site-packages/sqlalchemy/engine/_util_cy.cpython-313-aarch64-linux-gnu.so' size.human='683 kB' size.bytes='682760' mtime='2026-11-22T19:42:54Z' hash='8a7d7cd21d5c923d9496b82e22400aeada63cd65' mode='-rwxr-xr-x' 
+cmd=xray info=object size.human='662 kB' uid='0' mtime='2026-11-22T19:42:53Z' object.name='/usr/local/lib/python3.13/site-packages/psycopg_binary.libs/libpq-53e4e5f8.so.5.18' mode='-rwxr-xr-x' size.bytes='661793' gid='0' H='[A:5]' hash='fa73932f4a7cadf89475763ae1bef219b3b2bd9e' 
+cmd=xray info=object mode='-rwxr-xr-x' size.bytes='654416' mtime='2026-11-22T19:42:53Z' H='[A:5]' object.name='/usr/local/lib/python3.13/site-packages/httptools/parser/url_parser.cpython-313-aarch64-linux-gnu.so' size.human='654 kB' uid='0' gid='0' hash='de35e3a9b57beeb1a9ecaac4e72485e55303f00c' 
+cmd=xray info=object uid='0' mtime='2026-11-22T19:42:53Z' hash='9e05f37f848001e1d813d24b80a8c94186301df9' object.name='/usr/local/lib/python3.13/site-packages/psycopg_binary.libs/libldap-ed13728f.so.2.0.200' mode='-rwxr-xr-x' size.human='607 kB' H='[A:5]' size.bytes='607033' gid='0' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer path='blobs/sha256/7b9cbf3c79164f6af0ac97abea6b9ec1ef0c57bff93d3e501bb060d70fea0d3c' index='6' id='7b9cbf3c79164f6af0ac97abea6b9ec1ef0c57bff93d3e501bb060d70fea0d3c' 
+cmd=xray info=change.instruction index='0:13' type='COPY' snippet='COPY file:896a5846623a5c055badeaab33d0850f09...' all='COPY file:896a5846623a5c055badeaab33d0850f09c0b2f6d16e39a22c2813499abf228e ./' 
+cmd=xray info=layer.stats all_size.human='45 B' all_size.bytes='45' 
+cmd=xray info=layer.stats object_count='2' 
+cmd=xray info=layer.stats dir_count='1' 
+cmd=xray info=layer.stats file_count='1' 
+cmd=xray info=layer.stats max_file_size.human='45 B' max_file_size.bytes='45' 
+cmd=xray info=layer.stats added_size.human='45 B' added_size.bytes='45' 
+cmd=xray info=layer.change.summary added='1' all='2' deleted='0' modified='1' 
+cmd=xray info=layer.objects.count value='2' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object uid='0' H='[A:6]' object.name='/srv/alembic.ini' mode='-rw-r--r--' size.bytes='45' mtime='2026-11-13T12:51:46Z' hash='cc865d8fe38e674a855127a9df79e1834bfe97e1' size.human='45 B' gid='0' 
+cmd=xray info=object uid='0' gid='0' H='[A:0/M:6,7]' hash='' object.name='/srv' mode='drwxr-xr-x' size.human='0 B' size.bytes='0' mtime='2026-11-22T19:42:59Z' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='7' id='dba24fc9073819443e4aeadac05ba83fc3c5e9e9cb19d269a4c1f92145b97c09' path='blobs/sha256/dba24fc9073819443e4aeadac05ba83fc3c5e9e9cb19d269a4c1f92145b97c09' 
+cmd=xray info=change.instruction all='COPY dir:1b5fe4338260522c1615d983644562a382a8c1c89a317d8b55eea3c9cd2bfdcf ./alembic' index='0:14' type='COPY' snippet='COPY dir:1b5fe4338260522c1615d983644562a382a...' 
+cmd=xray info=other.instructions count='3' 
+cmd=xray info=other.instruction pos='0' index='0:15' type='USER' snippet='USER app' all='USER app' 
+cmd=xray info=other.instruction snippet='EXPOSE 8000' all='EXPOSE 8000' pos='1' index='0:16' type='EXPOSE' 
+cmd=xray info=other.instruction all='CMD ["sh","-c","alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+' pos='2' index='0:17' type='CMD' snippet='CMD ["sh","-c","alembic upgrade head && exec...' 
+cmd=xray info=layer.stats all_size.human='14 kB' all_size.bytes='13964' 
+cmd=xray info=layer.stats object_count='10' 
+cmd=xray info=layer.stats dir_count='5' 
+cmd=xray info=layer.stats file_count='5' 
+cmd=xray info=layer.stats max_file_size.human='7.2 kB' max_file_size.bytes='7242' 
+cmd=xray info=layer.stats added_size.human='14 kB' added_size.bytes='13964' 
+cmd=xray info=layer.change.summary deleted='0' modified='1' added='9' all='10' 
+cmd=xray info=layer.objects.count value='10' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object size.human='7.2 kB' uid='0' gid='0' H='[A:7]' hash='52e09d119691810ee6d56b5c604a01c6c76553be' mode='-rw-r--r--' size.bytes='7242' mtime='2026-11-13T13:11:01Z' object.name='/srv/alembic/versions/__pycache__/0001_initial_schema.cpython-313.pyc' 
+cmd=xray info=object H='[A:7]' hash='4903ef0652419f97546b7275e52dda275d1685bb' uid='0' size.human='4.3 kB' size.bytes='4305' gid='0' mtime='2026-11-13T12:51:46Z' object.name='/srv/alembic/versions/0001_initial_schema.py' mode='-rw-r--r--' 
+cmd=xray info=object size.human='1.3 kB' size.bytes='1308' uid='0' object.name='/srv/alembic/__pycache__/env.cpython-313.pyc' mode='-rw-r--r--' mtime='2026-11-13T13:11:01Z' H='[A:7]' hash='f9f9010151b2eba5a46d990c5b8fc915bfa76b26' gid='0' 
+cmd=xray info=object hash='9a752d988249275f16d3a177685232b53ed40a73' object.name='/srv/alembic/env.py' size.human='641 B' size.bytes='641' gid='0' H='[A:7]' mode='-rw-r--r--' uid='0' mtime='2026-11-13T12:51:46Z' 
+cmd=xray info=object size.bytes='468' uid='0' gid='0' mtime='2026-11-13T12:51:46Z' H='[A:7]' object.name='/srv/alembic/script.py.mako' mode='-rw-r--r--' size.human='468 B' hash='bfb1dde94cd9e1f596c79042d2fee08fdcae3b1d' 
+cmd=xray info=object uid='0' gid='0' mtime='2026-11-13T13:11:01Z' hash='' object.name='/srv/alembic/versions' size.human='0 B' size.bytes='0' H='[A:7]' mode='drwxr-xr-x' 
+cmd=xray info=object mode='drwxr-xr-x' size.bytes='0' uid='0' mtime='2026-11-13T13:11:01Z' H='[A:7]' size.human='0 B' gid='0' hash='' object.name='/srv/alembic/__pycache__' 
+cmd=xray info=object size.bytes='0' mtime='2026-11-13T13:11:01Z' mode='drwxr-xr-x' size.human='0 B' uid='0' gid='0' H='[A:7]' hash='' object.name='/srv/alembic/versions/__pycache__' 
+cmd=xray info=object size.human='0 B' size.bytes='0' gid='0' H='[A:7]' hash='' mode='drwxr-xr-x' uid='0' mtime='2026-11-22T19:42:59Z' object.name='/srv/alembic' 
+cmd=xray info=object gid='0' mtime='2026-11-22T19:42:59Z' hash='' object.name='/srv' size.human='0 B' uid='0' H='[A:0/M:6,7]' mode='drwxr-xr-x' size.bytes='0' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=image.shells exe_path='/bin/bash' link_path='' reference='/bin/rbash' verified='false' full_name='Bash shell' short_name='bash' 
+cmd=xray info=image.shells full_name='Unknown shell' short_name='' exe_path='/usr/bin/rbash' link_path='bash' reference='' verified='true' 
+cmd=xray info=image.shells full_name='Unknown shell' short_name='' exe_path='/usr/bin/dash' link_path='' reference='' verified='true' 
+cmd=xray info=image.shells exe_path='/bin/sh' link_path='' reference='' verified='false' full_name='Bourne shell' short_name='sh' 
+cmd=xray info=image.shells link_path='dash' reference='' verified='true' full_name='Unknown shell' short_name='' exe_path='/usr/bin/sh' 
+cmd=xray info=image.shells full_name='Bash shell' short_name='bash' exe_path='/bin/bash' link_path='' reference='' verified='false' 
+cmd=xray info=image.shells full_name='Unknown shell' short_name='' exe_path='/usr/bin/bash' link_path='' reference='' verified='true' 
+cmd=xray info=image.entry exe_path='sh' exe_args='-c,alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000' 
+cmd=xray info=image.entry.full_exe_path layer='0' name='/usr/bin/sh' 
+cmd=xray info=image.special_perms.setuid name='/usr/bin/newgrp' 
+cmd=xray info=image.special_perms.setuid name='/usr/bin/passwd' 
+cmd=xray info=image.special_perms.setuid name='/usr/bin/su' 
+cmd=xray info=image.special_perms.setuid name='/usr/bin/umount' 
+cmd=xray info=image.special_perms.setuid name='/usr/bin/chfn' 
+cmd=xray info=image.special_perms.setuid name='/usr/bin/chsh' 
+cmd=xray info=image.special_perms.setuid name='/usr/bin/gpasswd' 
+cmd=xray info=image.special_perms.setuid name='/usr/bin/mount' 
+cmd=xray info=image.special_perms.setgid name='/usr/bin/expiry' 
+cmd=xray info=image.special_perms.setgid name='/usr/sbin/unix_chkpwd' 
+cmd=xray info=image.special_perms.setgid name='/usr/bin/chage' 
+cmd=xray info=image.special_perms.sticky name='/tmp' 
+cmd=xray info=image.special_perms.sticky name='/var/tmp' 
+cmd=xray info=image.special_perms.sticky name='/run/lock' 
+cmd=xray state=completed
+cmd=xray state=done
+cmd=xray info=results artifacts.location='/work/state/.mint-state/images/972af51daf7bbd01f138d486ac9ad5362466af3ccbfd7d534c1d9cbb5087d56b/artifacts' 
+cmd=xray info=results artifacts.dockerfile.original='Dockerfile.fat' 
+cmd=xray info=version status='OUTDATED' local='x.1.42.2' current='1.41.8' 
+cmd=xray message='Your version of MinToolkit is out of date! Use `mint update` to get the latest version.'
+cmd=xray info=report file='/work/brewtrack-api-0.1.0-31d6f23.xray.json' 
+app='mint' message='GitHub Discussions' info='https://github.com/mintoolkit/mint/discussions'
+app='mint' message='Join the CNCF Slack channel to ask questions or to share your feedback' info='https://cloud-native.slack.com/archives/C059QP1RH1S'
+app='mint' message='Join the Discord server to ask questions or to share your feedback' info='https://discord.gg/fAvq4ruKsG'

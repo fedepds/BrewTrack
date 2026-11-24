@@ -1,0 +1,3 @@
+web normal   114 MB  localhost:5001/brewtrack-web:0.2.0-31d6f23
+web reducida 55 MB  localhost:5001/brewtrack-web:0.2.0-31d6f23-slim
+ahorro 59 MB (51%)

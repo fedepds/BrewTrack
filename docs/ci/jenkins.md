@@ -1,6 +1,6 @@
 # Jenkins para BrewTrack
 
-El `Jenkinsfile` de la raíz clona el repo, analiza el código y las dependencias, corre los tests, construye las imágenes, las publica en el registro local y despliega en minikube con Helm. Si una etapa falla, las siguientes no corren.
+El `Jenkinsfile` de la raíz clona el repo, analiza el código y las dependencias, corre los tests, construye las imágenes, las publica en el registro local y despliega en minikube con Helm. Una etapa en rojo detiene el pipeline; una en amarillo (`UNSTABLE`) marca el build y deja seguir.
 
 ## Etapas
 
@@ -13,10 +13,12 @@ El `Jenkinsfile` de la raíz clona el repo, analiza el código y las dependencia
 | 2d | Snyk dependencias | Snyk CLI sobre las dependencias de la API | hay una vulnerabilidad **crítica** | `reports/snyk-report.txt` |
 | 2e | Trivy fs | Trivy (vulnerabilidades, secretos, configuración) | hay hallazgos HIGH o CRITICAL con arreglo | log |
 | 3 | Build imágenes | docker build | falla una compilación | tamaño de cada imagen en el log |
-| 4a | Trivy imágenes | Trivy | hay hallazgos HIGH o CRITICAL con arreglo | log |
-| 4b | Snyk imágenes | `snyk container test` | hay una vulnerabilidad **crítica** | `reports/snyk-container-report.txt` |
+| 4a | Trivy imágenes | Trivy | hay hallazgos HIGH o CRITICAL con arreglo | `reports/trivy-images-report.txt` |
+| 4b | SlimToolkit análisis | `ci/slimtoolkit.sh xray` de `db`, `api` y `web` | nunca (amarillo si falla) | `reports/slimtoolkit/*.xray.json`, `*.xray.log`, `*.txt` |
 | 5 | Publicar imágenes | docker push a `localhost:5001` | el registro no responde | imágenes en el registro |
 | 6 | Deploy Helm | `helm upgrade --install --wait` y `helm test` | un pod no queda listo en 5 minutos, o `/api/v1/health` no responde a través de la web | `helm status`, salida del test, historial y pods en el log |
+
+El pipeline no construye la `web` reducida. Para volver a medirla, corre a mano `ci/slimtoolkit.sh reduce <imagen web>` y actualiza `reports/image-analysis.md`. La variable `WEB_CHECK_PATHS` cambia las rutas que prueba.
 
 Las etapas 2 y 4 corren en paralelo y sin `failFast`: si falla una, las demás terminan igual, así se ven todos los problemas de una vez.
 

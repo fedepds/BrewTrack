@@ -28,7 +28,7 @@ Resumen de lo que no se rompe:
 - **Tests frontend:** `cd web && flutter test`
 - **Backup:** `docker compose exec db pg_dump -U brewtrack brewtrack > backup-$(date +%F).sql`
 - **Kubernetes con Helm:** `helm install brewtrack ./helm-chart -n brewtrack-dev --create-namespace -f helm-chart/values-dev.yaml` (o `values-prod.yaml`). Ver `helm-chart/README.md`.
-- **CI/CD:** `Jenkinsfile` (tests, Semgrep, Snyk, Trivy, publicación en el registro local y deploy con Helm a minikube, namespace `brewtrack`, en cada push a `master`). Ver `docs/ci/jenkins.md`.
+- **CI/CD:** `Jenkinsfile` (tests, Semgrep, Snyk, Trivy, SlimToolkit, publicación en el registro local y deploy con Helm a minikube, namespace `brewtrack`, en cada push a `master`). Ver `docs/ci/jenkins.md`.
 
 ## Puertos del host
 Cada servicio tiene un puerto fijo para que no choquen entre sí ni con Jenkins, que corre en la misma máquina.
