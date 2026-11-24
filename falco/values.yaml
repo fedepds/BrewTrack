@@ -1,0 +1,19 @@
+# Valores para la chart oficial de Falco (falcosecurity/falco). Los usa scripts/falco-up.sh.
+
+driver:
+  # Sonda eBPF moderna: no compila ni carga un módulo en el kernel. Pide kernel 5.8 o más con BTF
+  # (la VM de Colima lo trae). Si el pod de Falco no arranca, probar con "auto".
+  kind: modern_ebpf
+
+# Con tty, Falco vacía cada alerta al log apenas ocurre: "kubectl logs" la muestra al instante.
+tty: true
+
+falco:
+  # Una alerta por línea en JSON: fácil de filtrar y de guardar en reports/falco-event.log.
+  json_output: true
+  # Solo reglas estables (falco_rules.yaml), desde prioridad "notice".
+  priority: notice
+
+resources:
+  requests: { cpu: 100m, memory: 256Mi }
+  limits: { cpu: "1", memory: 1Gi }

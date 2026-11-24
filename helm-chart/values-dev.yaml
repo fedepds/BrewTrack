@@ -1,0 +1,18 @@
+# Desarrollo en minikube: helm install brewtrack ./helm-chart -f helm-chart/values-dev.yaml
+# Imágenes localhost/* cargadas a mano, una réplica, lotes de ejemplo y sin Ingress.
+db:
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits: { cpu: "1", memory: 256Mi }
+api:
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits: { cpu: "1", memory: 384Mi }
+  config: { seedDemoLots: "true" }
+web:
+  replicas: 1
+  service: { type: NodePort }
+  resources:
+    requests: { cpu: 20m, memory: 32Mi }
+    limits: { cpu: "1", memory: 64Mi }
+ingress: { enabled: false }

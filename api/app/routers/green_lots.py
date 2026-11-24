@@ -65,9 +65,9 @@ def list_lots(
 ):
     where = []
     if country:
-        where.append(GreenLot.origin_country.ilike(f"%{country}%"))
+        where.append(GreenLot.origin_country.icontains(country, autoescape=True))
     if process:
-        where.append(GreenLot.process.ilike(f"%{process}%"))
+        where.append(GreenLot.process.icontains(process, autoescape=True))
     rows = db.scalars(
         select(GreenLot).where(*where)
         .order_by(GreenLot.received_at.desc(), GreenLot.code).limit(limit).offset(offset)

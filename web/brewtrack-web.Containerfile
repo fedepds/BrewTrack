@@ -1,11 +1,13 @@
-FROM ghcr.io/cirruslabs/flutter:stable AS build
+# Versiones fijas (nunca "stable" ni "latest"). 3.44.0 es la última que publica cirruslabs; pubspec.lock pide >= 3.44.
+ARG FLUTTER_VERSION=3.44.0
+FROM ghcr.io/cirruslabs/flutter:${FLUTTER_VERSION} AS build
 WORKDIR /app
 COPY pubspec.yaml pubspec.lock ./
 RUN flutter pub get
 COPY . .
 RUN flutter build web --release --no-web-resources-cdn
 
-FROM docker.io/library/nginx:alpine
+FROM docker.io/library/nginx:1.30-alpine
 ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
 ENV API_UPSTREAM=http://api:8000
 COPY templates /etc/nginx/templates

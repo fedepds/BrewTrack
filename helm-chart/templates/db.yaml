@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-db
+  labels:
+    {{- include "brewtrack.labels" (list . "db") | nindent 4 }}
+spec:
+  type: {{ .Values.db.service.type }}
+  selector:
+    {{- include "brewtrack.selector" (list . "db") | nindent 4 }}
+  ports:
+    - port: {{ .Values.db.service.port }}
+      targetPort: 5432
+---
+# StatefulSet: el pod conserva su disco al reiniciarse y helm uninstall no borra el PVC.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-db
+  labels:
+    {{- include "brewtrack.labels" (list . "db") | nindent 4 }}
+spec:
+  serviceName: {{ .Release.Name }}-db
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "brewtrack.selector" (list . "db") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "brewtrack.labels" (list . "db") | nindent 8 }}
+    spec:
+      # uid 70 = usuario postgres de la imagen alpine; fsGroup deja el disco escribible.
+      # Sin token de la ServiceAccount: la app no habla con el API server.
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        fsGroup: 70
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: postgres
+          image: "{{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}"
+          imagePullPolicy: {{ .Values.db.image.pullPolicy }}
+          {{- with .Values.db.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: POSTGRES_USER
+              value: brewtrack
+            - name: POSTGRES_DB
+              value: brewtrack
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "brewtrack.secretName" . }}
+                  key: POSTGRES_PASSWORD
+            # Subcarpeta: algunos discos traen "lost+found" en la raíz y Postgres no arranca.
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+            # Raíz de solo lectura: el socket y los temporales van a discos en memoria.
+            - name: run
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "brewtrack"]
+            periodSeconds: 5
+          # Margen para el primer initdb antes de reiniciar el pod.
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "brewtrack"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- with .Values.db.persistence.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.db.persistence.size }}

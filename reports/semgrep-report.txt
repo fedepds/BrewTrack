@@ -1,0 +1,60 @@
+===== Semgrep — 2026-11-22 19:01:45 +0000
+Semgrep 1.186.0
+Reglas de la comunidad: semgrep-rules @ a5ad171
+Reglas propias: semgrep/python-security.yaml
+
+===== 1. Prueba de las reglas propias (semgrep --test)
+5/5: ✓ All tests passed
+
+===== 2. Escaneo del repo
+$ semgrep scan --config <reglas> --metrics=off --exclude=.venv --exclude=.venv-ci --exclude=.pubcache --exclude=.dart_tool --exclude=web/build --exclude=.superpowers --exclude=.playwright-mcp --exclude=reports --exclude=semgrep/python-security.py --exclude=kyverno/tests --exclude=docs/security/scan_semgrep.txt .
+Rule third-party-action-not-pinned-to-commit-sha contains an include pattern '.github/workflows' that will soon be interpreted as '/.github/workflows' to comply with the Semgrepignore v2 and Gitignore specifications. To make this pattern permanently unanchored, edit rule third-party-action-not-pinned-to-commit-sha and change it to '**/.github/workflows'. To confirm the anchored behavior and avoid this warning, change it to '/.github/workflows'.
+               
+               
+┌─────────────┐
+│ Scan Status │
+└─────────────┘
+  Scanning 153 files tracked by git with 751 Code rules:
+                                                                                                                        
+  Language      Rules   Files          Origin   Rules                                                                   
+ ─────────────────────────────        ────────────────                                                                  
+  <multilang>     233     153          Custom     751                                                                   
+  yaml             92      24                                                                                           
+  python          373      21                                                                                           
+  json              2       3                                                                                           
+                                                                                                                        
+Rule third-party-action-not-pinned-to-commit-sha contains an include pattern '.github/workflows' that will soon be interpreted as '/.github/workflows' to comply with the Semgrepignore v2 and Gitignore specifications. To make this pattern permanently unanchored, edit rule third-party-action-not-pinned-to-commit-sha and change it to '**/.github/workflows'. To confirm the anchored behavior and avoid this warning, change it to '/.github/workflows'.
+                
+                
+┌──────────────┐
+│ Scan Summary │
+└──────────────┘
+✅ Scan completed successfully.
+ • Findings: 1 (1 blocking)
+ • Rules run: 698
+ • Targets scanned: 153
+ • Parsed lines: ~100.0%
+ • Scan skipped: 
+   ◦ Matching --exclude patterns: 39
+   ◦ Files larger than  files 1.0 MB: 1
+   ◦ Files matching .semgrepignore patterns: 20
+ • Scan was limited to files tracked by git
+ • For a detailed list of skipped files and lines, run semgrep with the --verbose flag
+Ran 698 rules on 153 files: 1 finding.
+                  
+                  
+┌────────────────┐
+│ 1 Code Finding │
+└────────────────┘
+                    
+    web/pubspec.lock
+     ❱ facebook-page-access-token
+          ❰❰ Blocking ❱❱
+          A gitleaks facebook-page-access-token was detected which attempts to identify hard-coded            
+          credentials. It is not recommended to store credentials in source-code, as this risks secrets being 
+          leaked and used by either an internal or external malicious adversary. It is recommended to use     
+          environment variables to securely provide credentials or retrieve credentials from a secure vault or
+          HSM (Hardware Security Module).                                                                     
+                                                                                                              
+          172┆ sha256: eaac480a35ec0814146c2c48d96aaa829e0e44a7662c88ae84c9edf4bc35651f
+

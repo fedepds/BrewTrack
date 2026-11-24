@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.deps import admin_only, current_user
 from app.errors import ApiError
+from app.metrics import record_roast
 from app.models import GreenLot, Roast, User
 from app.schemas import Page, RoastDetail, RoastOut
 from app.stock import used_kg
@@ -113,6 +114,7 @@ def create_roast(body: RoastIn, user: User = Depends(current_user), db: Session 
     db.add(roast)
     db.commit()
     db.refresh(roast)
+    record_roast(roast.roast_level, roast.green_in_kg, roast.roasted_out_kg)
     return roast
 
 

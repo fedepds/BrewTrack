@@ -1,0 +1,20 @@
+# Producción: helm install brewtrack ./helm-chart -f helm-chart/values-prod.yaml
+# Dos réplicas de web, más recursos, sin lotes de ejemplo y con Ingress (clase nginx).
+# Para claves propias y el primer admin, nombra tu Secret en existingSecret.
+db:
+  resources:
+    requests: { cpu: 250m, memory: 256Mi }
+    limits: { cpu: "1", memory: 1Gi }
+  persistence: { size: 10Gi }
+api:
+  resources:
+    requests: { cpu: 200m, memory: 256Mi }
+    limits: { cpu: "1", memory: 512Mi }
+  config: { seedDemoLots: "false" }
+web:
+  replicas: 2
+  service: { type: ClusterIP }
+  resources:
+    requests: { cpu: 100m, memory: 64Mi }
+    limits: { cpu: "1", memory: 128Mi }
+ingress: { enabled: true, className: nginx, host: brewtrack.local }

@@ -1,0 +1,69 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: brewtrack-require-run-as-non-root
+  annotations:
+    policies.kyverno.io/title: Prohibir contenedores como root
+    policies.kyverno.io/category: BrewTrack
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/minversion: 1.19.1
+    policies.kyverno.io/description: >-
+      Cada contenedor tiene que correr con runAsNonRoot true (propio o heredado del pod) y ninguno puede fijar runAsUser 0. Un proceso root dentro del contenedor está a un fallo del kernel de ser root en el nodo.
+spec:
+  # Deny: el API server rechaza el recurso. Audit solo lo anotaría en un PolicyReport.
+  validationActions: [Deny]
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    # Todo el clúster salvo los namespaces del sistema y de las herramientas que necesitan privilegios (Falco).
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values: [kube-system, kube-public, kube-node-lease, kyverno, falco, ingress-nginx]
+    # Pods y todo lo que crea pods: así Helm recibe el rechazo al crear el Deployment, no después.
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods, replicationcontrollers]
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [deployments, statefulsets, daemonsets, replicasets]
+      - apiGroups: [batch]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [jobs, cronjobs]
+  variables:
+    # La especificación del pod, esté donde esté según el tipo de recurso.
+    - name: podSpec
+      expression: >-
+        object.kind == 'CronJob' ? object.spec.jobTemplate.spec.template.spec :
+        (has(object.spec.template) ? object.spec.template.spec : object.spec)
+    - name: containers
+      expression: >-
+        variables.podSpec.containers +
+        (has(variables.podSpec.initContainers) ? variables.podSpec.initContainers : [])
+    - name: podNonRoot
+      expression: >-
+        has(variables.podSpec.securityContext) &&
+        has(variables.podSpec.securityContext.runAsNonRoot) &&
+        variables.podSpec.securityContext.runAsNonRoot == true
+    - name: podUserIsRoot
+      expression: >-
+        has(variables.podSpec.securityContext) &&
+        has(variables.podSpec.securityContext.runAsUser) &&
+        variables.podSpec.securityContext.runAsUser == 0
+  validations:
+    - expression: >-
+        variables.containers.all(c,
+          (has(c.securityContext) && has(c.securityContext.runAsNonRoot)) ?
+            c.securityContext.runAsNonRoot == true : variables.podNonRoot)
+      message: "runAsNonRoot tiene que ser true, en el securityContext del pod o en el de cada contenedor."
+    - expression: >-
+        variables.containers.all(c,
+          (has(c.securityContext) && has(c.securityContext.runAsUser)) ?
+            c.securityContext.runAsUser != 0 : !variables.podUserIsRoot)
+      message: "runAsUser 0 es root y no está permitido."

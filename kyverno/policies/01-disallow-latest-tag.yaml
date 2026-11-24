@@ -1,0 +1,55 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: brewtrack-disallow-latest-tag
+  annotations:
+    policies.kyverno.io/title: Prohibir la etiqueta latest
+    policies.kyverno.io/category: BrewTrack
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/minversion: 1.19.1
+    policies.kyverno.io/description: >-
+      Cada imagen tiene que llevar una etiqueta fija (o un digest) y no puede ser latest. latest cambia sin aviso: dos pods de la misma versión pueden correr código distinto.
+spec:
+  # Deny: el API server rechaza el recurso. Audit solo lo anotaría en un PolicyReport.
+  validationActions: [Deny]
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    # Todo el clúster salvo los namespaces del sistema y de las herramientas que necesitan privilegios (Falco).
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values: [kube-system, kube-public, kube-node-lease, kyverno, falco, ingress-nginx]
+    # Pods y todo lo que crea pods: así Helm recibe el rechazo al crear el Deployment, no después.
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods, replicationcontrollers]
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [deployments, statefulsets, daemonsets, replicasets]
+      - apiGroups: [batch]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [jobs, cronjobs]
+  variables:
+    # La especificación del pod, esté donde esté según el tipo de recurso.
+    - name: podSpec
+      expression: >-
+        object.kind == 'CronJob' ? object.spec.jobTemplate.spec.template.spec :
+        (has(object.spec.template) ? object.spec.template.spec : object.spec)
+    - name: containers
+      expression: >-
+        variables.podSpec.containers +
+        (has(variables.podSpec.initContainers) ? variables.podSpec.initContainers : [])
+  validations:
+    - expression: >-
+        variables.containers.all(c, c.image.contains('@') || c.image.matches(':[^/]+$'))
+      message: "Cada imagen tiene que llevar etiqueta. Ejemplo: brewtrack-api:0.1.0 en vez de brewtrack-api."
+    - expression: >-
+        variables.containers.all(c, !c.image.endsWith(':latest'))
+      message: "La etiqueta latest no está permitida: usa una versión fija."

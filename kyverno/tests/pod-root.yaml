@@ -1,0 +1,32 @@
+# Incumple 03: runAsUser 0 y runAsNonRoot false (root).
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kyverno-root
+  namespace: brewtrack
+  labels:
+    app: kyverno-test
+spec:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsNonRoot: false
+    runAsUser: 0
+  containers:
+  - name: app
+    image: docker.io/library/busybox:1.37.0
+    command:
+    - sleep
+    - '3600'
+    resources:
+      requests:
+        cpu: 10m
+        memory: 16Mi
+      limits:
+        cpu: 50m
+        memory: 32Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+        - ALL

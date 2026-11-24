@@ -82,3 +82,15 @@ def test_delete_rules(client, roaster, admin, auth, make_lot, make_roast):
     assert r.status_code == 409 and r.json()["error"]["code"] == "lot_has_roasts"
     assert client.delete(f"{URL}/{empty.id}", headers=auth(admin)).status_code == 204
     assert client.get(f"{URL}/{empty.id}", headers=auth(admin)).status_code == 404
+
+
+def test_filter_treats_like_wildcards_as_text(client, roaster, auth, make_lot):
+    # "%" y "_" son comodines de LIKE: sin escape, "%" traería todos los lotes (Semgrep: brewtrack-like-sin-escape).
+    make_lot("GL-1", origin_country="Colombia", process="washed")
+    make_lot("GL-2", origin_country="Brasil", process="natural_100%")
+    by_country = client.get(f"{URL}?country=%25", headers=auth(roaster)).json()
+    assert by_country["total"] == 0
+    by_process = client.get(f"{URL}?process=100%25", headers=auth(roaster)).json()
+    assert [i["code"] for i in by_process["items"]] == ["GL-2"]
+    assert client.get(f"{URL}?country=_rasil", headers=auth(roaster)).json()["total"] == 0
+    assert client.get(f"{URL}?country=colom", headers=auth(roaster)).json()["total"] == 1

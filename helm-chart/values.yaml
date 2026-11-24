@@ -1,0 +1,43 @@
+# Valores por defecto: sirven en minikube con las imágenes cargadas a mano.
+# Las claves no van aquí: la chart las genera al instalar.
+# Nombre de un Secret propio con las mismas claves que <release>-secrets y, si
+# quieres, las del primer admin (SEED_ADMIN_*). Vacío: la chart crea el suyo.
+existingSecret: ""
+db:
+  image: { repository: localhost/brewtrack-db, tag: "0.1.0", pullPolicy: IfNotPresent }
+  service: { type: ClusterIP, port: 5432 }
+  # Kyverno (política 02) rechaza pods sin requests y limits: los valores por defecto ya los traen.
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: "1", memory: 512Mi }
+  # storageClass vacío: usa la clase por defecto del clúster.
+  persistence: { size: 1Gi, storageClass: "" }
+
+api:
+  image: { repository: localhost/brewtrack-api, tag: "0.1.0", pullPolicy: IfNotPresent }
+  # La plantilla fija 1 réplica, diga lo que diga este valor: ver templates/api.yaml.
+  replicas: 1
+  service: { type: ClusterIP, port: 8000 }
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: "1", memory: 512Mi }
+  config: { timezone: America/Argentina/Buenos_Aires, seedDemoLots: "true" }
+
+web:
+  # 0.2.0 = UI actual (rebranding); 0.1.0 es la UI anterior (rama UI_vieja).
+  image: { repository: localhost/brewtrack-web, tag: "0.2.0", pullPolicy: IfNotPresent }
+  replicas: 1
+  service: { type: ClusterIP, port: 8080 }
+  resources:
+    requests: { cpu: 50m, memory: 32Mi }
+    limits: { cpu: "1", memory: 128Mi }
+
+# Pod de "helm test": también pasa por Kyverno, así que lleva sus límites.
+tests:
+  resources:
+    requests: { cpu: 10m, memory: 32Mi }
+    limits: { cpu: "1", memory: 64Mi }
+
+# Apagado: hace falta un controlador de Ingress en el clúster.
+# className vacío: usa la clase por defecto del clúster.
+ingress: { enabled: false, className: "", host: brewtrack.local, annotations: {} }
