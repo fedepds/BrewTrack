@@ -45,3 +45,32 @@ La `web` reducida pesa 59,4 MB menos (51,8 %). Pasa la sonda HTTP, la prueba de 
 **Observaciones:**
 - `slim build` quita los módulos sobrantes de nginx, los paquetes y `apk upgrade`: el sistema baja de 70 MB a 10,6 MB. La app queda entera, así que hoy es el 81 % de la reducida.
 - El margen que queda está en `canvaskit/`. Servir solo la versión que usa el navegador ahorraría hasta unos 30 MB. Antes hay que confirmar cuál carga.
+
+## Anexos: salida de SlimToolkit
+
+Copiamos la salida del build 16 en [`image-analysis/`](image-analysis/). Los JSON completos de `xray` (8,7 MB en total) quedan solo en Jenkins.
+
+| Archivo | Qué es |
+|---|---|
+| [`brewtrack-db-0.1.0-31d6f23.xray.log`](image-analysis/brewtrack-db-0.1.0-31d6f23.xray.log) | Log de `slim xray` de `db` |
+| [`brewtrack-api-0.1.0-31d6f23.xray.log`](image-analysis/brewtrack-api-0.1.0-31d6f23.xray.log) | Log de `slim xray` de `api` |
+| [`brewtrack-web-0.2.0-31d6f23.xray.log`](image-analysis/brewtrack-web-0.2.0-31d6f23.xray.log) | Log de `slim xray` de `web` |
+| [`brewtrack-web-0.2.0-31d6f23.build.log`](image-analysis/brewtrack-web-0.2.0-31d6f23.build.log) | Log de `slim build` de `web`: sonda HTTP y resultado |
+| `brewtrack-{db,api,web}-*.txt` | Resumen por capa de cada imagen, generado desde el JSON de `xray` |
+| [`brewtrack-web-0.2.0-31d6f23.compare.txt`](image-analysis/brewtrack-web-0.2.0-31d6f23.compare.txt) | Comparación de la `web` normal y la reducida |
+
+Líneas clave de los logs:
+
+```
+db   xray   info=layers.count value='11'
+api  xray   info=layers.count value='8'
+web  xray   info=layers.count value='11'
+web  build  info=http.probe.summary total='4' failures='0' successful='4'
+web  build  info=results status='MINIFIED' by='2.07X' size.original='115 MB' size.optimized='55 MB'
+```
+
+Cómo leer los logs:
+
+- El log de `slim build` trae 181 líneas `level=error` con `dst already exists (no op)`. Aparecen cuando el sensor intenta copiar dos veces el mismo archivo, y no afectan el resultado.
+- El script fija `slim 1.40.11`, pero el sensor dice ser `x.1.42.2`. Falta confirmar cuál corre en realidad.
+- Las palabras `password` que aparecen en los logs son el campo `no_password_login` de los usuarios de cada imagen, no secretos.

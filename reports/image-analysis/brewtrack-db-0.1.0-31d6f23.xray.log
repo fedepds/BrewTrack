@@ -1,0 +1,392 @@
+cmd=xray state=started
+cmd=xray info=cmd.input.params runtime='auto/docker' target='localhost:5001/brewtrack-db:0.1.0-31d6f23' target.type='tt.image.ref' add-image-manifest='false' add-image-config='false' rm-file-artifacts='false' 
+cmd=xray state=image.api.inspection.start
+cmd=xray info=image architecture='arm64' id='sha256:55e0c31031b3eff431cad860e32ad6172c6f2e392b80ff7c875a59c888e33616' size.bytes='0' size.human='0 B' 
+cmd=xray info=image.users exe='postgres' all='postgres' 
+cmd=xray info=image.stack index='0' name='localhost:5001/brewtrack-db:0.1.0-31d6f23' id='sha256:55e0c31031b3eff431cad860e32ad6172c6f2e392b80ff7c875a59c888e33616' instructions='25' message='see report file for details' 
+cmd=xray info=image.exposed_ports list='5432/tcp' 
+cmd=xray state=image.api.inspection.done
+cmd=xray state=image.data.inspection.start
+cmd=xray info=image.data.inspection.save.image.start
+cmd=xray info=image.data.inspection.save.image.end
+cmd=xray info=image.data.inspection.process.image.start
+cmd=xray info=image.data.inspection.process.image.end
+cmd=xray state=image.data.inspection.done
+cmd=xray info=image.package.details
+cmd=xray info=layers.count value='11' 
+cmd=xray info=image.identities.stats user_count='17' group_count='35' 
+cmd=xray info=image.identities.user uid='2' home='/sbin' shell='/sbin/nologin' no_login_shell='true' no_password_login='true' username='daemon' 
+cmd=xray info=image.identities.user no_password_login='true' username='ftp' uid='21' home='/var/lib/ftp' shell='/sbin/nologin' no_login_shell='true' 
+cmd=xray info=image.identities.user username='sshd' uid='22' home='/dev/null' shell='/sbin/nologin' no_login_shell='true' no_password_login='true' 
+cmd=xray info=image.identities.user shell='/sbin/nologin' no_login_shell='true' no_password_login='true' username='lp' uid='4' home='/var/spool/lpd' 
+cmd=xray info=image.identities.user home='/sbin' shell='/sbin/halt' no_login_shell='false' no_password_login='true' username='halt' uid='7' 
+cmd=xray info=image.identities.user shell='/sbin/nologin' no_login_shell='true' no_password_login='true' username='cron' uid='16' home='/var/spool/cron' 
+cmd=xray info=image.identities.user username='guest' uid='405' home='/dev/null' shell='/sbin/nologin' no_login_shell='true' no_password_login='true' 
+cmd=xray info=image.identities.user no_password_login='true' username='uucp' uid='10' home='/var/spool/uucppublic' shell='/sbin/nologin' no_login_shell='true' 
+cmd=xray info=image.identities.user shell='/sbin/nologin' no_login_shell='true' no_password_login='true' username='ntp' uid='123' home='/var/empty' 
+cmd=xray info=image.identities.user no_login_shell='false' no_password_login='true' username='root' uid='0' home='/root' shell='/bin/sh' 
+cmd=xray info=image.identities.user username='bin' uid='1' home='/bin' shell='/sbin/nologin' no_login_shell='true' no_password_login='true' 
+cmd=xray info=image.identities.user no_password_login='true' username='sync' uid='5' home='/sbin' shell='/bin/sync' no_login_shell='false' 
+cmd=xray info=image.identities.user no_login_shell='true' no_password_login='true' username='news' uid='9' home='/usr/lib/news' shell='/sbin/nologin' 
+cmd=xray info=image.identities.user username='shutdown' uid='6' home='/sbin' shell='/sbin/shutdown' no_login_shell='false' no_password_login='true' 
+cmd=xray info=image.identities.user username='mail' uid='8' home='/var/mail' shell='/sbin/nologin' no_login_shell='true' no_password_login='true' 
+cmd=xray info=image.identities.user no_login_shell='true' no_password_login='true' username='games' uid='35' home='/usr/games' shell='/sbin/nologin' 
+cmd=xray info=image.identities.user no_login_shell='true' no_password_login='true' username='nobody' uid='65534' home='/' shell='/sbin/nologin' 
+cmd=xray info=image.stats.duplicates file_size.human='165 kB' file_total_size.bytes='331550' file_total_size.human='332 kB' wasted.bytes='166305' wasted.human='166 kB' file_count='18' file_total_count='37' file_size.bytes='165245' 
+cmd=xray info=layer.start
+cmd=xray info=layer id='3d971ddbca237031066ab6609a11ae2e9e5b109da24d5c5d94d2e584dd94bd54' path='blobs/sha256/3d971ddbca237031066ab6609a11ae2e9e5b109da24d5c5d94d2e584dd94bd54' index='0' 
+cmd=xray info=distro name='Alpine Linux' version='3.24.4' display='Alpine Linux v3.24' 
+cmd=xray info=change.instruction all='ADD alpine-minirootfs-3.24.4-aarch64.tar.gz /' index='0:0' type='ADD' snippet='ADD alpine-minirootfs-3.24.4-aarch64.tar.gz ...' 
+cmd=xray info=other.instructions count='1' 
+cmd=xray info=other.instruction pos='0' index='0:1' type='CMD' snippet='CMD ["/bin/sh"]
+' all='CMD ["/bin/sh"]
+' 
+cmd=xray info=layer.stats all_size.bytes='8652280' all_size.human='8.7 MB' 
+cmd=xray info=layer.stats object_count='514' 
+cmd=xray info=layer.stats dir_count='96' 
+cmd=xray info=layer.stats file_count='83' 
+cmd=xray info=layer.stats link_count='335' 
+cmd=xray info=layer.stats max_file_size.human='4.5 MB' max_file_size.bytes='4533144' 
+cmd=xray info=layer.stats added_size.human='8.7 MB' added_size.bytes='8652280' 
+cmd=xray info=layer.change.summary deleted='0' modified='0' added='514' all='514' 
+cmd=xray info=layer.objects.count value='514' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object H='[A:0/M:10]' object.name='/usr/lib/libcrypto.so.3' mode='-rwxr-xr-x' size.human='4.5 MB' size.bytes='4533144' uid='0' gid='0' mtime='2026-09-30T07:09:33Z' hash='5c647d1f98b80d174bd82635664ebfaa42da9ace' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='919 kB' gid='0' H='[A:0]' hash='a2b1a4a96b3e3dac0c7bb4e5bafc5f8c777451d8' object.name='/bin/busybox' size.bytes='919304' uid='0' mtime='2026-01-10T15:38:28Z' 
+cmd=xray info=object size.human='868 kB' size.bytes='868240' gid='0' object.name='/usr/lib/libssl.so.3' mode='-rwxr-xr-x' uid='0' mtime='2026-09-30T07:09:33Z' H='[A:0/M:10]' hash='a55fd30e598e4f9e659935faa6410e4b12f1991c' 
+cmd=xray info=object H='[A:0]' hash='0967cd0c5ecbb758fcc3dace34f7f3ec8fb041ef' object.name='/lib/ld-musl-aarch64.so.1' size.human='724 kB' size.bytes='723480' uid='0' gid='0' mtime='2026-10-21T15:50:16Z' mode='-rwxr-xr-x' 
+cmd=xray info=object size.human='330 kB' uid='0' gid='0' mtime='2026-11-04T08:03:01Z' H='[A:0]' object.name='/usr/lib/libapk.so.3.0.0' mode='-rwxr-xr-x' hash='76cc29bb778f2bc429f03e22f6691f7dceff18d1' size.bytes='330416' 
+cmd=xray info=object size.bytes='178791' hash='993d16520219bb7a38fbec959bef6e6c31407420' object.name='/etc/ssl/certs/ca-certificates.crt' mtime='2026-10-20T15:31:28Z' H='[A:0/M:2]' mode='-rw-r--r--' size.human='179 kB' uid='0' gid='0' 
+cmd=xray info=object size.human='135 kB' gid='0' uid='0' mtime='2026-11-04T08:03:01Z' H='[A:0]' hash='4676b377888513473fbf312114cb467527423a72' object.name='/sbin/apk' mode='-rwxr-xr-x' size.bytes='135248' 
+cmd=xray info=object size.human='133 kB' size.bytes='133008' hash='10f8a55f61c1b834798410d6a6fa39604a0ef0a6' object.name='/usr/lib/ossl-modules/legacy.so' mode='-rwxr-xr-x' uid='0' gid='0' mtime='2026-09-30T07:09:33Z' H='[A:0/M:10]' 
+cmd=xray info=object size.human='133 kB' gid='0' H='[A:0/D:10]' hash='319793c123c82d2e14af20a149779633e974ca92' object.name='/usr/lib/libz.so.1.3.2' mode='-rwxr-xr-x' size.bytes='133008' uid='0' mtime='2026-10-06T20:34:20Z' 
+cmd=xray info=object uid='0' gid='0' mtime='2026-09-30T07:09:33Z' H='[A:0/M:10]' hash='cc7f0d2201b64a85ca23c58f360371d5307a3725' mode='-rwxr-xr-x' size.human='68 kB' size.bytes='67952' object.name='/usr/lib/engines-3/loader_attic.so' 
+cmd=xray info=object H='[A:0/M:10]' hash='502644ccb42a97cc9d2d8df7c18282eb629d563e' object.name='/usr/lib/engines-3/afalg.so' mode='-rwxr-xr-x' size.human='68 kB' size.bytes='67680' uid='0' gid='0' mtime='2026-09-30T07:09:33Z' 
+cmd=xray info=object gid='0' mtime='2026-10-21T15:50:16Z' hash='590cd7ec74999ef47a90330d1bc0e7e23b6e0a63' mode='-rwxr-xr-x' size.human='68 kB' H='[A:0]' object.name='/usr/bin/getent' size.bytes='67528' uid='0' 
+cmd=xray info=object uid='0' gid='0' mtime='2026-01-10T15:38:28Z' hash='8ee925b312540617d0ba7b7b2feaab5bf899f67c' size.human='68 kB' size.bytes='67472' H='[A:0]' object.name='/usr/bin/ssl_client' mode='-rwxr-xr-x' 
+cmd=xray info=object mode='-rwxr-xr-x' size.bytes='67424' hash='e59659f262ce34388f20fb7c2887386a11879c3a' object.name='/usr/bin/scanelf' size.human='67 kB' uid='0' gid='0' mtime='2026-03-27T19:39:10Z' H='[A:0]' 
+cmd=xray info=object gid='0' H='[A:0]' hash='3826b3c6d0b652d952bc3a99d4fab0f9a9085716' mode='-rwxr-xr-x' uid='0' mtime='2026-10-21T15:50:16Z' object.name='/usr/bin/getconf' size.human='67 kB' size.bytes='67320' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='67 kB' mtime='2026-10-21T15:50:16Z' H='[A:0]' hash='24bdb78953ea009d853eb4af4c532f936c82a6eb' size.bytes='67240' uid='0' gid='0' object.name='/usr/bin/iconv' 
+cmd=xray info=object uid='0' mtime='2026-09-30T07:09:33Z' hash='28d448e13180220c95e5c4c46ec8d5987ebc2b88' mode='-rwxr-xr-x' size.bytes='67168' H='[A:0/M:10]' object.name='/usr/lib/engines-3/padlock.so' size.human='67 kB' gid='0' 
+cmd=xray info=object size.bytes='67168' uid='0' gid='0' mtime='2026-09-30T07:09:33Z' H='[A:0/M:10]' hash='48fa8435d17a7f9489feed90437155de7e2c9dbe' object.name='/usr/lib/engines-3/capi.so' mode='-rwxr-xr-x' size.human='67 kB' 
+cmd=xray info=object size.human='15 kB' size.bytes='15097' uid='0' hash='9aa5257614fd58ff8e2022c5f14e1f9dca2d4b15' object.name='/lib/apk/db/installed' mode='-rw-r--r--' gid='0' mtime='2026-11-05T09:19:24Z' H='[A:0/M:2,4,10]' 
+cmd=xray info=object mode='-rw-r--r--' size.bytes='12813' uid='0' H='[A:0]' object.name='/etc/services' size.human='13 kB' gid='0' mtime='2026-03-24T19:40:54Z' hash='a0d7a229bf049f7fe17e8445226236e4024535d0' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='1' id='329652dade602f9fd8b0d787152dfc2bedc65179c2e549ae3dd7339428f29cee' path='blobs/sha256/329652dade602f9fd8b0d787152dfc2bedc65179c2e549ae3dd7339428f29cee' 
+cmd=xray info=change.instruction index='0:2' type='RUN' snippet='RUN set -eux; 	addgroup -g 70 -S postgres; 	...' all='RUN set -eux; 	addgroup -g 70 -S postgres; 	adduser -u 70 -S -D -G postgres -H -h /var/lib/postgresql -s /bin/sh postgres; 	install --verbose --directory --owner postgres --group postgres --mode 1777 /var/lib/postgresql' 
+cmd=xray info=other.instructions count='1' 
+cmd=xray info=other.instruction all='ENV GOSU_VERSION=1.19' pos='0' index='0:3' type='ENV' snippet='ENV GOSU_VERSION=1.19' 
+cmd=xray info=layer.stats all_size.human='3.1 kB' all_size.bytes='3058' 
+cmd=xray info=layer.stats object_count='10' 
+cmd=xray info=layer.stats dir_count='4' 
+cmd=xray info=layer.stats file_count='6' 
+cmd=xray info=layer.stats max_file_size.human='748 B' max_file_size.bytes='748' 
+cmd=xray info=layer.stats added_size.human='1.5 kB' added_size.bytes='1487' 
+cmd=xray info=layer.stats modified_size.human='1.6 kB' modified_size.bytes='1571' 
+cmd=xray info=layer.change.summary deleted='0' modified='6' added='4' all='10' 
+cmd=xray info=layer.objects.count value='10' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object uid='0' H='[A:0/M:1]' object.name='/etc/passwd' mode='-rw-r--r--' size.human='748 B' size.bytes='748' gid='0' mtime='2026-11-05T19:01:24Z' hash='38166fe428dda8b23fb792d1b0df2d5af2cefd39' 
+cmd=xray info=object mode='-rw-r--r--' gid='0' hash='afe6cba27664032062c7f1cb812783b1ecf6d99b' size.human='702 B' size.bytes='702' uid='0' mtime='2026-03-24T19:40:54Z' H='[A:1]' object.name='/etc/passwd-' 
+cmd=xray info=object gid='0' mtime='2026-11-05T19:01:24Z' H='[A:0/M:1]' hash='d433233a567fb03af47a313c18b02e53094f5bfd' object.name='/etc/group' mode='-rw-r--r--' size.bytes='533' uid='0' size.human='533 B' 
+cmd=xray info=object H='[A:1]' hash='5984e05486a838ae6fe8ef4f011f5d5a660b9230' size.bytes='525' uid='0' gid='0' object.name='/etc/group-' mode='-rw-r--r--' size.human='525 B' mtime='2026-11-05T19:01:24Z' 
+cmd=xray info=object size.bytes='290' gid='42' H='[A:0/M:1]' object.name='/etc/shadow' hash='ae10bd4a5db0f2af5b9396dd3ca0f385937a6982' mode='-rw-r-----' size.human='290 B' uid='0' mtime='2026-11-05T19:01:24Z' 
+cmd=xray info=object uid='0' gid='42' mtime='2026-11-05T09:19:24Z' hash='fdcce813d9a3aa27fffcf07126d2deabf17cb057' size.human='260 B' size.bytes='260' object.name='/etc/shadow-' mode='-rw-r-----' H='[A:1]' 
+cmd=xray info=object size.bytes='0' uid='70' mtime='2026-11-05T19:01:24Z' hash='' object.name='/var/lib/postgresql' mode='dtrwxrwxrwx' size.human='0 B' gid='70' H='[A:1/M:7]' 
+cmd=xray info=object size.human='0 B' gid='0' mtime='2026-11-05T19:01:24Z' H='[A:0/M:1,7]' hash='' mode='drwxr-xr-x' size.bytes='0' uid='0' object.name='/var/lib' 
+cmd=xray info=object uid='0' mtime='2026-11-05T09:19:24Z' H='[A:0/M:1,2,4,7,10]' mode='drwxr-xr-x' size.bytes='0' gid='0' hash='' object.name='/var' size.human='0 B' 
+cmd=xray info=object mode='drwxr-xr-x' gid='0' mtime='2026-11-05T19:01:24Z' object.name='/etc' size.human='0 B' size.bytes='0' uid='0' H='[A:0/M:1,2,4,10]' hash='' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='2' id='f20fa49624ff8a2d5c4d24ed478c4451ae4c0fc318f59c99d65f28cb034a9984' path='blobs/sha256/f20fa49624ff8a2d5c4d24ed478c4451ae4c0fc318f59c99d65f28cb034a9984' 
+cmd=xray info=change.instruction all='RUN set -eux; 		apk add --no-cache --virtual .gosu-deps 		ca-certificates 		dpkg 		gnupg 	; 		dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; 	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; 	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; 		export GNUPGHOME="$(mktemp -d)"; 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; 	gpgconf --kill all; 	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; 		apk del --no-network .gosu-deps; 		chmod +x /usr/local/bin/gosu; 	gosu --version; 	gosu nobody true' index='0:4' type='RUN' snippet='RUN set -eux; 		apk add --no-cache --virtual...' 
+cmd=xray info=other.instructions count='1' 
+cmd=xray info=other.instruction pos='0' index='0:5' type='ENV' snippet='ENV LANG=en_US.utf8' all='ENV LANG=en_US.utf8' 
+cmd=xray info=layer.stats all_size.human='2.0 MB' all_size.bytes='2030423' 
+cmd=xray info=layer.stats object_count='29' 
+cmd=xray info=layer.stats dir_count='14' 
+cmd=xray info=layer.stats file_count='8' 
+cmd=xray info=layer.stats link_count='7' 
+cmd=xray info=layer.stats max_file_size.bytes='1830424' max_file_size.human='1.8 MB' 
+cmd=xray info=layer.stats added_size.human='1.8 MB' added_size.bytes='1834450' 
+cmd=xray info=layer.stats modified_size.human='196 kB' modified_size.bytes='195973' 
+cmd=xray info=layer.change.summary deleted='0' modified='25' added='4' all='29' 
+cmd=xray info=layer.objects.count value='29' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object size.human='1.8 MB' uid='0' mtime='2026-11-05T19:01:25Z' object.name='/usr/local/bin/gosu' mode='-rwxr-xr-x' gid='0' H='[A:2]' hash='ed6f2c63b72ed740097b79574db21d7eb5f05fbe' size.bytes='1830424' 
+cmd=xray info=object size.human='179 kB' size.bytes='178791' uid='0' mtime='2026-11-05T19:01:25Z' H='[A:0/M:2]' mode='-rw-r--r--' gid='0' hash='993d16520219bb7a38fbec959bef6e6c31407420' object.name='/etc/ssl/certs/ca-certificates.crt' 
+cmd=xray info=object mode='-rw-r--r--' size.bytes='15097' gid='0' mtime='2026-11-05T19:01:27Z' hash='9aa5257614fd58ff8e2022c5f14e1f9dca2d4b15' size.human='15 kB' uid='0' H='[A:0/M:2,4,10]' object.name='/lib/apk/db/installed' 
+cmd=xray info=object hash='07275e82a74fc1da2a6d690d39da0bfa45e0645d' object.name='/var/log/apk.log' size.bytes='4026' gid='0' mtime='2026-11-05T19:01:27Z' H='[A:2/M:4,10]' mode='-rw-r--r--' size.human='4.0 kB' uid='0' 
+cmd=xray info=object size.human='1.9 kB' gid='0' mtime='2026-11-05T19:01:27Z' object.name='/lib/apk/db/scripts.tar.gz' hash='f9d37e758c4ba07faf3280c521a53079e460af0d' mode='-rw-r--r--' size.bytes='1916' uid='0' H='[A:0/M:2,4,10]' 
+cmd=xray info=object mode='-rw-r--r--' size.bytes='95' gid='0' object.name='/lib/apk/db/triggers' size.human='95 B' uid='0' mtime='2026-11-05T19:01:27Z' H='[A:0/M:2,4,10]' hash='9d339bce9ddc307a6ecd35d50f3b2994d8d35d90' 
+cmd=xray info=object size.bytes='74' gid='0' mtime='2026-11-05T19:01:27Z' H='[A:0/M:2,4,10]' mode='-rw-r--r--' uid='0' hash='0757538e91abcad57cfafe57a89685cb40d64b00' object.name='/etc/apk/world' size.human='74 B' 
+cmd=xray info=object size.bytes='0' uid='0' gid='0' object.name='/etc/ssl/certs' mode='drwxr-xr-x' size.human='0 B' mtime='2026-11-05T19:01:27Z' H='[A:0/M:2]' hash='' 
+cmd=xray info=object size.human='0 B' mtime='2026-11-05T09:19:24Z' hash='' mode='drwxr-xr-x' size.bytes='0' uid='0' gid='0' H='[A:0/M:2,10]' object.name='/etc/ssl' 
+cmd=xray info=object size.human='0 B' size.bytes='0' mtime='2026-11-05T19:01:27Z' object.name='/etc' hash='' mode='drwxr-xr-x' uid='0' gid='0' H='[A:0/M:1,2,4,10]' 
+cmd=xray info=object size.bytes='0' mtime='2026-11-05T19:01:27Z' gid='0' H='[A:0/M:2,4,10]' hash='' object.name='/lib/apk/db' mode='drwxr-xr-x' size.human='0 B' uid='0' 
+cmd=xray info=object size.bytes='0' uid='0' gid='0' H='[A:2]' object.name='/lib/apk/db/lock' mode='-rw-------' size.human='0 B' mtime='2026-11-05T19:01:24Z' hash='da39a3ee5e6b4b0d3255bfef95601890afd80709' 
+cmd=xray info=object mode='Lrwxrwxrwx' size.human='0 B' size.bytes='0' hash='' uid='0' gid='0' mtime='2026-11-05T19:01:25Z' H='[A:2]' object.name='/usr/bin/pinentry' link.target='pinentry-curses' 
+cmd=xray info=object uid='0' mtime='2026-11-05T09:19:24Z' H='[A:0/M:2,4,10]' hash='' object.name='/lib/apk' mode='drwxr-xr-x' size.human='0 B' size.bytes='0' gid='0' 
+cmd=xray info=object mode='Lrwxrwxrwx' uid='0' mtime='2026-11-05T19:01:27Z' hash='' object.name='/usr/bin/lzcat' link.target='/bin/busybox' size.human='0 B' size.bytes='0' gid='0' H='[A:0/M:2,4]' 
+cmd=xray info=object size.human='0 B' size.bytes='0' gid='0' mtime='2026-11-05T09:19:24Z' H='[A:0/M:2,4,10]' hash='' object.name='/lib' mode='drwxr-xr-x' uid='0' 
+cmd=xray info=object object.name='/usr/bin' size.bytes='0' uid='0' mtime='2026-11-05T19:01:27Z' H='[A:0/M:2,4,10]' hash='' mode='drwxr-xr-x' size.human='0 B' gid='0' 
+cmd=xray info=object mode='Lrwxrwxrwx' size.bytes='0' gid='0' mtime='2026-11-05T19:01:27Z' H='[A:0/M:2,4]' size.human='0 B' uid='0' hash='' object.name='/usr/bin/lzma' link.target='/bin/busybox' 
+cmd=xray info=object size.bytes='0' gid='0' object.name='/usr' mode='drwxr-xr-x' size.human='0 B' uid='0' mtime='2026-11-05T19:01:27Z' H='[A:0/M:2,4,5,8,9,10]' hash='' 
+cmd=xray info=object uid='0' gid='0' mtime='2026-11-05T19:01:27Z' hash='' object.name='/etc/apk' size.human='0 B' size.bytes='0' mode='drwxr-xr-x' H='[A:0/M:2,4,10]' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='3' id='89df97bd3374748656ac29fc7310aafe6aa8374d7dfe3b98046d81307a457c2d' path='blobs/sha256/89df97bd3374748656ac29fc7310aafe6aa8374d7dfe3b98046d81307a457c2d' 
+cmd=xray info=change.instruction index='0:6' type='RUN' snippet='RUN mkdir /docker-entrypoint-initdb.d' all='RUN mkdir /docker-entrypoint-initdb.d' 
+cmd=xray info=other.instructions count='4' 
+cmd=xray info=other.instruction all='ENV PG_MAJOR=17' pos='0' index='0:7' type='ENV' snippet='ENV PG_MAJOR=17' 
+cmd=xray info=other.instruction all='ENV PG_VERSION=17.11' pos='1' index='0:8' type='ENV' snippet='ENV PG_VERSION=17.11' 
+cmd=xray info=other.instruction snippet='ENV PG_SHA256=dd27f2b3c59e73ed14aa3324901242...' all='ENV PG_SHA256=dd27f2b3c59e73ed14aa3324901242bf69a032a6347805f274e6260322d42979' pos='2' index='0:9' type='ENV' 
+cmd=xray info=other.instruction pos='3' index='0:10' type='ENV' snippet='ENV DOCKER_PG_LLVM_DEPS=llvm21-dev 		clang21' all='ENV DOCKER_PG_LLVM_DEPS=llvm21-dev 		clang21' 
+cmd=xray info=layer.stats object_count='1' 
+cmd=xray info=layer.stats dir_count='1' 
+cmd=xray info=layer.change.summary all='1' deleted='0' modified='0' added='1' 
+cmd=xray info=layer.objects.count value='1' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object size.human='0 B' H='[A:3]' object.name='/docker-entrypoint-initdb.d' mode='drwxr-xr-x' size.bytes='0' uid='0' gid='0' mtime='2026-11-05T19:01:27Z' hash='' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='4' id='91eee09b1b79a2104c4a6997de530dd3fc0889f2c6c5a6eaa4e171babd4ac459' path='blobs/sha256/91eee09b1b79a2104c4a6997de530dd3fc0889f2c6c5a6eaa4e171babd4ac459' 
+cmd=xray info=change.instruction index='0:11' type='RUN' snippet='RUN set -eux; 		wget -O postgresql.tar.bz2 "...' all='RUN set -eux; 		wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSION/postgresql-$PG_VERSION.tar.bz2"; 	echo "$PG_SHA256 *postgresql.tar.bz2" | sha256sum -c -; 	mkdir -p /usr/src/postgresql; 	tar 		--extract 		--file postgresql.tar.bz2 		--directory /usr/src/postgresql 		--strip-components 1 	; 	rm postgresql.tar.bz2; 		apk add --no-cache --virtual .build-deps 		$DOCKER_PG_LLVM_DEPS 		bison 		coreutils 		dpkg-dev dpkg 		flex 		g++ 		gcc 		krb5-dev 		libc-dev 		libedit-dev 		libxml2-dev 		libxslt-dev 		linux-headers 		make 		openldap-dev 		openssl-dev 		perl-dev 		perl-ipc-run 		perl-utils 		python3-dev 		tcl-dev 		util-linux-dev 		zlib-dev 		icu-dev 		lz4-dev 		zstd-dev 	; 		cd /usr/src/postgresql; 	awk '$1 == "#define" && \
+	$2 == "DEFAULT_PGSOCKET_DIR" && \
+	$3 == "\"/tmp\"" { $3 = "\"/var/run/postgresql\""; print; next } { print }' src/include/pg_config_manual.h > src/include/pg_config_manual.h.new; 	grep '/var/run/postgresql' src/include/pg_config_manual.h.new; 	mv src/include/pg_config_manual.h.new src/include/pg_config_manual.h; 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; 		export LLVM_CONFIG="/usr/lib/llvm21/bin/llvm-config"; 	export CLANG=clang-21; 		./configure 		--enable-option-checking=fatal 		--build="$gnuArch" 		--enable-integer-datetimes 		--enable-tap-tests 		--disable-rpath 		--with-uuid=e2fs 		--with-pgport=5432 		--with-system-tzdata=/usr/share/zoneinfo 		--prefix=/usr/local 		--with-includes=/usr/local/include 		--with-libraries=/usr/local/lib 		--with-gssapi 		--with-icu 		--with-ldap 		--with-libxml 		--with-libxslt 		--with-llvm 		--with-lz4 		--with-openssl 		--with-perl 		--with-python 		--with-tcl 		--with-zstd 	; 	make -j "$(nproc)" world-bin; 	make install-world-bin; 	make -C contrib install; 		runDeps="$( 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local 			| tr ',' '\n' 			| sort -u 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' 			| grep -v -e perl -e python -e tcl 	)"; 	apk add --no-cache --virtual .postgresql-rundeps 		$runDeps 		bash 		tzdata 		zstd 		icu-data-full 		$([ "$(apk --print-arch)" != 'ppc64le' ] && \
+	echo 'nss_wrapper') 	; 	apk del --no-network .build-deps; 	cd /; 	rm -rf 		/usr/src/postgresql 		/usr/local/share/doc 		/usr/local/share/man 	; 		postgres --version' 
+cmd=xray info=layer.stats all_size.bytes='280287593' all_size.human='280 MB' 
+cmd=xray info=layer.stats object_count='3474' 
+cmd=xray info=layer.stats dir_count='262' 
+cmd=xray info=layer.stats file_count='2814' 
+cmd=xray info=layer.stats link_count='398' 
+cmd=xray info=layer.stats max_file_size.human='164 MB' max_file_size.bytes='164035472' 
+cmd=xray info=layer.stats added_size.human='280 MB' added_size.bytes='280204999' 
+cmd=xray info=layer.stats modified_size.human='83 kB' modified_size.bytes='82594' 
+cmd=xray info=layer.change.summary deleted='0' modified='113' added='3361' all='3474' 
+cmd=xray info=layer.objects.count value='3474' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object hash='f33d38e27ed6962879e355ef2260ff0eb00333fa' object.name='/usr/lib/libLLVM.so.21.1' size.human='164 MB' size.bytes='164035472' mtime='2026-03-27T19:39:10Z' H='[A:4]' mode='-rwxr-xr-x' uid='0' gid='0' 
+cmd=xray info=object gid='0' hash='f18e5f315a9cb87676c9701490f43074a9c4f1d2' size.human='33 MB' size.bytes='33107408' mtime='2026-01-13T08:47:49Z' H='[A:4]' object.name='/usr/share/icu/78.1/icudt78l.dat' mode='-rw-r--r--' uid='0' 
+cmd=xray info=object size.bytes='10931104' H='[A:4]' hash='73bdcf59ad83b919d4979c4a1292b35aa3470eb5' mode='-rwxr-xr-x' uid='0' gid='0' mtime='2026-11-05T19:03:49Z' object.name='/usr/local/bin/postgres' size.human='11 MB' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='3.1 MB' gid='0' H='[A:4]' hash='4917574fefd28370f16b089e347291f7c60a5792' object.name='/usr/lib/libicui18n.so.78.1' size.bytes='3148224' uid='0' mtime='2026-01-13T08:47:49Z' 
+cmd=xray info=object mtime='2026-05-29T19:59:26Z' object.name='/usr/lib/libstdc++.so.6.0.34' mode='-rwxr-xr-x' size.bytes='2820600' uid='0' hash='e3cccaab683b3e27995de326af5973f9d68338db' size.human='2.8 MB' gid='0' H='[A:4]' 
+cmd=xray info=object H='[A:4]' size.human='1.9 MB' size.bytes='1902632' gid='0' hash='49100543281c52118d0537ac4fd39f3f0e738705' object.name='/usr/lib/libicuuc.so.78.1' mode='-rwxr-xr-x' uid='0' mtime='2026-01-13T08:47:49Z' 
+cmd=xray info=object uid='0' H='[A:4]' size.human='1.8 MB' size.bytes='1764144' mtime='2026-11-05T19:03:49Z' hash='54daa76d61b8e682dcd03455421386c6f097ec79' object.name='/usr/local/lib/postgresql/bitcode/postgres.index.bc' mode='-rw-r--r--' gid='0' 
+cmd=xray info=object size.bytes='1196400' uid='0' gid='0' mtime='2026-11-05T19:03:49Z' H='[A:4]' hash='02d4599dedb56b8faa8d66234db4f34bdb64bdc3' mode='-rwxr-xr-x' size.human='1.2 MB' object.name='/usr/local/lib/postgresql/dict_snowball.so' 
+cmd=xray info=object hash='dff2210515d07522b679d35e8b15a6826dc6fa5a' object.name='/usr/lib/libxml2.so.2.13.9' mode='-rwxr-xr-x' size.human='1.2 MB' size.bytes='1182624' uid='0' gid='0' H='[A:4/M:10]' mtime='2026-05-28T09:40:38Z' 
+cmd=xray info=object H='[A:4]' object.name='/usr/local/bin/ecpg' mode='-rwxr-xr-x' size.human='1.1 MB' uid='0' mtime='2026-11-05T19:03:50Z' size.bytes='1075408' gid='0' hash='8140cb1bc0ed9f742612c07a9684fa886200ab68' 
+cmd=xray info=object mtime='2026-11-05T19:03:49Z' H='[A:4]' hash='9c7bb27f426637211002240accda900b2df087d4' object.name='/usr/local/share/postgresql/postgres.bki' size.human='953 kB' gid='0' uid='0' mode='-rw-r--r--' size.bytes='953268' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='868 kB' mtime='2026-11-05T19:03:50Z' hash='068fe56a9f48a0c7d37f310f49eb95276a303cda' object.name='/usr/local/bin/psql' size.bytes='867624' uid='0' gid='0' H='[A:4]' 
+cmd=xray info=object H='[A:4]' object.name='/bin/bash' mode='-rwxr-xr-x' uid='0' gid='0' mtime='2026-01-25T22:34:20Z' hash='d5efa963dba1c0e02b0aba0a688974fe775d8444' size.human='866 kB' size.bytes='866280' 
+cmd=xray info=object hash='da8be4d59a181a8e4a78ab7305c9116277527729' gid='0' mtime='2026-04-17T23:17:57Z' size.bytes='726736' uid='0' H='[A:4/M:10]' object.name='/usr/lib/libkrb5.so.3.3' mode='-rwxr-xr-x' size.human='727 kB' 
+cmd=xray info=object H='[A:4]' mode='-rwxr-xr-x' size.human='657 kB' uid='0' mtime='2025-07-28T12:06:44Z' size.bytes='657240' gid='0' hash='37a1e59b4678b81623bff177dabcf1ed830e52b0' object.name='/usr/lib/libzstd.so.1.5.7' 
+cmd=xray info=object gid='0' object.name='/usr/local/lib/postgresql/bitcode/postgres/parser/gram.bc' size.human='649 kB' uid='0' mtime='2026-11-05T19:03:48Z' H='[A:4]' hash='eb73944ef39ac130e13856132ae2309f081b0cda' mode='-rw-r--r--' size.bytes='649220' 
+cmd=xray info=object uid='0' mtime='2026-11-05T19:03:50Z' size.bytes='578424' size.human='578 kB' gid='0' H='[A:4]' hash='659fe5e1058f1956bad9f1ac118f1539e959a695' object.name='/usr/local/bin/pg_dump' mode='-rwxr-xr-x' 
+cmd=xray info=object hash='ff1e663e17cf5c153265470f01a18040541bc113' object.name='/usr/local/include/postgresql/server/ppport.h' mode='-rw-r--r--' gid='0' mtime='2026-11-05T19:03:51Z' H='[A:4]' size.human='544 kB' size.bytes='544415' uid='0' 
+cmd=xray info=object size.human='530 kB' size.bytes='530010' uid='0' gid='0' H='[A:4]' hash='0755563d9542829a60e945b7bcd8c5ae798fe883' object.name='/usr/local/lib/libpgcommon.a' mode='-rw-r--r--' mtime='2026-11-05T19:03:47Z' 
+cmd=xray info=object mode='-rw-r--r--' size.human='515 kB' size.bytes='515150' mtime='2026-11-05T19:03:47Z' H='[A:4]' object.name='/usr/local/lib/libpgcommon_shlib.a' uid='0' gid='0' hash='09ac8cbc120069003a20b691fe6c7e3b1e7e191d' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='5' id='2af809ac8a3a5819258bd950eb7977639b89591d7bc8ea4646ffd8d1acad24eb' path='blobs/sha256/2af809ac8a3a5819258bd950eb7977639b89591d7bc8ea4646ffd8d1acad24eb' 
+cmd=xray info=change.instruction index='0:12' type='RUN' snippet='RUN set -eux; 	cp -v /usr/local/share/postgr...' all='RUN set -eux; 	cp -v /usr/local/share/postgresql/postgresql.conf.sample /usr/local/share/postgresql/postgresql.conf.sample.orig; 	sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/local/share/postgresql/postgresql.conf.sample; 	grep -F "listen_addresses = '*'" /usr/local/share/postgresql/postgresql.conf.sample' 
+cmd=xray info=layer.stats all_size.human='62 kB' all_size.bytes='61854' 
+cmd=xray info=layer.stats object_count='6' 
+cmd=xray info=layer.stats dir_count='4' 
+cmd=xray info=layer.stats file_count='2' 
+cmd=xray info=layer.stats max_file_size.human='31 kB' max_file_size.bytes='30950' 
+cmd=xray info=layer.stats added_size.human='31 kB' added_size.bytes='30950' 
+cmd=xray info=layer.stats modified_size.human='31 kB' modified_size.bytes='30904' 
+cmd=xray info=layer.change.summary deleted='0' modified='5' added='1' all='6' 
+cmd=xray info=layer.objects.count value='6' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object size.bytes='30950' mtime='2026-11-05T19:03:56Z' H='[A:5]' mode='-rw-r--r--' size.human='31 kB' uid='0' gid='0' hash='bc0dafbcda8d11c5bfb7c80b2efe542fc1e198f2' object.name='/usr/local/share/postgresql/postgresql.conf.sample.orig' 
+cmd=xray info=object size.bytes='30904' uid='0' mode='-rw-r--r--' size.human='31 kB' H='[A:4/M:5]' hash='19f76f3278a20df1cdb8d0b3ad7dd78e187b23bf' object.name='/usr/local/share/postgresql/postgresql.conf.sample' gid='0' mtime='2026-11-05T19:03:56Z' 
+cmd=xray info=object mode='drwxr-xr-x' size.bytes='0' mtime='2026-11-05T19:03:56Z' H='[A:0/M:4,5]' hash='' object.name='/usr/local/share' size.human='0 B' uid='0' gid='0' 
+cmd=xray info=object mode='drwxr-xr-x' size.bytes='0' mtime='2026-11-05T19:03:56Z' size.human='0 B' uid='0' gid='0' H='[A:4/M:5]' hash='' object.name='/usr/local/share/postgresql' 
+cmd=xray info=object uid='0' gid='0' object.name='/usr/local' mode='drwxr-xr-x' size.human='0 B' size.bytes='0' mtime='2026-11-05T19:03:49Z' H='[A:0/M:2,4,5,8,9]' hash='' 
+cmd=xray info=object gid='0' hash='' object.name='/usr' mode='drwxr-xr-x' size.human='0 B' size.bytes='0' uid='0' mtime='2026-11-05T19:03:56Z' H='[A:0/M:2,4,5,8,9,10]' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer id='3f8e57c6b477a6f158d38d33a4c840f466e645a93f1b9e33c09d9abd1d38211f' path='blobs/sha256/3f8e57c6b477a6f158d38d33a4c840f466e645a93f1b9e33c09d9abd1d38211f' index='6' 
+cmd=xray info=change.instruction index='0:13' type='RUN' snippet='RUN install --verbose --directory --owner po...' all='RUN install --verbose --directory --owner postgres --group postgres --mode 3777 /var/run/postgresql' 
+cmd=xray info=other.instructions count='1' 
+cmd=xray info=other.instruction pos='0' index='0:14' type='ENV' snippet='ENV PGDATA=/var/lib/postgresql/data' all='ENV PGDATA=/var/lib/postgresql/data' 
+cmd=xray info=layer.stats object_count='2' 
+cmd=xray info=layer.stats dir_count='2' 
+cmd=xray info=layer.change.summary deleted='0' modified='1' added='1' all='2' 
+cmd=xray info=layer.objects.count value='2' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object gid='70' mtime='2026-11-05T19:03:56Z' size.bytes='0' uid='70' H='[A:6]' hash='' object.name='/run/postgresql' mode='dgtrwxrwxrwx' size.human='0 B' 
+cmd=xray info=object mode='drwxr-xr-x' size.human='0 B' gid='0' mtime='2026-11-05T19:03:56Z' H='[A:0/M:6]' hash='' object.name='/run' size.bytes='0' uid='0' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer id='ddd9b4947d3a2c2dfc8451d29431c0f565e26391fa2056084f00545dc638e47b' path='blobs/sha256/ddd9b4947d3a2c2dfc8451d29431c0f565e26391fa2056084f00545dc638e47b' index='7' 
+cmd=xray info=change.instruction index='0:15' type='RUN' snippet='RUN install --verbose --directory --owner po...' all='RUN install --verbose --directory --owner postgres --group postgres --mode 1777 "$PGDATA"' 
+cmd=xray info=other.instructions count='1' 
+cmd=xray info=other.instruction type='VOLUME' snippet='VOLUME [/var/lib/postgresql/data]' all='VOLUME [/var/lib/postgresql/data]' pos='0' index='0:16' 
+cmd=xray info=layer.stats object_count='4' 
+cmd=xray info=layer.stats dir_count='4' 
+cmd=xray info=layer.change.summary all='4' deleted='0' modified='3' added='1' 
+cmd=xray info=layer.objects.count value='4' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object mtime='2026-11-05T19:03:56Z' H='[A:0/M:1,7]' hash='' mode='drwxr-xr-x' size.bytes='0' uid='0' gid='0' object.name='/var/lib' size.human='0 B' 
+cmd=xray info=object mode='dtrwxrwxrwx' size.human='0 B' size.bytes='0' uid='70' H='[A:1/M:7]' hash='' object.name='/var/lib/postgresql' gid='70' mtime='2026-11-05T19:03:57Z' 
+cmd=xray info=object size.human='0 B' H='[A:7]' hash='' object.name='/var/lib/postgresql/data' mode='dtrwxrwxrwx' size.bytes='0' uid='70' gid='70' mtime='2026-11-05T19:03:57Z' 
+cmd=xray info=object mode='drwxr-xr-x' mtime='2026-11-05T09:19:24Z' H='[A:0/M:1,2,4,7,10]' size.human='0 B' size.bytes='0' uid='0' gid='0' hash='' object.name='/var' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer index='8' id='7d8a1dafb6f1de74c9c11186c967c5709463b080d40b027ce7032bfcd8ffa394' path='blobs/sha256/7d8a1dafb6f1de74c9c11186c967c5709463b080d40b027ce7032bfcd8ffa394' 
+cmd=xray info=change.instruction index='0:17' type='COPY' snippet='COPY docker-entrypoint.sh docker-ensure-init...' all='COPY docker-entrypoint.sh docker-ensure-initdb.sh /usr/local/bin/' 
+cmd=xray info=layer.stats all_size.human='17 kB' all_size.bytes='16894' 
+cmd=xray info=layer.stats object_count='5' 
+cmd=xray info=layer.stats dir_count='3' 
+cmd=xray info=layer.stats file_count='2' 
+cmd=xray info=layer.stats max_file_size.human='15 kB' max_file_size.bytes='14577' 
+cmd=xray info=layer.stats added_size.bytes='16894' added_size.human='17 kB' 
+cmd=xray info=layer.change.summary deleted='0' modified='3' added='2' all='5' 
+cmd=xray info=layer.objects.count value='5' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object gid='0' H='[A:8]' object.name='/usr/local/bin/docker-entrypoint.sh' mode='-rwxr-xr-x' size.human='15 kB' size.bytes='14577' uid='0' mtime='2026-11-05T19:01:24Z' hash='64b4703cb3362aa74b95cd2711dd581bfe540905' 
+cmd=xray info=object mtime='2026-11-05T19:01:24Z' H='[A:8]' object.name='/usr/local/bin/docker-ensure-initdb.sh' mode='-rwxr-xr-x' gid='0' uid='0' hash='af617c36dbab2078d5116e866310ad405e740fae' size.human='2.3 kB' size.bytes='2317' 
+cmd=xray info=object uid='0' gid='0' mtime='2026-11-05T19:03:57Z' object.name='/usr/local/bin' hash='' mode='drwxr-xr-x' size.human='0 B' size.bytes='0' H='[A:0/M:2,4,8,9]' 
+cmd=xray info=object mtime='2026-11-05T19:03:49Z' H='[A:0/M:2,4,5,8,9]' hash='' object.name='/usr/local' mode='drwxr-xr-x' size.human='0 B' size.bytes='0' gid='0' uid='0' 
+cmd=xray info=object mtime='2026-11-05T19:03:56Z' size.bytes='0' uid='0' gid='0' H='[A:0/M:2,4,5,8,9,10]' hash='' object.name='/usr' mode='drwxr-xr-x' size.human='0 B' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer path='blobs/sha256/166cd0396d9976a46ef1fff6178439d457dca98c222049e724e6acabba432f14' index='9' id='166cd0396d9976a46ef1fff6178439d457dca98c222049e724e6acabba432f14' 
+cmd=xray info=change.instruction index='0:18' type='RUN' snippet='RUN ln -sT docker-ensure-initdb.sh /usr/loca...' all='RUN ln -sT docker-ensure-initdb.sh /usr/local/bin/docker-enforce-initdb.sh' 
+cmd=xray info=other.instructions count='4' 
+cmd=xray info=other.instruction type='ENTRYPOINT' snippet='ENTRYPOINT ["docker-entrypoint.sh"]
+' all='ENTRYPOINT ["docker-entrypoint.sh"]
+' pos='0' index='0:19' 
+cmd=xray info=other.instruction index='0:20' type='STOPSIGNAL' snippet='STOPSIGNAL SIGINT' all='STOPSIGNAL SIGINT' pos='1' 
+cmd=xray info=other.instruction index='0:21' type='EXPOSE' snippet='EXPOSE 5432/tcp' all='EXPOSE 5432/tcp' pos='2' 
+cmd=xray info=other.instruction pos='3' index='0:22' type='CMD' snippet='CMD ["postgres"]
+' all='CMD ["postgres"]
+' 
+cmd=xray info=layer.stats object_count='4' 
+cmd=xray info=layer.stats dir_count='3' 
+cmd=xray info=layer.stats link_count='1' 
+cmd=xray info=layer.change.summary deleted='0' modified='3' added='1' all='4' 
+cmd=xray info=layer.objects.count value='4' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object mode='drwxr-xr-x' size.human='0 B' uid='0' gid='0' object.name='/usr/local' size.bytes='0' mtime='2026-11-05T19:03:49Z' H='[A:0/M:2,4,5,8,9]' hash='' 
+cmd=xray info=object H='[A:0/M:2,4,8,9]' object.name='/usr/local/bin' mode='drwxr-xr-x' uid='0' mtime='2026-11-05T19:03:57Z' hash='' size.human='0 B' size.bytes='0' gid='0' 
+cmd=xray info=object link.target='docker-ensure-initdb.sh' mode='Lrwxrwxrwx' size.bytes='0' uid='0' H='[A:9]' hash='' object.name='/usr/local/bin/docker-enforce-initdb.sh' size.human='0 B' gid='0' mtime='2026-11-05T19:03:57Z' 
+cmd=xray info=object mode='drwxr-xr-x' size.human='0 B' gid='0' mtime='2026-11-05T19:03:56Z' hash='' size.bytes='0' uid='0' H='[A:0/M:2,4,5,8,9,10]' object.name='/usr' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=layer.start
+cmd=xray info=layer id='7ead448fd5540b69c3e9987c1080b617886e7373a7518baf940fd5b38b95b305' path='blobs/sha256/7ead448fd5540b69c3e9987c1080b617886e7373a7518baf940fd5b38b95b305' index='10' 
+cmd=xray info=change.instruction type='RUN' snippet='RUN apk upgrade --no-cache' all='RUN apk upgrade --no-cache' index='0:23' 
+cmd=xray info=other.instructions count='1' 
+cmd=xray info=other.instruction pos='0' index='0:24' type='USER' snippet='USER postgres' all='USER postgres' 
+cmd=xray info=layer.stats all_size.bytes='10088871' all_size.human='10 MB' 
+cmd=xray info=layer.stats object_count='67' 
+cmd=xray info=layer.stats dir_count='18' 
+cmd=xray info=layer.stats file_count='36' 
+cmd=xray info=layer.stats link_count='13' 
+cmd=xray info=layer.stats max_file_size.human='4.5 MB' max_file_size.bytes='4533144' 
+cmd=xray info=layer.stats deleted_count='1' 
+cmd=xray info=layer.stats deleted_file_count='1' 
+cmd=xray info=layer.stats deleted_size='133008' 
+cmd=xray info=layer.stats added_size.human='133 kB' added_size.bytes='133008' 
+cmd=xray info=layer.stats modified_size.human='10 MB' modified_size.bytes='9955863' 
+cmd=xray info=layer.change.summary added='1' all='67' deleted='1' modified='65' 
+cmd=xray info=layer.objects.count value='67' 
+cmd=xray info=layer.objects.top.start
+cmd=xray info=object size.human='4.5 MB' size.bytes='4533144' uid='0' hash='309445c001cf78b778d0632f25e56b94ccde04ed' mode='-rwxr-xr-x' gid='0' mtime='2026-11-18T23:31:47Z' H='[A:0/M:10]' object.name='/usr/lib/libcrypto.so.3' 
+cmd=xray info=object size.human='1.2 MB' mtime='2026-11-20T09:39:28Z' mode='-rwxr-xr-x' uid='0' gid='0' H='[A:4/M:10]' hash='f0991b4360eebd2a6edf5cca84dce99687cf0d85' object.name='/usr/lib/libxml2.so.2.13.9' size.bytes='1182624' 
+cmd=xray info=object size.bytes='868240' uid='0' gid='0' hash='a4e58b8caae2bb27f157f26732536d670a4e626b' mode='-rwxr-xr-x' size.human='868 kB' mtime='2026-11-18T23:31:47Z' H='[A:0/M:10]' object.name='/usr/lib/libssl.so.3' 
+cmd=xray info=object hash='900853154be51533315cd4c11337d6cf0c0bec10' object.name='/usr/lib/libkrb5.so.3.3' gid='0' H='[A:4/M:10]' size.bytes='726736' uid='0' mtime='2026-11-10T07:33:52Z' mode='-rwxr-xr-x' size.human='727 kB' 
+cmd=xray info=object size.human='332 kB' mtime='2026-11-10T07:33:52Z' hash='a6c098747e548e5ea9bf0c6a8ba1ae737b387dd9' mode='-rwxr-xr-x' size.bytes='331952' uid='0' gid='0' H='[A:4/M:10]' object.name='/usr/lib/libgssapi_krb5.so.2.2' 
+cmd=xray info=object size.bytes='264232' gid='0' object.name='/usr/lib/libxslt.so.1.1.43' mtime='2026-11-10T01:45:03Z' H='[A:4/M:10]' hash='e35887fd972468b6cdd8c9f10d34a5227a160838' mode='-rwxr-xr-x' size.human='264 kB' uid='0' 
+cmd=xray info=object mode='-rwxr-xr-x' uid='0' H='[A:4/M:10]' object.name='/usr/lib/libk5crypto.so.3.1' size.human='199 kB' size.bytes='198736' gid='0' mtime='2026-11-10T07:33:52Z' hash='786ad9084460080d469e7c7312c6ced156024f40' 
+cmd=xray info=object mtime='2026-11-10T07:33:52Z' object.name='/usr/lib/libgssrpc.so.4.2' mode='-rwxr-xr-x' size.human='134 kB' size.bytes='134056' uid='0' gid='0' H='[A:4/M:10]' hash='128b25d57a36c7fd9dfb9251c43520a9d988d354' 
+cmd=xray info=object mtime='2026-11-10T07:33:52Z' H='[A:4/M:10]' hash='c1b42ce3d07d8a6b667168817a310d50dea19b50' mode='-rwxr-xr-x' size.bytes='133664' gid='0' object.name='/usr/lib/krb5/plugins/preauth/spake.so' size.human='134 kB' uid='0' 
+cmd=xray info=object H='[A:4/M:10]' hash='668490ab6477ab9882a0273c92e654f033fe12b7' mtime='2026-11-10T07:33:52Z' object.name='/usr/lib/krb5/plugins/kdb/db2.so' mode='-rwxr-xr-x' size.human='133 kB' size.bytes='133336' uid='0' gid='0' 
+cmd=xray info=object size.human='133 kB' size.bytes='133232' H='[A:4/M:10]' hash='d267ee93322430834d1b7c450221613221c6d896' object.name='/usr/lib/libkdb5.so.10.0' mode='-rwxr-xr-x' uid='0' gid='0' mtime='2026-11-10T07:33:52Z' 
+cmd=xray info=object H='[A:4/M:10]' hash='6fad056050ed8d1bc587cb95a4fade72398aecfd' mode='-rwxr-xr-x' size.human='133 kB' uid='0' object.name='/usr/lib/libkadm5srv_mit.so.12.0' size.bytes='133096' gid='0' mtime='2026-11-10T07:33:52Z' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='133 kB' size.bytes='133088' H='[A:4/M:10]' hash='a947f172a854875a09c330e1debdf7899b4c2979' object.name='/usr/lib/libkadm5clnt_mit.so.12.0' uid='0' gid='0' mtime='2026-11-10T07:33:52Z' 
+cmd=xray info=object mode='-rwxr-xr-x' uid='0' gid='0' H='[A:10]' hash='dbbc101b7f5feb89d3281610a9f00eb04ab8edf7' size.human='133 kB' size.bytes='133008' mtime='2026-11-06T18:22:02Z' object.name='/usr/lib/libz.so.1.4' 
+cmd=xray info=object mode='-rwxr-xr-x' gid='0' H='[A:0/M:10]' hash='10f8a55f61c1b834798410d6a6fa39604a0ef0a6' size.human='133 kB' size.bytes='133008' uid='0' mtime='2026-11-18T23:31:47Z' object.name='/usr/lib/ossl-modules/legacy.so' 
+cmd=xray info=object uid='0' mtime='2026-11-10T01:45:03Z' hash='20c500501a1241636ec50f85becb70792ee91787' mode='-rwxr-xr-x' size.human='133 kB' H='[A:4/M:10]' object.name='/usr/lib/libexslt.so.0.8.24' size.bytes='132944' gid='0' 
+cmd=xray info=object H='[A:0/M:10]' size.human='68 kB' uid='0' gid='0' hash='cc7f0d2201b64a85ca23c58f360371d5307a3725' object.name='/usr/lib/engines-3/loader_attic.so' mode='-rwxr-xr-x' size.bytes='67952' mtime='2026-11-18T23:31:47Z' 
+cmd=xray info=object gid='0' mtime='2026-11-18T23:31:47Z' hash='502644ccb42a97cc9d2d8df7c18282eb629d563e' mode='-rwxr-xr-x' size.human='68 kB' size.bytes='67680' uid='0' H='[A:0/M:10]' object.name='/usr/lib/engines-3/afalg.so' 
+cmd=xray info=object size.bytes='67648' uid='0' gid='0' object.name='/usr/lib/libkrb5support.so.0.1' mode='-rwxr-xr-x' size.human='68 kB' mtime='2026-11-10T07:33:52Z' H='[A:4/M:10]' hash='33a5dc3b8b6296aefa20a725be532f75746867ad' 
+cmd=xray info=object mode='-rwxr-xr-x' size.human='68 kB' size.bytes='67552' mtime='2026-11-10T07:33:52Z' hash='095cc095ad4d9c299d11901a6d485c175aeee4ee' object.name='/usr/lib/libkrad.so.0.0' uid='0' gid='0' H='[A:4/M:10]' 
+cmd=xray info=layer.objects.top.end
+cmd=xray info=layer.objects.deleted.start
+cmd=xray info=layer.objects.deleted.end
+cmd=xray info=layer.objects.modified.start
+cmd=xray info=layer.objects.modified.end
+cmd=xray info=layer.objects.added.start
+cmd=xray info=layer.objects.added.end
+cmd=xray info=layer.end
+cmd=xray info=image.shells full_name='Bourne shell' short_name='sh' exe_path='/bin/sh' link_path='/bin/busybox' reference='' verified='true' 
+cmd=xray info=image.shells link_path='/bin/busybox' reference='' verified='true' full_name='Ash shell' short_name='ash' exe_path='/bin/ash' 
+cmd=xray info=image.shells full_name='Bash shell' short_name='bash' exe_path='/bin/bash' link_path='' reference='' verified='true' 
+cmd=xray info=image.entry exe_path='docker-entrypoint.sh' exe_args='postgres' 
+cmd=xray info=image.entry.full_exe_path name='/usr/local/bin/docker-entrypoint.sh' layer='8' 
+cmd=xray info=image.special_perms.sticky name='/var/tmp' 
+cmd=xray info=image.special_perms.sticky name='/run/postgresql' 
+cmd=xray info=image.special_perms.sticky name='/var/lib/postgresql/data' 
+cmd=xray info=image.special_perms.sticky name='/var/lib/postgresql' 
+cmd=xray info=image.special_perms.sticky name='/tmp' 
+cmd=xray state=completed
+cmd=xray state=done
+cmd=xray info=results artifacts.location='/work/state/.mint-state/images/55e0c31031b3eff431cad860e32ad6172c6f2e392b80ff7c875a59c888e33616/artifacts' 
+cmd=xray info=results artifacts.dockerfile.original='Dockerfile.fat' 
+cmd=xray info=version status='OUTDATED' local='x.1.42.2' current='1.41.8' 
+cmd=xray message='Your version of MinToolkit is out of date! Use `mint update` to get the latest version.'
+cmd=xray info=report file='/work/brewtrack-db-0.1.0-31d6f23.xray.json' 
+app='mint' message='GitHub Discussions' info='https://github.com/mintoolkit/mint/discussions'
+app='mint' message='Join the CNCF Slack channel to ask questions or to share your feedback' info='https://cloud-native.slack.com/archives/C059QP1RH1S'
+app='mint' message='Join the Discord server to ask questions or to share your feedback' info='https://discord.gg/fAvq4ruKsG'
