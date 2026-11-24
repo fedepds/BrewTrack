@@ -30,12 +30,20 @@ spec:
         readOnlyRootFilesystem: true
         capabilities:
           drop: ["ALL"]
-      # urlopen lanza una excepción, y python sale con 1, si la respuesta no es 2xx.
+      # Justo después de un rollout, el pedido puede ir al pod viejo de api mientras se apaga:
+      # reintenta hasta 6 veces, con 5 s entre intentos. El último error sale con 1.
       command:
         - python
         - -c
         - |
-          import urllib.request
-          r = urllib.request.urlopen("http://{{ .Release.Name }}-web:{{ .Values.web.service.port }}/api/v1/health", timeout=10)
-          print(r.status, r.read().decode())
-          raise SystemExit(0 if r.status == 200 else 1)
+          import time, urllib.request
+          for i in range(6):
+              try:
+                  r = urllib.request.urlopen("http://{{ .Release.Name }}-web:{{ .Values.web.service.port }}/api/v1/health", timeout=10)
+                  print(r.status, r.read().decode())
+                  raise SystemExit(0)
+              except OSError as e:
+                  print("intento", i + 1, "falló:", e)
+                  if i == 5:
+                      raise
+                  time.sleep(5)
