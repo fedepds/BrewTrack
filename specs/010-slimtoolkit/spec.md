@@ -1,7 +1,29 @@
 # 010 — SlimToolkit: análisis de capas y una imagen `web` reducida
 
-Estado: aprobada
+Estado: aprobada · cambio 1 aprobado (2026-11-24)
 Fecha: 2026-11-23
+
+## Cambio 1 (aprobado 2026-11-24): la reducción sale del pipeline
+
+Este cambio manda sobre lo que dicen de la fase 2 en el pipeline las secciones "Solución", "Decisiones de implementación" y "Decisiones de pruebas".
+
+**Motivo.** El Laboratorio 4 pide SlimToolkit solo para *analizar* tamaño y capas (1.d.b) y un informe con tamaño, capas y posibles mejoras (1.e). No pide construir una imagen reducida. La fase 2 suma tres etapas a cada build (`Reducir web`, `Trivy web reducida` y el push de la `-slim`), levanta un segundo dockerd desechable y corre en serie antes de los escaneos. Produce una imagen que el deploy no usa (historia 22). La cifra que el cliente quería (historia 19) ya está medida y guardada en `reports/image-analysis.md`: `web` baja de 114,7 MB a 55,3 MB (build 16, commit `31d6f23`).
+
+**Qué cambia.**
+- El pipeline solo corre la fase 1 (`xray` de `db`, `api` y `web`, en paralelo con Trivy). No cambia nada de esa fase.
+- Se quitan del `Jenkinsfile` las etapas `Reducir web (SlimToolkit)` y `Trivy web reducida`, el parámetro `WEB_CHECK_PATHS`, el push de la `-slim` en `Publicar imágenes` y el `docker rmi` de la `-slim` en `post`. El `docker rm -f` del dind se queda en `post`: `xray` también lo usa.
+- `ci/slimtoolkit.sh reduce` queda para correrlo a mano (historia 23). Sirve para volver a medir cuando cambie un `Containerfile` y actualizar `reports/image-analysis.md`.
+- Dejan de aplicar en CI las historias 13, 14, 18, 20 y 21. Las historias 14, 15, 16, 17 y 19 se cumplen con el script local. Las historias 18, 20 y 21 ya no se cumplen en ningún lado. La 22 se cumple sola: no hay otra imagen que desplegar. Las demás no cambian.
+- El script local no pasa Trivy por la `-slim`. `reports/image-analysis.md` debe decir que el resultado de Trivy de la reducida es del build 16 y que una medición local nueva no lo renueva.
+
+**Pruebas que cambian.**
+- Se quita la prueba de falla con `WEB_CHECK_PATHS` y el control de la `-slim` en el registro.
+- QA comprueba que un build sin la fase 2 deja los informes de `xray` de las tres imágenes y termina en verde.
+- QA corre `ci/slimtoolkit.sh reduce` en local una vez y comprueba que deja `*.compare.txt` y que la reducida responde 200 en las cuatro rutas.
+
+**Qué no cambia.** El deploy sigue con la imagen normal. No cambia el esquema, la API, la app ni la chart.
+
+**Documentos a tocar si se aprueba.** `Jenkinsfile`, `docs/ci/jenkins.md` (filas 3b, 3c y 5, y el párrafo de `WEB_CHECK_PATHS`), `README.md` (sección del pipeline), `reports/image-analysis.md` (aclarar que la reducida se mide a mano) y `plan.md`/`tasks.md` de esta spec.
 
 ## Problema
 
@@ -105,3 +127,8 @@ Un script del repo hace el mismo trabajo en la máquina del desarrollador, contr
 - Cumple la constitución: no cambia el esquema ni la API, y no usa secretos.
 - No publica puertos nuevos en el host. La prueba de `web-slim` usa la red interna de Docker, o un puerto libre que se cierra al terminar.
 - Cifras de partida (build `addef6a`): `db` 429 MB, `api` 389 MB, `web` 165 MB.
+
+## Historial
+
+- 2026-11-23: spec aprobada.
+- 2026-11-24: cambio 1 aprobado. La reducción de `web` sale del pipeline y queda en el script local. El `product-owner` agregó la historia 14 a las que cumple el script local, aclaró que 18, 20 y 21 ya no se cumplen, que `post` conserva el borrado del dind y que el resultado de Trivy de la reducida es del build 16.
