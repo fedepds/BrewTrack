@@ -7,7 +7,7 @@
 Con las imágenes de `addef6a` (o las que construyas):
 
     ci/slimtoolkit.sh xray   localhost:5001/brewtrack-db:0.1.0-addef6a localhost:5001/brewtrack-api:0.1.0-addef6a localhost:5001/brewtrack-web:0.2.0-addef6a
-    ci/slimtoolkit.sh reduce localhost:5001/brewtrack-db:0.1.0-addef6a localhost:5001/brewtrack-api:0.1.0-addef6a localhost:5001/brewtrack-web:0.2.0-addef6a
+    ci/slimtoolkit.sh reduce localhost:5001/brewtrack-web:0.2.0-addef6a
 
 Informes en `reports/slimtoolkit/`. `WEB_CHECK_PATHS="/ /api/v1/health"` fuerza una falla de la prueba HTTP.
 
