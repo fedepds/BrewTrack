@@ -18,7 +18,7 @@ El `Jenkinsfile` de la raíz clona el repo, analiza el código y las dependencia
 | 5 | Publicar imágenes | docker push a `localhost:5001` | el registro no responde | imágenes en el registro |
 | 6 | Deploy Helm | `helm upgrade --install --wait` y `helm test` | un pod no queda listo en 5 minutos, o `/api/v1/health` no responde a través de la web | `helm status`, salida del test, historial y pods en el log |
 
-La imagen `web` reducida no se construye en el pipeline. Para volver a medirla, corre a mano `ci/slimtoolkit.sh reduce <imagen web>` y actualiza `reports/image-analysis.md`. La variable `WEB_CHECK_PATHS` cambia las rutas que prueba.
+El pipeline no construye la `web` reducida. Para volver a medirla, corre a mano `ci/slimtoolkit.sh reduce <imagen web>` y actualiza `reports/image-analysis.md`. La variable `WEB_CHECK_PATHS` cambia las rutas que prueba.
 
 Las etapas 2 y 4 corren en paralelo y sin `failFast`: si falla una, las demás terminan igual, así se ven todos los problemas de una vez.
 

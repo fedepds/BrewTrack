@@ -17,5 +17,5 @@
 - `xray`: carga cada imagen y su base en el dockerd interno, corre `xray --changes all` y deja `<imagen>-<etiqueta>.xray.json`, `.xray.log` y `.txt`. Una imagen que falla no corta a las otras; el script sale con 1 al final.
 - `reduce WEB_REF`: `slim build` de `web` (sonda HTTP en 8080; conserva `/usr/share/nginx/html`, `/etc/nginx`, `/docker-entrypoint.sh`, `/docker-entrypoint.d` y el shell), levanta la imagen reducida, comprueba con `curl` 200 en las rutas de `WEB_CHECK_PATHS` (variable de entorno; por defecto `/`, `/index.html`, `/lotes/ejemplo`, `/main.dart.js`), que una ruta interna devuelva el mismo cuerpo que `/index.html`, y usuario `nginx`. Escribe `<imagen>-<etiqueta>.compare.txt`. Solo si todo pasa, copia `<WEB_REF>-slim` al Docker del host.
 - `Jenkinsfile`: etapa `SlimToolkit análisis` en paralelo con Trivy, con `catchError` a UNSTABLE. `Deploy Helm` no cambia. `post always` borra el dind si quedó vivo.
-- Cambio 1: `reduce` sale del pipeline y se corre a mano (sin Trivy). `WEB_CHECK_PATHS` queda como variable de entorno del script.
+- Cambio 1: `reduce` sale del pipeline; el desarrollador lo corre a mano (sin Trivy). `WEB_CHECK_PATHS` queda como variable de entorno del script.
 - `.gitignore`: `reports/slimtoolkit/`.

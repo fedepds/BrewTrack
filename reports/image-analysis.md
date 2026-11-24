@@ -1,6 +1,6 @@
 # Análisis de imágenes
 
-Fuente: `slim xray` y `slim build` (SlimToolkit) en el build 16 de Jenkins, commit `31d6f23`, 24/11/2026. Los informes completos de cada corrida quedan en `reports/slimtoolkit/` como artefactos de Jenkins.
+Fuente: `slim xray` y `slim build` (SlimToolkit) en el build 16 de Jenkins, commit `31d6f23`, 24/11/2026. Desde entonces Jenkins solo archiva en `reports/slimtoolkit/` los informes de `xray`; los de `slim build` salen de una corrida a mano.
 
 - **Tamaño:** suma de las capas sin comprimir, según SlimToolkit. Entre paréntesis, lo que ocupa comprimida en el registro.
 - **Capas:** capas de sistema de archivos del manifiesto, incluidas las de la imagen base.
@@ -16,7 +16,7 @@ Fuente: `slim xray` y `slim build` (SlimToolkit) en el build 16 de Jenkins, comm
 
 La `web` reducida pesa 59,4 MB menos (51,8 %). Pasa la sonda HTTP, la prueba de la ruta interna de la SPA y Trivy sin hallazgos HIGH ni CRITICAL. El clúster usa la normal.
 
-Desde el cambio 1 de la spec 010, el pipeline solo corre `xray`. La reducida se mide a mano con `ci/slimtoolkit.sh reduce <imagen web>`, que no pasa Trivy: el resultado de Trivy de arriba es del build 16, y una medición local nueva no lo renueva.
+Desde el cambio 1 de la spec 010, el pipeline solo corre `xray`. Para medir la reducida, corre a mano `ci/slimtoolkit.sh reduce <imagen web>`, que no pasa Trivy: el resultado de Trivy de arriba es del build 16, y una medición local nueva no lo renueva.
 
 ## db
 

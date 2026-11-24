@@ -1,7 +1,7 @@
 # 010 — Notas del desarrollador
 
 ## Qué cambió
-`ci/slimtoolkit.sh`, `ci/slimtoolkit-summary.py`, tres etapas en el `Jenkinsfile` y una línea en `.gitignore`. No cambia la app, la API ni la chart.
+`ci/slimtoolkit.sh`, `ci/slimtoolkit-summary.py`, una etapa en el `Jenkinsfile` (eran tres; el cambio 1 sacó la reducción) y una línea en `.gitignore`. No cambia la app, la API ni la chart.
 
 ## Cómo probarlo
 Con las imágenes de `addef6a` (o las que construyas):
@@ -23,6 +23,6 @@ Informes en `reports/slimtoolkit/`. `WEB_CHECK_PATHS="/ /api/v1/health"` fuerza 
 - `--privileged` aceptado: `docs/security/2026-11-23-slimtoolkit-dind.md`.
 
 ## Pendiente
-1. Corrida en Jenkins: sin probar (artefactos, UNSTABLE, `-slim` en el registro, `helm get values`).
-2. El `Jenkinsfile` no se validó sin Jenkins; revisa la sintaxis de las etapas nuevas en la primera corrida.
+1. Corrida en Jenkins: sin probar sin la fase 2 (informes de `xray` de las tres imágenes y build en verde).
+2. El `Jenkinsfile` no se validó sin Jenkins; revisa la sintaxis de la etapa nueva en la primera corrida.
 3. El script no se probó en amd64 (el sha256 de `dist_linux.tar.gz` sí se calculó).

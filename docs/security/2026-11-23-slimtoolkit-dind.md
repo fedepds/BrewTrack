@@ -16,7 +16,7 @@ slim 1.40.11 no exporta imágenes del almacén containerd del Docker del host, y
 
 - Jenkins ya monta el socket de Docker del host, que da el mismo acceso. Este contenedor no suma poder nuevo.
 - No publica puertos. Su API (2375, sin TLS) escucha solo dentro de su red, y solo la usa el propio script.
-- Dura segundos o minutos y solo corre imágenes de BrewTrack y la imagen `web` reducida.
+- Dura segundos o minutos y solo corre imágenes de BrewTrack. En CI solo analiza (`xray`); la imagen `web` reducida sale de una corrida a mano de `reduce`.
 
 ## Descarga del binario
 
